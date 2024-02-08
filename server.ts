@@ -12,7 +12,10 @@ import userRouter from "./Router/userRouter";
 const app: express.Application = express();
 
 //cors
-app.use(cors());
+app.use(cors({
+	origin: "http://localhost:3000",
+	credentials: true
+}));
 
 app.use(express.json());
 

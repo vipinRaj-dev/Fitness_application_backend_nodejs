@@ -13,6 +13,8 @@ export const userRegister = async (
   res: express.Response
 ) => {
   try {
+    console.log("Request body:", req.body);
+    
     const { name, email, password } = req.body;
 
 
@@ -28,7 +30,8 @@ export const userRegister = async (
     }
 
     if (user) {
-      return res.status(400).json({ msg: "user already exists" });
+      console.log('working');
+      return res.status(409).json({ msg: "user already exists" });
     }
 
     let userCount = await User.countDocuments({});
@@ -48,7 +51,7 @@ export const userRegister = async (
       .save()
       .then((user: UserType) => {
         console.log("User saved successfully:", user);
-        return res.status(200).json({ msg: "user registration successful" });
+        return res.status(201).json({ msg: "user registration successful" });
       })
       .catch((error: any) => {
         console.error("Error saving user:", error);
@@ -64,7 +67,8 @@ export const userLogin = async (
 ) => {
   try {
     const { email, password } = req.body;
-
+    console.log("Request body:", email, password);
+    
     let foundUser: UserType | TrainerType | AdminType;
 
     foundUser = await User.findOne({ email: email });
@@ -95,14 +99,13 @@ export const userLogin = async (
     };
 
     let token = jwt.sign(payload, process.env.JWT_SECRET_KEY);
-    res.status(200).json({ msg: "Login succesfully", token: token , role:foundUser.role });
-    // res.cookie("jwt", token, { httpOnly: true });
+    res.status(200).cookie('jwttoken', token,).json({ success: "success" });
   } catch (error) {
     console.error(error);
     res.status(500).json({
       msg: "server error",
     });
-  }
+  } 
 };
 
 
