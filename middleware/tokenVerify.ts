@@ -1,3 +1,4 @@
+import { log } from "console";
 import express from "express";
 import jwt from "jsonwebtoken";
 
@@ -22,9 +23,11 @@ export let tokenVerify = async (
     let secretkey: string | undefined = process.env.JWT_SECRET_KEY;
 
     if (secretkey) {
+
       let decode: any = jwt.verify(words[1], secretkey);
 
       req.headers["user"] = decode;
+      
       next();
     } else {
       return res
