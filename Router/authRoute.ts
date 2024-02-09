@@ -5,7 +5,7 @@ import {
   SaveUser,
   checkrole,
   forgotPasswordOtpSend,
-  forgotPasswordReset,
+  // forgotPasswordReset,
   otpVerification,
   userLogin,
   userRegistrationSendOtp,
@@ -16,8 +16,6 @@ const authRouter: express.Router = express.Router();
 
 authRouter.post("/sendOtp", userRegistrationSendOtp);
 
-authRouter.post('/verifyOtp', otpVerification)
-
 authRouter.post('/registerUser', SaveUser)
 
 authRouter.post("/login", userLogin);
@@ -26,6 +24,8 @@ authRouter.get("/role" ,tokenVerify, checkrole)
 
 authRouter.post('/forgot-password', forgotPasswordOtpSend)
 
-authRouter.post('/reset-password' , forgotPasswordReset)
+authRouter.post('/verifyOtp', otpVerification)
+
+// authRouter.post('/reset-password' , forgotPasswordReset)
 
 export default authRouter;

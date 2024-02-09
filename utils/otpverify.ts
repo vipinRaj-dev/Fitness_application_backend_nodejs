@@ -1,8 +1,10 @@
 import { OTP } from "../models/OtpModel";
 
+import { OTPType } from "../models/OtpModel"
 
-export async function otpVerify(email: string, otp: number) {
-  let otpDoc = await OTP.findOne({ email: email });
+
+export async function otpVerify( otp: number) {
+  let otpDoc : OTPType = await OTP.findOne({otp: otp});
   if (!otpDoc) {
     return false;
   }
@@ -10,6 +12,6 @@ export async function otpVerify(email: string, otp: number) {
     return false;
   }
   if (otpDoc.otp === otp) {
-    return true;
+    return otpDoc;
   }
 }
