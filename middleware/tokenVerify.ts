@@ -1,4 +1,3 @@
-import { log } from "console";
 import express from "express";
 import jwt from "jsonwebtoken";
 
@@ -7,6 +6,7 @@ export let tokenVerify = async (
   res: express.Response,
   next: express.NextFunction
 ) => {
+  console.log("yes token verified");
   try {
     let tokenHeader = req.headers.authorization;
     // console.log(tokenHeader );
