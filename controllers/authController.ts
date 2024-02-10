@@ -57,7 +57,6 @@ export const SaveUser = async (req: express.Request, res: express.Response) => {
     let { otp } = req.body;
     let OTP = parseInt(otp);
     let otpDoc = await otpVerify(OTP);
-    // console.log("otpDoc:", otpDoc, "otp:", typeof otp);
 
     if (!otpDoc) {
       return res.status(401).json({ msg: "otp verification failed" });

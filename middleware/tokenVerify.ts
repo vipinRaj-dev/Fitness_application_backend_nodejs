@@ -9,6 +9,8 @@ export let tokenVerify = async (
 ) => {
   try {
     let tokenHeader = req.headers.authorization;
+    // console.log(tokenHeader );
+    
 
     if (!tokenHeader) {
       return res.status(401).json({ msg: "Not authorized" });
