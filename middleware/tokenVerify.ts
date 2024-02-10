@@ -28,6 +28,15 @@ export let tokenVerify = async (
 
       let decode: any = jwt.verify(words[1], secretkey);
 
+      
+      // console.log(decode);
+      // {
+      //   email: 'admin@gmail.com',
+      //   role: 'admin',
+      //   userId: '65c48928c4133be373d8cb8b',
+      //   iat: 1707568108
+      // }
+      
       req.headers["user"] = decode;
       
       next();

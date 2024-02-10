@@ -3,19 +3,20 @@ import cors from "cors";
 import dotenv from "dotenv";
 import mongoose from "mongoose";
 
-
-
 // importing the routes
 import authRouter from "./Router/authRoute";
 import userRouter from "./Router/userRouter";
+import adminRouter from "./Router/adminRouter";
 
 const app: express.Application = express();
 
 //cors
-app.use(cors({
-	origin: "http://localhost:3000",
-	credentials: true
-}));
+app.use(
+  cors({
+    origin: "http://localhost:3000",
+    credentials: true,
+  })
+);
 
 app.use(express.json());
 
@@ -29,6 +30,8 @@ let mongo_uri: string | undefined = process.env.MONGO_DB_LOCAL;
 
 app.use("/auth", authRouter);
 app.use("/user", userRouter);
+
+app.use("/admin", adminRouter);
 
 if (hostName && port && mongo_uri) {
   mongoose

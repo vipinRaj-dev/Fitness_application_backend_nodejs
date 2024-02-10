@@ -144,7 +144,7 @@ export const checkrole = async (
   try {
     let requstedUser: any = req.headers["user"];
 
-    res.status(200).json({ role: requstedUser.role });
+    res.status(200).json({ role: requstedUser.role , email : requstedUser.email});
   } catch (error) {
     console.error(error);
   }
