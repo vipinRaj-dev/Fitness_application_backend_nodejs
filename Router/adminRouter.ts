@@ -2,9 +2,10 @@ import express from "express";
 import { tokenVerify } from "../middleware/tokenVerify";
 import {
   adminProfileEdit,
+  blockUser,
   createUser,
   dashboard,
-  deleteUser,
+  // deleteUser,
   getAllUsers,
   getUser,
   userProfileEdit,
@@ -28,7 +29,9 @@ adminRouter.get("/user/:id", getUser);
 
 adminRouter.put("/user/:id", userProfileEdit);
 
-adminRouter.delete("/user/:id", deleteUser);
+// adminRouter.delete("/user/:id", deleteUser);
+
+adminRouter.put("/user/block/:id", blockUser);
 
 
 export default adminRouter;

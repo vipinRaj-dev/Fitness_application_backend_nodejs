@@ -116,6 +116,11 @@ export const userLogin = async (
       return res.status(401).json({ msg: "password incorrect" });
     }
 
+    //check if the user is blocked
+    if ("userBlocked" in foundUser && foundUser.userBlocked) {
+      return res.status(401).json({ msg: "user is blocked please contact to admin" });
+    }
+
     // sending token
 
     let payload = {
@@ -144,7 +149,9 @@ export const checkrole = async (
   try {
     let requstedUser: any = req.headers["user"];
 
-    res.status(200).json({ role: requstedUser.role , email : requstedUser.email});
+    res
+      .status(200)
+      .json({ role: requstedUser.role, email: requstedUser.email });
   } catch (error) {
     console.error(error);
   }
@@ -198,7 +205,7 @@ export const otpVerification = async (
     }
   } catch (error) {
     console.error(error);
-    return res.status(500).json({msg : "server error"})
+    return res.status(500).json({ msg: "server error" });
   }
 };
 

@@ -18,7 +18,9 @@ export const dashboard = async (
   try {
     let requstedUser: any = req.headers["user"];
 
-    let adminData: AdminType | null = await Admin.findById(requstedUser.userId);
+    let adminData: AdminType | null = await Admin.findById(
+      requstedUser.userId
+    ).select("role email fullName _id");
     const userCount = await User.countDocuments();
     const trainerCount = await Trainer.countDocuments();
 
@@ -61,7 +63,7 @@ export const getAllUsers = async (
   res: express.Response
 ) => {
   try {
-    const users = await User.find({}, { name: 1, email: 1, role: 1, _id: 0 });
+    const users = await User.find({}, { name: 1, email: 1, role: 1, _id: 1 });
     res.status(200).json({ users });
   } catch (error) {
     console.error(error);
@@ -110,25 +112,50 @@ export const userProfileEdit = async (
   try {
     const id = req.params.id;
     const updateData = req.body;
-    // console.log(updateData  , id);
-    // await db.collection('resources').updateOne({ _id: id }, { $set: updateData });
 
-    res.json({ message: " user Resource updated", data: updateData });
+    const isUserUpdated = await User.findByIdAndUpdate(id, updateData, {
+      new: true,
+    });
+
+    if (!isUserUpdated) {
+      return res.status(404).json({ message: "User not found" });
+    } else {
+      res.status(200).json({ message: "User updated", user: isUserUpdated });
+    }
   } catch (error) {
     console.error(error);
     res.status(500).json({ message: error.message });
   }
 };
 
-export const deleteUser = async (
+// export const deleteUser = async (
+//   req: express.Request,
+//   res: express.Response
+// ) => {
+//   try {
+//     const id = req.params.id;
+//     const isUserExist = await User.findById(id);
+//     res.json({ message: "Resource deleted" });
+//   } catch (error) {
+//     console.error(error);
+//     res.status(500).json({ message: error.message });
+//   }
+// };
+export const blockUser = async (
   req: express.Request,
   res: express.Response
 ) => {
   try {
     const id = req.params.id;
-    const isUserExist = await User.findById(id);
-    // await db.collection('resources').deleteOne({ _id: id });
-    res.json({ message: "Resource deleted" });
+    const userDetails = await User.findById(id);
+    if (!userDetails) {
+      return res.status(404).json({ message: "User not found" });
+    } else {
+      // console.log(userDetails);
+      userDetails.userBlocked = !userDetails.userBlocked;
+      await userDetails.save();
+      res.status(200).json({ message: "User blocked", user: userDetails });
+    }
   } catch (error) {
     console.error(error);
     res.status(500).json({ message: error.message });
