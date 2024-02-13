@@ -16,11 +16,9 @@ export const dashboard = async (
   res: express.Response
 ) => {
   try {
-    let requstedUser: any = req.headers["user"];
-
-    let adminData: AdminType | null = await Admin.findById(
-      requstedUser.userId
-    ).select("role email fullName _id");
+    let adminData: AdminType | null = await Admin.findOne({}).select("role email fullName _id");
+    console.log(adminData);
+    
     const userCount = await User.countDocuments();
     const trainerCount = await Trainer.countDocuments();
 

@@ -15,23 +15,22 @@ import { isAdmin } from "../middleware/isAdmin";
 const adminRouter: express.Router = express.Router();
 
 
-adminRouter.use(tokenVerify, isAdmin);
 
 adminRouter.get("/dashboard", dashboard);
 
-adminRouter.put("/profile/:id", adminProfileEdit);
+adminRouter.put("/profile/:id", tokenVerify, isAdmin,adminProfileEdit);
 
-adminRouter.get("/users", getAllUsers);
+adminRouter.get("/users", tokenVerify, isAdmin,getAllUsers);
 
-adminRouter.post("/createUser", createUser);
+adminRouter.post("/createUser",tokenVerify, isAdmin, createUser);
 
-adminRouter.get("/user/:id", getUser);
+adminRouter.get("/user/:id",tokenVerify, isAdmin, getUser);
 
-adminRouter.put("/user/:id", userProfileEdit);
+adminRouter.put("/user/:id",tokenVerify, isAdmin, userProfileEdit);
 
 // adminRouter.delete("/user/:id", deleteUser);
 
-adminRouter.put("/user/block/:id", blockUser);
+adminRouter.put("/user/block/:id", tokenVerify, isAdmin,blockUser);
 
 
 export default adminRouter;

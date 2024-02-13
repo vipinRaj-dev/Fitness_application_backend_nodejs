@@ -64,16 +64,31 @@ export const userProfileImageUpdate = async (
         { _id: id },
         { $set: { profileImage: data.url, publicId: data.public_id } }
       );
+      // console.log("profileUpdate", profileUpdate);
     }
 
     // user detal update
     const updateData = req.body;
     delete updateData.profileImage;
     delete updateData.publicId;
+    // console.log("updateData", updateData);
 
-    const updatedUser = await User.findByIdAndUpdate(id, updateData, {
-      new: true,
-    });
+    try {
+      const existingUser = await User.findOne({ email: updateData.email });
+
+
+      if (existingUser && String(existingUser._id) !== id) {
+        return res.status(400).json({ msg: "Email already in use" });
+      }
+
+      await User.findByIdAndUpdate(id, updateData, {
+        new: true,
+      });
+    } catch (error) {
+      console.log("error", error);
+    }
+
+    // console.log("updatedUser", updatedUser);
 
     res.status(200).json({ msg: "updated successfully" });
   } catch (error) {
