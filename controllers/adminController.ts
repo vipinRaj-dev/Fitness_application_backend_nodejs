@@ -61,7 +61,7 @@ export const getAllUsers = async (
   res: express.Response
 ) => {
   try {
-    const users = await User.find({}, { name: 1, email: 1, role: 1, _id: 1 });
+    const users = await User.find({}, { name: 1, email: 1, role: 1, _id: 1, userBlocked: 1 });
     res.status(200).json({ users });
   } catch (error) {
     console.error(error);
