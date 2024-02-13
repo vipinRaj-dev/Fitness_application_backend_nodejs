@@ -14,7 +14,7 @@ export interface UserType extends Document {
   email: string;
   mobileNumber?: number;
   password: string;
-  weight?: number;
+  weight?: number; 
   height?: number;
   role:string;
   userBlocked: boolean;
@@ -23,6 +23,7 @@ export interface UserType extends Document {
   dueDate?: Date;
   vegetarian?: boolean;
   profileImage?: string;
+  publicId?: string;
   attendance?: [AttendanceType];
   workOutLogs?: [WorkoutLogType];
   foodLogs?: [FoodLogType];
@@ -52,6 +53,7 @@ const UserSchema: Schema<UserType> = new Schema(
     },
     dueDate: Date,
     vegetarian: Boolean,
+    publicId: String,
     profileImage: String,
     attendance: [
       {

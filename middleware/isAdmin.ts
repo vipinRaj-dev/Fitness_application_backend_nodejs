@@ -5,7 +5,7 @@ export let isAdmin = async (
   res: express.Response,
   next: express.NextFunction
 ) => {
-    // console.log("yes admin verified")
+    console.log("yes admin verified")
   try {
     let requstedUser: any = req.headers["user"];
     if (requstedUser.role !== "admin") {

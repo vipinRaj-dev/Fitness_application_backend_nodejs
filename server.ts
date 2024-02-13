@@ -29,9 +29,11 @@ let mongo_uri: string | undefined = process.env.MONGO_DB_LOCAL;
 // Defining the routes
 
 app.use("/auth", authRouter);
-app.use("/user", userRouter);
 
 app.use("/admin", adminRouter);
+
+app.use("/user", userRouter);
+
 
 if (hostName && port && mongo_uri) {
   mongoose

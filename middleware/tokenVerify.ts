@@ -6,7 +6,7 @@ export let tokenVerify = async (
   res: express.Response,
   next: express.NextFunction
 ) => {
-  // console.log("yes token verified");
+  console.log("yes token verified");
   try {
     let tokenHeader = req.headers.authorization;
     // console.log(tokenHeader  , req.headers);
