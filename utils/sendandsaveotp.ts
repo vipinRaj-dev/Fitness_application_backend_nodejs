@@ -46,6 +46,19 @@ export async function SaveOTPAndTempUser({
     to: email,
     subject: "Your OTP",
     text: `Your OTP is ${Otp}`,
+    html: `
+    <div style="background-color: #f6f6f6; padding: 20px;">
+      <h1 style="color: #444; text-align: center;">Welcome</h1>
+    
+      <p style="font-size: 16px; color: #666; text-align: center;">
+        Thank you for using our service. Here is your OTP:
+      </p>
+      <h2 style="text-align: center; color: #f60;">${Otp}</h2>
+      <p style="font-size: 16px; color: #666; text-align: center;">
+        Please enter this OTP to continue.
+      </p>
+    </div>
+  `,
   };
 
   try {

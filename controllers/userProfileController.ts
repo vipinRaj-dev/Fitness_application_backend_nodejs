@@ -58,6 +58,9 @@ export const userProfileImageUpdate = async (
         console.log("no public id found");
       }
       console.log(req.file);
+
+
+      
       let data;
       try {
         data = await uploadToCloudinary(req.file.path, "user-Images");

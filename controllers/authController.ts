@@ -118,7 +118,9 @@ export const userLogin = async (
 
     //check if the user is blocked
     if ("userBlocked" in foundUser && foundUser.userBlocked) {
-      return res.status(401).json({ msg: "user is blocked please contact to admin" });
+      return res
+        .status(401)
+        .json({ msg: "user is blocked please contact to admin" });
     }
 
     // sending token
@@ -148,6 +150,20 @@ export const checkrole = async (
 ) => {
   try {
     let requstedUser: any = req.headers["user"];
+
+    if (requstedUser.role === "user") {
+      let isUserBlocked = await User.findById(requstedUser.userId).select(
+        "userBlocked"
+      );
+      console.log("requstedUser", requstedUser);
+      console.log("isUserBlocked", isUserBlocked);
+
+      if (isUserBlocked.userBlocked) {
+        return res
+          .status(401)
+          .json({ msg: "user is blocked please contact to admin" });
+      }
+    }
 
     res
       .status(200)

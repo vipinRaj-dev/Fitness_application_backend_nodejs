@@ -1,4 +1,4 @@
-const cloudinary = require("cloudinary").v2;
+import { v2 as cloudinary, UploadApiResponse } from 'cloudinary';
 import dotenv from 'dotenv';
 dotenv.config();
 // console.log(process.env.CLOUD_NAME);
@@ -11,10 +11,10 @@ cloudinary.config({
   api_secret: process.env.API_SECRET,
 });
 
-const  uploadToCloudinary = (path, folder) => {
+const  uploadToCloudinary = async (path : string , folder: string) => {
   return cloudinary.uploader
     .upload(path, { folder })
-    .then((data) => {
+    .then((data: UploadApiResponse) => {
       return { url: data.url, public_id: data.public_id };
     })
     .catch((error) => {
