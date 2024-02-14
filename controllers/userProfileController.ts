@@ -57,41 +57,53 @@ export const userProfileImageUpdate = async (
       } else {
         console.log("no public id found");
       }
+      console.log(req.file);
+      let data;
+      try {
+        data = await uploadToCloudinary(req.file.path, "user-Images");
+      } catch (error) {
+        console.error("Error uploading to Cloudinary:", error);
+        return res.status(500).json({ msg: "Error uploading image", error });
+      }
 
-      const data = await uploadToCloudinary(req.file.path, "user-Images");
+      if (!data || !data.url || !data.public_id) {
+        console.error("Invalid response from Cloudinary:", data);
+        return res
+          .status(500)
+          .json({ msg: "Invalid response from image upload" });
+      }
 
       const profileUpdate = await User.updateOne(
         { _id: id },
         { $set: { profileImage: data.url, publicId: data.public_id } }
       );
-      // console.log("profileUpdate", profileUpdate);
+      console.log("profileUpdate", profileUpdate);
     }
 
     // user detal update
     const updateData = req.body;
     delete updateData.profileImage;
     delete updateData.publicId;
-    // console.log("updateData", updateData);
+    console.log("updateData", updateData);
 
     try {
       const existingUser = await User.findOne({ email: updateData.email });
-
 
       if (existingUser && String(existingUser._id) !== id) {
         return res.status(400).json({ msg: "Email already in use" });
       }
 
-      await User.findByIdAndUpdate(id, updateData, {
+      const updatedUser = await User.findByIdAndUpdate(id, updateData, {
         new: true,
       });
+      console.log("updatedUser", updatedUser);
     } catch (error) {
-      console.log("error", error);
+      console.log("error", error.message, error.stack);
     }
-
-    // console.log("updatedUser", updatedUser);
 
     res.status(200).json({ msg: "updated successfully" });
   } catch (error) {
     res.status(500).json({ msg: "server error", error });
+    console.log("error", error.message, error.stack);
   }
 };
