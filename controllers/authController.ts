@@ -55,7 +55,9 @@ export const userRegistrationSendOtp = async (
 export const SaveUser = async (req: express.Request, res: express.Response) => {
   try {
     let { otp } = req.body;
+    console.log("Request body:", req.body);
     let OTP = parseInt(otp);
+    console.log("otp:", OTP); 
     let otpDoc = await otpVerify(OTP);
 
     if (!otpDoc) {

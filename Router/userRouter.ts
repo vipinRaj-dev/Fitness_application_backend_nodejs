@@ -2,6 +2,7 @@ import express from "express";
 
 import { tokenVerify } from "../middleware/tokenVerify";
 import {
+  attendance,
   userProfile,
   userProfileImageUpdate,
 } from "../controllers/userProfileController";
@@ -19,4 +20,5 @@ userRouter.put(
   userProfileImageUpdate
 );
 
+userRouter.get('/attandance', attendance)
 export default userRouter;

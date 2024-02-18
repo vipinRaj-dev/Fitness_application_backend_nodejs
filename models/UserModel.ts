@@ -1,37 +1,70 @@
 import mongoose, { Schema, Document } from "mongoose";
 
-
 import { Attendance, AttendanceType } from "./AttendanceModel";
-import { WorkoutLog, WorkoutLogType } from "./WorkoutLogModel";
-import { FoodLog, FoodLogType } from "./FoodLogModel";
 
+export interface WorkoutTypeFromTrainer extends Document {
+  _id?: string;
+  date: Date;
+  workoutId: mongoose.Types.ObjectId;
+  workoutSet: [[number, number]];
+}
 
+const SetWorkoutFromTrainer = new Schema(
+  {
+    date: { type: Date, required: true },
+    workoutId: { type: mongoose.Types.ObjectId, required: true },
+    workoutSet: { type: [[Number, Number]], required: true },
+  },
+  { _id: false }
+);
 
-export interface UserType extends Document {  
+export interface FoodTypeFromTrainer extends Document {
+  _id?: string;
+  date: Date;
+  foodId: mongoose.Types.ObjectId;
+  timePeriod: "morning" | "afternoon" | "evening";
+  time: string;
+  quantity: string;
+}
+
+const SetFoodFromTrainer = new Schema(
+  {
+    date: { type: Date, required: true },
+    foodId: { type: mongoose.Types.ObjectId, required: true },
+    timePeriod: {
+      type: String,
+      enum: ["morning", "afternoon", "evening"],
+      required: true,
+    },
+    time: { type: String, required: true },
+    quantity: { type: String, required: true },
+  },
+  { _id: false }
+);
+
+export interface UserType extends Document {
   _id?: string;
   admissionNumber?: number;
   name: string;
   email: string;
   mobileNumber?: number;
   password: string;
-  weight?: number; 
+  weight?: number;
   height?: number;
-  role:string;
+  role: string;
   userBlocked: boolean;
   healthIssues?: string[];
-  planSelected: "premiumUser" | "normalUser";
+  isPremiumUser?: boolean;
   dueDate?: Date;
   vegetarian?: boolean;
   profileImage?: string;
   publicId?: string;
-  attendance?: [AttendanceType];
-  workOutLogs?: [WorkoutLogType];
-  foodLogs?: [FoodLogType];
+  // attendance?: [AttendanceType];
+  latestWorkoutByTrainer?: [WorkoutTypeFromTrainer];
+  latestFoodByTrainer?: [FoodTypeFromTrainer];
   createdAt?: Date;
   updatedAt?: Date;
 }
-
-
 
 // schema design
 const UserSchema: Schema<UserType> = new Schema(
@@ -41,38 +74,24 @@ const UserSchema: Schema<UserType> = new Schema(
     email: { type: String, required: true, unique: true },
     mobileNumber: Number,
     password: { type: String, required: true },
-    weight: { type: Number, default: 0 }, 
+    weight: { type: Number, default: 0 },
     height: { type: Number, default: 0 },
     role: { type: String, default: "user" },
     userBlocked: { type: Boolean, default: false },
     healthIssues: { type: [String], default: [] },
-    planSelected: {
-      type: String,
-      enum: ["premiumUser", "normalUser"],
-      default: "normalUser",
-    },
+    isPremiumUser: { type: Boolean, default: false },
     dueDate: Date,
     vegetarian: Boolean,
     publicId: String,
     profileImage: String,
-    attendance: [
-      {
-        type: Schema.Types.ObjectId,
-        ref: Attendance,
-      },
-    ],
-    workOutLogs: [
-      {
-        type: Schema.Types.ObjectId,
-        ref: WorkoutLog,
-      },
-    ],
-    foodLogs: [
-      {
-        type: Schema.Types.ObjectId,
-        ref: FoodLog,
-      },
-    ],
+    latestWorkoutByTrainer: [SetWorkoutFromTrainer],
+    latestFoodByTrainer: [SetFoodFromTrainer],
+    // attendance: [
+    //   {
+    //     type: Schema.Types.ObjectId,
+    //     ref: Attendance,
+    //   },
+    // ],
   },
   { timestamps: true }
 );
