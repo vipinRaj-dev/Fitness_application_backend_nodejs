@@ -1,7 +1,7 @@
 import express from "express";
 import { Admin, AdminType } from "../models/AdminModel";
 import { User, UserType } from "../models/UserModel";
-import { Trainer } from "../models/TrainerModel";
+import { Trainer, TrainerType } from "../models/TrainerModel";
 import { hashPassword } from "../utils/password";
 
 interface RequestedUser {
@@ -11,14 +11,17 @@ interface RequestedUser {
   iat: number;
 }
 
+// USER CONTROLLERS
 export const dashboard = async (
   req: express.Request,
   res: express.Response
 ) => {
   try {
-    let adminData: AdminType | null = await Admin.findOne({}).select("role email fullName _id");
-    console.log(adminData);
-    
+    let adminData: AdminType | null = await Admin.findOne({}).select(
+      "role email fullName _id"
+    );
+    // console.log(adminData);
+
     const userCount = await User.countDocuments();
     const trainerCount = await Trainer.countDocuments();
 
@@ -61,7 +64,10 @@ export const getAllUsers = async (
   res: express.Response
 ) => {
   try {
-    const users = await User.find({}, { name: 1, email: 1, role: 1, _id: 1, userBlocked: 1 });
+    const users = await User.find(
+      {},
+      { name: 1, email: 1, role: 1, _id: 1, userBlocked: 1 }
+    );
     res.status(200).json({ users });
   } catch (error) {
     console.error(error);
@@ -110,6 +116,12 @@ export const userProfileEdit = async (
   try {
     const id = req.params.id;
     const updateData = req.body;
+    let isTrainerExist : TrainerType;
+
+    isTrainerExist = await Trainer.findOne({ email : updateData.email });
+    if (isTrainerExist) {
+      return res.status(404).json({ message: "Email already exists" });
+    }
 
     const isUserUpdated = await User.findByIdAndUpdate(id, updateData, {
       new: true,
@@ -127,6 +139,7 @@ export const userProfileEdit = async (
 };
 
 // export const deleteUser = async (
+
 //   req: express.Request,
 //   res: express.Response
 // ) => {
@@ -139,6 +152,7 @@ export const userProfileEdit = async (
 //     res.status(500).json({ message: error.message });
 //   }
 // };
+
 export const blockUser = async (
   req: express.Request,
   res: express.Response
@@ -153,6 +167,116 @@ export const blockUser = async (
       userDetails.userBlocked = !userDetails.userBlocked;
       await userDetails.save();
       res.status(200).json({ message: "User blocked", user: userDetails });
+    }
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: error.message });
+  }
+};
+
+// TRAINER CONTROLLERS
+
+
+export const createTrainer = async (
+  req: express.Request,
+  res: express.Response
+) => {
+  try {
+    const trainerData: TrainerType = req.body;
+    // console.log(trainerData);
+    const isTrainerExist = await User.findOne({ email: trainerData.email });
+    if (isTrainerExist) {
+      return res.status(400).json({ message: "User already exist" });
+    }
+    const hashedPassword = await hashPassword(trainerData.password);
+    const user = new Trainer({ ...trainerData, password: hashedPassword });
+    await user.save();
+    res.status(201).json({ message: "Trainer created", user });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: error.message });
+  }
+};
+
+
+export const getAllTrainers = async (
+  req: express.Request,
+  res: express.Response
+) => {
+  try {
+    
+    const trainer = await Trainer.find(
+      {},
+      { name: 1, email: 1, role: 1, _id: 1, isBlocked: 1 }
+      );
+      // console.log('trainer' , trainer)
+    res.status(200).json({ trainer });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: error.message });
+  }
+};
+
+
+export const blockTrainer = async (
+  req: express.Request,
+  res: express.Response
+) => {
+  try {
+    const id = req.params.id;
+    const trainerDetails = await Trainer.findById(id);
+    if (!trainerDetails) {
+      return res.status(404).json({ message: "Trainer not found" });
+    } else {
+      // console.log(trainerDetails);
+      trainerDetails.isBlocked = !trainerDetails.isBlocked;
+      await trainerDetails.save();
+      res.status(200).json({ message: "User blocked", trainer: trainerDetails });
+    }
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: error.message });
+  }
+};
+
+
+export const getTrainer = async (req: express.Request, res: express.Response) => {
+  try {
+    const id = req.params.id;
+    const trainer = await Trainer.findById(id);
+    if (!trainer) {
+      return res.status(404).json({ message: "trainer not found" });
+    }
+    res.status(200).json({ trainer });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: error.message });
+  }
+};
+
+
+export const trainerProfileEdit = async (
+  req: express.Request,
+  res: express.Response
+) => {
+  try {
+    const id = req.params.id;
+    const updateData = req.body;
+    let isUserExist : UserType;
+
+    isUserExist = await User.findOne({ email : updateData.email });
+    if (isUserExist) {
+      return res.status(404).json({ message: "Email already exists" });
+    }
+
+    const isTrainerUpdated = await Trainer.findByIdAndUpdate(id, updateData, {
+      new: true,
+    });
+
+    if (!isTrainerUpdated) {
+      return res.status(404).json({ message: "Trainer not found" });
+    } else {
+      res.status(200).json({ message: "Trainer updated", user: isTrainerUpdated });
     }
   } catch (error) {
     console.error(error);

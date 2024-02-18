@@ -2,12 +2,16 @@ import express from "express";
 import { tokenVerify } from "../middleware/tokenVerify";
 import {
   adminProfileEdit,
+  blockTrainer,
   blockUser,
+  createTrainer,
   createUser,
   dashboard,
-  // deleteUser,
+  getAllTrainers,
   getAllUsers,
+  getTrainer,
   getUser,
+  trainerProfileEdit,
   userProfileEdit,
 } from "../controllers/adminController";
 import { isAdmin } from "../middleware/isAdmin";
@@ -15,22 +19,37 @@ import { isAdmin } from "../middleware/isAdmin";
 const adminRouter: express.Router = express.Router();
 
 
+// USER ROUTES
+adminRouter.use(tokenVerify, isAdmin);
 
 adminRouter.get("/dashboard", dashboard);
 
-adminRouter.put("/profile/:id", tokenVerify, isAdmin,adminProfileEdit);
+adminRouter.put("/profile/:id", adminProfileEdit);
 
-adminRouter.get("/users", tokenVerify, isAdmin,getAllUsers);
+adminRouter.get("/users", getAllUsers);
 
-adminRouter.post("/createUser",tokenVerify, isAdmin, createUser);
+adminRouter.post("/createUser", createUser);
 
-adminRouter.get("/user/:id",tokenVerify, isAdmin, getUser);
+adminRouter.get("/user/:id", getUser);
 
-adminRouter.put("/user/:id",tokenVerify, isAdmin, userProfileEdit);
+adminRouter.put("/user/:id", userProfileEdit);
 
-// adminRouter.delete("/user/:id", deleteUser);
+adminRouter.put("/user/block/:id", blockUser);
 
-adminRouter.put("/user/block/:id", tokenVerify, isAdmin,blockUser);
+
+
+// TRAINER ROUTES
+
+
+adminRouter.get("/trainers", getAllTrainers);
+
+adminRouter.post("/createTrainer", createTrainer);
+
+adminRouter.get("/trainer/:id", getTrainer);
+
+adminRouter.put("/trainer/:id", trainerProfileEdit);
+
+adminRouter.put("/trainer/block/:id", blockTrainer);
 
 
 export default adminRouter;

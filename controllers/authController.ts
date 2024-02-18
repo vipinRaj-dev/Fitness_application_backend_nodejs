@@ -32,7 +32,7 @@ export const userRegistrationSendOtp = async (
     }
 
     if (user) {
-      console.log("working");
+      // console.log("working");
       return res.status(409).json({ msg: "user already exists" });
     }
 
@@ -55,7 +55,7 @@ export const userRegistrationSendOtp = async (
 export const SaveUser = async (req: express.Request, res: express.Response) => {
   try {
     let { otp } = req.body;
-    console.log("Request body:", req.body);
+    // console.log("Request body:", req.body);
     let OTP = parseInt(otp);
     console.log("otp:", OTP); 
     let otpDoc = await otpVerify(OTP);
@@ -63,7 +63,7 @@ export const SaveUser = async (req: express.Request, res: express.Response) => {
     if (!otpDoc) {
       return res.status(401).json({ msg: "otp verification failed" });
     } else {
-      console.log("otp verified successfully");
+      // console.log("otp verified successfully");
       let { name, email, hashedPassword } = otpDoc;
       let userCount = await User.countDocuments({});
 

@@ -7,7 +7,7 @@ export interface TrainerType extends Document {
   name: string;
   age?: number;
   role: string;
-  trainerBlocked: boolean;
+  isBlocked: boolean;
   profilePicture: string;
   experience: number;
   specializedIn: string;
@@ -55,7 +55,7 @@ const trainerSchema = new Schema<TrainerType>(
     name: { type: String, required: true },
     age: { type: Number, default: 0 },
     role: { type: String, default: "trainer" },
-    trainerBlocked: { type: Boolean, default: false },
+    isBlocked: { type: Boolean, default: false },
     profilePicture: String,
     experience: { type: Number, default: 0 },
     specializedIn: String,
