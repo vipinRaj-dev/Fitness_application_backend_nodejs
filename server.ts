@@ -18,8 +18,15 @@ app.use(
   })
 );
 
-app.use(express.json());
-
+// app.use(express.json());
+app.use((req, res, next) => {
+  // console.log(req.path);
+  if (req.path === '/user/webhook') {
+    next();
+  } else {
+    express.json()(req, res, next);
+  }
+});
 dotenv.config();
 
 let hostName: string | undefined = process.env.HOST_NAME;
@@ -33,6 +40,7 @@ app.use("/auth", authRouter);
 app.use("/admin", adminRouter);
 
 app.use("/user", userRouter);
+
 
 
 if (hostName && port && mongo_uri) {
