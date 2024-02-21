@@ -7,7 +7,7 @@ import mongoose from "mongoose";
 import authRouter from "./Router/authRoute";
 import userRouter from "./Router/userRouter";
 import adminRouter from "./Router/adminRouter";
-
+import trainerRoutes from "./Router/trainerRoutes";
 const app: express.Application = express();
 
 //cors
@@ -40,6 +40,8 @@ app.use("/auth", authRouter);
 app.use("/admin", adminRouter);
 
 app.use("/user", userRouter);
+
+app.use('/trainer' ,  trainerRoutes)
 
 
 

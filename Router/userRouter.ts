@@ -2,7 +2,6 @@ import express from "express";
 import { User } from "../models/UserModel";
 import dotenv from "dotenv";
 dotenv.config();
-console.log(process.env.STRIPE_SECRET_KEY);
 const Stripe = require("stripe");
 const stripe = Stripe(process.env.STRIPE_SECRET_KEY);
 
@@ -56,6 +55,7 @@ userRouter.post(
     res.json({ id: session.id });
   }
 );
+
 let userId: string;
 let transactionId: string;
 let receiptUrl: string;
@@ -79,35 +79,42 @@ userRouter.post(
       response.status(400).send(`Webhook Error: ${err.message}`);
       return;
     }
-   
+
     // Handle the event
     switch (event.type) {
       case "payment_intent.succeeded":
         const paymentIntent = event.data.object;
         transactionId = paymentIntent.id;
         // console.log('PaymentIntent was successful!', paymentIntent);
-        console.log("Transaction ID is", transactionId);
+        // console.log("Transaction ID is", transactionId);
         break;
       case "checkout.session.completed":
         const session = event.data.object;
         userId = session.client_reference_id;
         // console.log("Checkout Session completed!", session);
-        console.log("userId is", userId);
+        // console.log("userId is", userId);
         break;
 
       case "charge.succeeded":
         const charge = event.data.object;
         receiptUrl = charge.receipt_url;
         // console.log('Charge succeeded!' , charge);
-        console.log("Receipt URL is", receiptUrl);
+        // console.log("Receipt URL is", receiptUrl);
         break;
       default:
         console.log(`Unhandled event type ${event.type}`);
     }
-    
+
     // Return a 200 response to acknowledge receipt of the event
-    if(userId && transactionId && receiptUrl){
-      console.log("userId", userId , "transactionId", transactionId , "receiptUrl", receiptUrl);
+    if (userId && transactionId && receiptUrl) {
+      console.log(
+        "userId",
+        userId,
+        "transactionId",
+        transactionId,
+        "receiptUrl",
+        receiptUrl
+      );
     }
     response.send().end();
   }

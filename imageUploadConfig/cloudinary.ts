@@ -19,7 +19,7 @@ const  uploadToCloudinary = async (path : string , folder: string) => {
     })
     .catch((error) => {
       console.log(error);
-    });
+    }); 
 };
 
 const removeFromCloudinary = async (public_id) => {

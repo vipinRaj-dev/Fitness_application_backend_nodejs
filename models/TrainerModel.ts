@@ -5,10 +5,12 @@ export interface TrainerType extends Document {
   password: string;
   email: string;
   name: string;
+  mobileNumber?: number;
   age?: number;
   role: string;
   isBlocked: boolean;
   profilePicture: string;
+  publicId?: string;
   experience: number;
   specializedIn: string;
   price: number;
@@ -26,12 +28,14 @@ interface CertificationType {
   name: string;
   content: string;
   photoUrl: string;
+  publicId?: String,
 }
 
 interface TransformationClientType {
   name: string;
   content: string;
   photoUrl: string;
+  publicId?: String,
 }
 
 interface ReviewType {
@@ -53,50 +57,62 @@ const trainerSchema = new Schema<TrainerType>(
     email: { type: String, required: true, unique: true },
     password: { type: String, required: true },
     name: { type: String, required: true },
+    mobileNumber: { type: Number, default: 0 },
     age: { type: Number, default: 0 },
     role: { type: String, default: "trainer" },
     isBlocked: { type: Boolean, default: false },
     profilePicture: String,
+    publicId: String,
     experience: { type: Number, default: 0 },
     specializedIn: String,
     price: { type: Number, default: 0 },
     description: String,
     certifications: {
-        type: [{
+      type: [
+        {
           name: String,
           content: String,
           photoUrl: String,
-        }],
-        default: [],
-      },
-      
-      transformationClients: {
-        type: [{
+          publicId: String,
+        },
+      ],
+      default: [],
+    },
+
+    transformationClients: {
+      type: [
+        {
           name: String,
           content: String,
           photoUrl: String,
-        }],
-        default: [],
-      },
-      
-      reviews: {
-        type: [{
+          publicId: String,
+        },
+      ],
+      default: [],
+    },
+
+    reviews: {
+      type: [
+        {
           clientName: String,
           content: String,
           rating: Number,
-        }],
-        default: [],
-      },
-      
-      payments: {
-        type: [{
+        },
+      ],
+      default: [],
+    },
+
+    payments: {
+      type: [
+        {
           clientName: String,
           amount: Number,
           date: Date,
-        }],
-        default: [],
-      },
-  },    
+        },
+      ],
+      default: [],
+    },
+  },
   { timestamps: true }
 );
 

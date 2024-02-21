@@ -46,7 +46,7 @@ export const userProfileImageUpdate = async (
   try {
     let requstedUser: any = req.headers["user"];
     const id = requstedUser.userId;
-
+    let imageData;
     if (req.file) {
       const user = await User.findById(id);
 
@@ -60,18 +60,17 @@ export const userProfileImageUpdate = async (
       } else {
         console.log("no public id found");
       }
-      console.log(req.file);
+      // console.log(req.file);
 
-      let data;
       try {
-        data = await uploadToCloudinary(req.file.path, "user-Images");
+        imageData = await uploadToCloudinary(req.file.path, "user-Images");
       } catch (error) {
         console.error("Error uploading to Cloudinary:", error);
         return res.status(500).json({ msg: "Error uploading image", error });
       }
 
-      if (!data || !data.url || !data.public_id) {
-        console.error("Invalid response from Cloudinary:", data);
+      if (!imageData || !imageData.url || !imageData.public_id) {
+        console.error("Invalid response from Cloudinary:", imageData);
         return res
           .status(500)
           .json({ msg: "Invalid response from image upload" });
@@ -79,16 +78,16 @@ export const userProfileImageUpdate = async (
 
       const profileUpdate = await User.updateOne(
         { _id: id },
-        { $set: { profileImage: data.url, publicId: data.public_id } }
+        { $set: { profileImage: imageData.url, publicId: imageData.public_id } }
       );
       console.log("profileUpdate", profileUpdate);
     }
-
+    // console.log("req.body user : " , req.body);
     // user detal update
     const updateData = req.body;
     delete updateData.profileImage;
     delete updateData.publicId;
-    console.log("updateData", updateData);
+    // console.log("updateData", updateData);
 
     try {
       const existingUser = await User.findOne({ email: updateData.email });
@@ -105,7 +104,7 @@ export const userProfileImageUpdate = async (
       console.log("error", error.message, error.stack);
     }
 
-    res.status(200).json({ msg: "updated successfully" });
+    res.status(200).json({ msg: "updated successfully" , imageData });
   } catch (error) {
     res.status(500).json({ msg: "server error", error });
     console.log("error", error.message, error.stack);
@@ -118,14 +117,19 @@ export const attendance = async (
 ) => {
   try {
     let workoutlogsData = await WorkoutLog.find({});
-    let workoutlogsIds = workoutlogsData.map(log => log._id);
-    
+    let workoutlogsIds = workoutlogsData.map((log) => log._id);
+
     let foodLogsData = await FoodLog.find({});
-    let foodLogsIds = foodLogsData.map(log => log._id);
-    
+    let foodLogsIds = foodLogsData.map((log) => log._id);
+
     let attandanceAdd = await Attendance.findByIdAndUpdate(
       "65d0218ab836966a19492a46",
-      { $push: { workOutLogs: { $each: workoutlogsIds }, foodLogs: { $each: foodLogsIds } } },
+      {
+        $push: {
+          workOutLogs: { $each: workoutlogsIds },
+          foodLogs: { $each: foodLogsIds },
+        },
+      },
       { new: true }
     );
 
@@ -134,8 +138,9 @@ export const attendance = async (
     ).populate("workOutLogs foodLogs");
     // console.log("attendanceData", attendanceData);
 
-
-    let workoutloguser = await WorkoutLog.findById("65d161f831fa069aa7e1d541").populate("userId");
+    let workoutloguser = await WorkoutLog.findById(
+      "65d161f831fa069aa7e1d541"
+    ).populate("userId");
     // console.log("workoutloguser", workoutloguser);
   } catch (error) {
     console.error(error);
