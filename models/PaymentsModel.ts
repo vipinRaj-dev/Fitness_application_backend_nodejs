@@ -9,7 +9,7 @@ export interface AdminPaymentType extends Document {
   receiptUrl: string;
 }
 
-export const AdminPaymentSchema: Schema<AdminPaymentType> = new Schema(
+export const AdminPaymentSchema: Schema<AdminPaymentType> = new Schema( 
   {
     planSelected: String,
     transactionId: String,

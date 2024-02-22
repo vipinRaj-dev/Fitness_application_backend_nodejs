@@ -55,7 +55,9 @@ export interface UserType extends Document {
   userBlocked: boolean;
   healthIssues?: string[];
   isPremiumUser?: boolean;
+  trainerId?: mongoose.Types.ObjectId;
   dueDate?: Date;
+  trainerPaymentDueDate?: Date; 
   vegetarian?: boolean;
   profileImage?: string;
   publicId?: string;
@@ -83,7 +85,9 @@ const UserSchema: Schema<UserType> = new Schema(
     userBlocked: { type: Boolean, default: false },
     healthIssues: { type: [String], default: [] },
     isPremiumUser: { type: Boolean, default: false },
+    trainerId: mongoose.Types.ObjectId,
     dueDate: Date,
+    trainerPaymentDueDate: Date,
     vegetarian: Boolean,
     publicId: String,
     profileImage: String,

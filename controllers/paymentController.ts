@@ -1,18 +1,17 @@
-
 import dotenv from "dotenv";
 import { AdminPayment } from "../models/PaymentsModel";
 import { User } from "../models/UserModel";
 dotenv.config();
 import Stripe from "stripe";
-const stripe =  new Stripe(process.env.STRIPE_SECRET_KEY);
-
-
-
+import { TrainerPayment } from "../models/trainerPaymentModel";
+const stripe = new Stripe(process.env.STRIPE_SECRET_KEY);
 
 export const createCheckoutSession = async (req: any, res: any) => {
-  const { amount, plan } = req.body;
+  const { amount, plan, trainerId } = req.body;
   const userId = req.headers["user"].userId;
-  console.log(amount, plan, userId);
+  trainerId
+    ? console.log(amount, plan, userId, trainerId)
+    : console.log(amount, plan, userId);
   const session = await stripe.checkout.sessions.create({
     payment_method_types: ["card"],
     line_items: [
@@ -35,13 +34,12 @@ export const createCheckoutSession = async (req: any, res: any) => {
     metadata: {
       selectedPlan: plan,
       amountPaid: amount,
+      trainer_reference_id: trainerId,
     },
   });
 
   res.json({ id: session.id });
 };
-
-
 
 let userId: string;
 let metadata: any;
@@ -51,8 +49,6 @@ let receiptUrl: string;
 const endpointSecret =
   "whsec_fecaf7dd03cff4bae38d6e153a36ed764714f82ea43044821c6e464f741209fd";
 
-
-  
 export const handleWebhook = async (request, response) => {
   const sig = request.headers["stripe-signature"];
 
@@ -71,27 +67,27 @@ export const handleWebhook = async (request, response) => {
     case "payment_intent.succeeded":
       const paymentIntent = event.data.object;
       transactionId = paymentIntent.id;
-    //   console.log("Transaction ID is", transactionId);
+      //   console.log("Transaction ID is", transactionId);
       break;
     case "checkout.session.completed":
       const session = event.data.object;
       userId = session.client_reference_id;
       metadata = session.metadata;
-    //   console.log("Checkout Session completed!", metadata);
-    //   console.log("userId is", userId);
+      console.log("Checkout Session completed!", metadata);
+      //   console.log("userId is", userId);
       break;
 
     case "charge.succeeded":
       const charge = event.data.object;
       receiptUrl = charge.receipt_url;
-    //   console.log("Receipt URL is", receiptUrl);
+      //   console.log("Receipt URL is", receiptUrl);
       break;
     default:
     //   console.log(`Unhandled event type ${event.type}`);
   }
 
   // Return a 200 response to acknowledge receipt of the event
-  if (userId && transactionId && receiptUrl && metadata) {
+  if (userId && transactionId && receiptUrl && !metadata.trainer_reference_id) {
     console.log(
       "userId",
       userId,
@@ -102,7 +98,7 @@ export const handleWebhook = async (request, response) => {
       "metadata",
       metadata
     );
-    const updateDetails = async () => {
+    const updateAdminPayment = async () => {
       const paymentDocument = new AdminPayment({
         planSelected: metadata.selectedPlan,
         transactionId: transactionId,
@@ -112,15 +108,15 @@ export const handleWebhook = async (request, response) => {
       });
       await paymentDocument.save();
 
-    //   console.log("paymentDocument", paymentDocument);
+      //   console.log("paymentDocument", paymentDocument);
 
       const trialPeriod: number =
         metadata?.selectedPlan === "Monthly plan" ? 1 : 6;
       const calculatedDueDate = new Date();
       calculatedDueDate.setMonth(calculatedDueDate.getMonth() + trialPeriod);
-    //   console.log("new date", new Date());
-    //   console.log("calculatedDueDate", calculatedDueDate);
-    //   console.log("payemntDocument._id", paymentDocument._id);
+      //   console.log("new date", new Date());
+      //   console.log("calculatedDueDate", calculatedDueDate);
+      //   console.log("payemntDocument._id", paymentDocument._id);
       await User.updateOne(
         { _id: userId },
         {
@@ -133,7 +129,58 @@ export const handleWebhook = async (request, response) => {
       transactionId = "";
       receiptUrl = "";
     };
-    updateDetails();
+    await updateAdminPayment()
   }
+  if (
+    userId &&
+    transactionId &&
+    receiptUrl &&
+    metadata &&
+    metadata.trainer_reference_id
+  ) {
+    console.log(
+      "userId",
+      userId,
+      "transactionId",
+      transactionId,
+      "receiptUrl",
+      receiptUrl,
+      "metadata",
+      metadata.trainer_reference_id
+    );
+    const updateTrainerPayment = async () => {
+      const paymentDocument = new TrainerPayment({
+        planSelected: metadata.selectedPlan,
+        transactionId: transactionId,
+        clientDetails: userId,
+        trainersId: metadata.trainer_reference_id,
+        amount: metadata.amountPaid,
+        receiptUrl: receiptUrl,
+      });
+      await paymentDocument.save();
+
+        console.log("paymentDocument", paymentDocument);
+
+      let month = 1;
+      const calculatedDueDate = new Date();
+      calculatedDueDate.setMonth(calculatedDueDate.getMonth() + month);
+      console.log("new date", new Date());
+      console.log("calculatedDueDate", calculatedDueDate);
+      console.log("payemntDocument._id", paymentDocument._id);
+      await User.updateOne(
+        { _id: userId },
+        {
+          $set: { trainerPaymentDueDate: calculatedDueDate , trainerId : metadata.trainer_reference_id},
+          $push: { trainerPaymentDetails: paymentDocument._id },
+        }
+      );
+      userId = "";
+      metadata = "";
+      transactionId = "";
+      receiptUrl = "";
+    };
+    await updateTrainerPayment();
+  }
+  
   response.send().end();
 };

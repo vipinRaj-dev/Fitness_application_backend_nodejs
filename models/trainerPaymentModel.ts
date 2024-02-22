@@ -2,28 +2,23 @@ import mongoose, { Schema, Document } from "mongoose";
 
 export interface TrainerPaymentType extends Document {
   _id?: string;
-  planSelected: "monthly" | "6months" | "yearly";
-  transactionId: number;
-  clientName: string;
+  planSelected: string
+  transactionId: string;
   clientDetails: mongoose.Types.ObjectId;
   trainersId: mongoose.Types.ObjectId;
-  trainersName: string;
   amount: number;
-  invoice : string;
-  
+  receiptUrl: String,
+    
 }
 
 export const TrainerPaymentSchema: Schema<TrainerPaymentType> = new Schema(
   {
-    _id: String,
     planSelected: String,
-    transactionId: Number,
-    clientName: String,
+    transactionId: String,
     clientDetails: mongoose.Types.ObjectId,
     trainersId: mongoose.Types.ObjectId,
-    trainersName: String,
     amount: Number,
-    invoice : String,
+    receiptUrl: String,
   },
   { timestamps: true }
 );
