@@ -22,7 +22,7 @@ trainerRouter.put(
 );
 
 trainerRouter.put(
-  "/addClientOrCertificate",
+  "/addCertificate",
   tokenVerify,
   upload.single("image"),
   addCertificateAndClient

@@ -100,7 +100,6 @@ export const trainerProfileImageUpdate = async (
       price,
     } = req.body;
 
-
     // console.log(
     //   name,
     //   mobileNumber,
@@ -145,7 +144,6 @@ export const trainerProfileImageUpdate = async (
       }
       console.log(req.file);
 
-     
       try {
         data = await uploadToCloudinary(req.file.path, "trainer-Images");
       } catch (error) {
@@ -166,7 +164,7 @@ export const trainerProfileImageUpdate = async (
       );
       console.log("profileUpdate", profileUpdate);
     }
-    res.status(200).json({ msg: "profile updated" , data });
+    res.status(200).json({ msg: "profile updated", data });
   } catch (error) {
     console.error(error);
     res.status(500).json({
@@ -183,9 +181,9 @@ export const addCertificateAndClient = async (
     let requstedUser: any = req.headers["user"];
     const id = requstedUser.userId;
 
-    const { certificate, client } = req.body;
-    console.log(certificate, client);
-    console.log(req.body.name, req.body.content);
+    console.log(req.body.name, req.body.content, req.body);
+    const { name, content, field } = req.body;
+
     const isTrainerExists = await Trainer.findById(id);
     if (!isTrainerExists) {
       return res.status(400).json({
@@ -209,34 +207,40 @@ export const addCertificateAndClient = async (
           .status(500)
           .json({ msg: "Invalid response from image upload" });
       }
-
-      if (certificate) {
-        const newCertificate = new Trainer({
-          certifications: [
-            {
-              ...certificate,
-              photoUrl: data.url,
-              publicId: data.public_id,
+      let updatedData;
+      if (field === "certificate") {
+        updatedData = await Trainer.updateOne(
+          { _id: id },
+          {
+            $push: {
+              certifications: {
+                name,
+                content,
+                photoUrl: data.url,
+                publicId: data.public_id,
+              },
             },
-          ],
-        });
-
-        await newCertificate.save();
-      }
-      if (client) {
-        const newTrainer = new Trainer({
-          transformationClients: [
-            {
-              ...client,
-              photoUrl: data.url,
-              publicId: data.public_id,
+          }
+        );
+      } else if (field === "client") {
+        updatedData = await Trainer.updateOne(
+          { _id: id },
+          {
+            $push: {
+              transformationClients: {
+                name,
+                content,
+                photoUrl: data.url,
+                publicId: data.public_id,
+              },
             },
-          ],
-        });
-
-        await newTrainer.save();
+          }
+        );
+      }else{
+        console.log("no field found");
       }
-      res.status(200).json({ msg: "certificate or client added" });
+      console.log("updatedData", updatedData);
+      res.status(200).json({ msg: "certificate addded" });
     } else {
       return res.status(400).json({ msg: "no file found" });
     }

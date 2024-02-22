@@ -6,6 +6,7 @@ const Stripe = require("stripe");
 const stripe = Stripe(process.env.STRIPE_SECRET_KEY);
 
 import { tokenVerify } from "../middleware/tokenVerify";
+import { isPremiumUser } from "../middleware/isPremiumUser";
 import {
   attendance,
   userProfile,
@@ -13,10 +14,15 @@ import {
 } from "../controllers/userProfileController";
 
 import upload from "../middleware/upload";
+import {
+  getAllTrainers,
+  getSingleTrainer,
+} from "../controllers/userTrainerControllers";
+import { AdminPayment } from "../models/PaymentsModel";
 
 const userRouter: express.Router = express.Router();
 
-userRouter.get("/profile", tokenVerify, userProfile);
+userRouter.get("/profile", tokenVerify, isPremiumUser, userProfile);
 
 userRouter.put(
   "/profileUpdate",
@@ -50,6 +56,11 @@ userRouter.post(
       success_url: "http://localhost:3000/success",
       cancel_url: "http://localhost:3000/failed",
       client_reference_id: userId,
+      // trainer_reference_id: trainerId,
+      metadata: {
+        selectedPlan: plan,
+        amountPaid: amount,
+      },
     });
 
     res.json({ id: session.id });
@@ -57,6 +68,7 @@ userRouter.post(
 );
 
 let userId: string;
+let metadata: any;
 let transactionId: string;
 let receiptUrl: string;
 // This is your Stripe CLI webhook secret for testing your endpoint locally.
@@ -68,7 +80,7 @@ userRouter.post(
   express.raw({ type: "application/json" }),
   (request, response) => {
     const sig = request.headers["stripe-signature"];
-
+ 
     let event;
 
     try {
@@ -85,40 +97,80 @@ userRouter.post(
       case "payment_intent.succeeded":
         const paymentIntent = event.data.object;
         transactionId = paymentIntent.id;
-        // console.log('PaymentIntent was successful!', paymentIntent);
-        // console.log("Transaction ID is", transactionId);
+        // console.log("PaymentIntent was successful!", paymentIntent);
+        console.log("Transaction ID is", transactionId);
         break;
       case "checkout.session.completed":
         const session = event.data.object;
         userId = session.client_reference_id;
-        // console.log("Checkout Session completed!", session);
-        // console.log("userId is", userId);
+        metadata = session.metadata;
+        console.log("Checkout Session completed!", metadata);
+        console.log("userId is", userId);
         break;
 
       case "charge.succeeded":
         const charge = event.data.object;
         receiptUrl = charge.receipt_url;
-        // console.log('Charge succeeded!' , charge);
-        // console.log("Receipt URL is", receiptUrl);
+        // console.log("Charge succeeded!", charge);
+        console.log("Receipt URL is", receiptUrl);
         break;
       default:
         console.log(`Unhandled event type ${event.type}`);
     }
 
     // Return a 200 response to acknowledge receipt of the event
-    if (userId && transactionId && receiptUrl) {
+    if (userId && transactionId && receiptUrl && metadata) {
       console.log(
         "userId",
         userId,
         "transactionId",
         transactionId,
         "receiptUrl",
-        receiptUrl
+        receiptUrl,
+        "metadata",
+        metadata
       );
+      const updateDetails = async () => {
+        const paymentDocument = new AdminPayment({
+          planSelected: metadata.selectedPlan,
+          transactionId: transactionId,
+          clientDetails: userId,
+          amount: metadata.amountPaid,
+          receiptUrl: receiptUrl,
+        });
+        await paymentDocument.save();
+
+        console.log("paymentDocument", paymentDocument);
+
+        const trialPeriod: number =
+          metadata?.selectedPlan === "Monthly plan" ? 1 : 6;
+        const calculatedDueDate = new Date();
+        calculatedDueDate.setMonth(calculatedDueDate.getMonth() + trialPeriod);
+        console.log("new date", new Date());
+        console.log("calculatedDueDate", calculatedDueDate);
+        console.log("payemntDocument._id", paymentDocument._id);
+        await User.updateOne(
+          { _id: userId },
+          {
+            $set: { isPremiumUser: true, dueDate: calculatedDueDate },
+            $push: { subscriptionDetails: paymentDocument._id },
+          }
+        );
+        userId = "";
+        metadata = "";
+        transactionId = "";
+        receiptUrl = "";
+        
+      };
+      updateDetails();
     }
     response.send().end();
   }
 );
+
+userRouter.get("/getAllTrainers", tokenVerify, getAllTrainers);
+
+userRouter.get("/getTrainer/:id", tokenVerify, getSingleTrainer);
 
 userRouter.get("/attandance", attendance);
 export default userRouter;

@@ -57,7 +57,7 @@ export const SaveUser = async (req: express.Request, res: express.Response) => {
     let { otp } = req.body;
     // console.log("Request body:", req.body);
     let OTP = parseInt(otp);
-    console.log("otp:", OTP); 
+    console.log("otp:", OTP);
     let otpDoc = await otpVerify(OTP);
 
     if (!otpDoc) {
@@ -67,12 +67,19 @@ export const SaveUser = async (req: express.Request, res: express.Response) => {
       let { name, email, hashedPassword } = otpDoc;
       let userCount = await User.countDocuments({});
 
+
+      let trialPeriod = 5;  // 5 days trial period
+      const trialEndsDate = new Date();
+      trialEndsDate.setDate(trialEndsDate.getDate() + trialPeriod);
+
+
       //register the user
       let newUser = new User({
         admissionNumber: userCount + 1,
         name,
         email,
         password: hashedPassword,
+        trialEndsAt: trialEndsDate
       });
       newUser
         .save()

@@ -8,7 +8,7 @@ export interface WorkoutTypeFromTrainer extends Document {
   workoutId: mongoose.Types.ObjectId;
   workoutSet: [[number, number]];
 }
-
+ 
 const SetWorkoutFromTrainer = new Schema(
   {
     date: { type: Date, required: true },
@@ -60,8 +60,11 @@ export interface UserType extends Document {
   profileImage?: string;
   publicId?: string;
   // attendance?: [AttendanceType];
+  subscriptionDetails?: mongoose.Types.ObjectId[];
+  trainerPaymentDetails?: mongoose.Types.ObjectId[];
   latestWorkoutByTrainer?: [WorkoutTypeFromTrainer];
   latestFoodByTrainer?: [FoodTypeFromTrainer];
+  trialEndsAt: Date,
   createdAt?: Date;
   updatedAt?: Date;
 }
@@ -76,7 +79,7 @@ const UserSchema: Schema<UserType> = new Schema(
     password: { type: String, required: true },
     weight: { type: Number, default: 0 },
     height: { type: Number, default: 0 },
-    role: { type: String, default: "user" },
+    role: { type: String, default: "user" }, 
     userBlocked: { type: Boolean, default: false },
     healthIssues: { type: [String], default: [] },
     isPremiumUser: { type: Boolean, default: false },
@@ -84,8 +87,18 @@ const UserSchema: Schema<UserType> = new Schema(
     vegetarian: Boolean,
     publicId: String,
     profileImage: String,
+
+    subscriptionDetails: { type: [mongoose.Types.ObjectId], ref: "AdminPayment" },
+    trainerPaymentDetails: {
+      type: [mongoose.Types.ObjectId],
+      ref: "TrainerPayment",
+    },
+
     latestWorkoutByTrainer: [SetWorkoutFromTrainer],
     latestFoodByTrainer: [SetFoodFromTrainer],
+
+    trialEndsAt: Date,
+    
     // attendance: [
     //   {
     //     type: Schema.Types.ObjectId,

@@ -9,6 +9,9 @@ import {
 import { WorkoutLog, WorkoutLogType } from "../models/WorkoutLogModel";
 import { FoodLog } from "../models/FoodLogModel";
 
+
+
+
 export const userProfile = async (
   req: express.Request,
   res: express.Response
@@ -104,7 +107,7 @@ export const userProfileImageUpdate = async (
       console.log("error", error.message, error.stack);
     }
 
-    res.status(200).json({ msg: "updated successfully" , imageData });
+    res.status(200).json({ msg: "updated successfully", imageData });
   } catch (error) {
     res.status(500).json({ msg: "server error", error });
     console.log("error", error.message, error.stack);

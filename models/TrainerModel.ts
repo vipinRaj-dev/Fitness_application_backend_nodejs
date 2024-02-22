@@ -19,7 +19,7 @@ export interface TrainerType extends Document {
   transformationClients: TransformationClientType[];
   clients: mongoose.Types.ObjectId[];
   reviews: ReviewType[];
-  payments: PaymentType[];
+  payments: mongoose.Types.ObjectId[];
   createdAt?: Date;
   updatedAt?: Date;
 }
@@ -28,26 +28,20 @@ interface CertificationType {
   name: string;
   content: string;
   photoUrl: string;
-  publicId?: String,
+  publicId?: String;
 }
 
 interface TransformationClientType {
   name: string;
   content: string;
   photoUrl: string;
-  publicId?: String,
+  publicId?: String;
 }
 
 interface ReviewType {
   clientName: string;
   content: string;
   rating: number;
-}
-
-interface PaymentType {
-  clientName: string;
-  amount: number;
-  date: Date;
 }
 
 //  Trainer schema with the above intefaces
@@ -67,6 +61,7 @@ const trainerSchema = new Schema<TrainerType>(
     specializedIn: String,
     price: { type: Number, default: 0 },
     description: String,
+    clients: [{ type: mongoose.Types.ObjectId, ref: "User" }],
     certifications: {
       type: [
         {
@@ -101,17 +96,7 @@ const trainerSchema = new Schema<TrainerType>(
       ],
       default: [],
     },
-
-    payments: {
-      type: [
-        {
-          clientName: String,
-          amount: Number,
-          date: Date,
-        },
-      ],
-      default: [],
-    },
+    payments:{type: [mongoose.Types.ObjectId], ref: "TrainerPayment"},
   },
   { timestamps: true }
 );

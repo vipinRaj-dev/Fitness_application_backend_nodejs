@@ -1,21 +1,23 @@
 import mongoose, { Schema, Document } from "mongoose";
 
-export interface PaymentType extends Document {
+export interface AdminPaymentType extends Document {
   _id?: string;
-  transactionId: number;
-  clientName: string;
+  planSelected: string;
+  transactionId: string;
   clientDetails: mongoose.Types.ObjectId;
   amount: number;
-  date: Date;
+  receiptUrl: string;
 }
 
-export const PaymentSchema: Schema<PaymentType> = new Schema({
-  _id: String,
-  transactionId: Number,
-  clientName: String,
-  clientDetails: mongoose.Types.ObjectId,
-  amount: Number,
-  date: Date,
-});
+export const AdminPaymentSchema: Schema<AdminPaymentType> = new Schema(
+  {
+    planSelected: String,
+    transactionId: String,
+    clientDetails: mongoose.Types.ObjectId,
+    amount: Number,
+    receiptUrl: String,
+  },
+  { timestamps: true }
+);
 
-export const Payment = mongoose.model("Payment", PaymentSchema);
+export const AdminPayment = mongoose.model("AdminPayment", AdminPaymentSchema);

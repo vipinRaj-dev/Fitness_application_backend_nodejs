@@ -1,7 +1,7 @@
 import mongoose, { Document, Schema } from "mongoose";
 
 import { EnquirySchema, EnquiryType } from "./EnquiryModel";
-import { PaymentSchema, PaymentType } from "./PaymentsModel";
+import { AdminPayment, AdminPaymentType } from "./PaymentsModel";
 
 interface PlanDetailType {
   _id?: string;
@@ -19,7 +19,7 @@ interface PlanDetailType {
   password: string;
   role: string;
   enquiries?: [EnquiryType];
-  paymentDetails?: [PaymentType];
+  paymentDetails?: [AdminPaymentType];
   planDetails?: [PlanDetailType];
   createdAt?: Date;
   updatedAt?: Date;
@@ -41,7 +41,7 @@ const adminSchema = new Schema<AdminType>(
     paymentDetails: [
       {
         type: Schema.Types.ObjectId,
-        ref: PaymentSchema,
+        ref: AdminPayment,
       },
     ],
     planDetails: {
