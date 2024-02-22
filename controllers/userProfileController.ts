@@ -1,7 +1,7 @@
 import express from "express";
 
 import { UserType, User } from "../models/UserModel";
-import { AttendanceType, Attendance } from "../models/AttendanceModel";
+import { AttendanceType, Attendance } from "../models/AttendanceModel"; 
 import {
   removeFromCloudinary,
   uploadToCloudinary,
