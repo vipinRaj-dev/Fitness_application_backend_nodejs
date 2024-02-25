@@ -1,5 +1,5 @@
-import { v2 as cloudinary, UploadApiResponse } from 'cloudinary';
-import dotenv from 'dotenv';
+import { v2 as cloudinary, UploadApiResponse } from "cloudinary";
+import dotenv from "dotenv";
 dotenv.config();
 // console.log(process.env.CLOUD_NAME);
 // console.log(process.env.API_KEY);
@@ -11,7 +11,7 @@ cloudinary.config({
   api_secret: process.env.API_SECRET,
 });
 
-const  uploadToCloudinary = async (path : string , folder: string) => {
+const uploadToCloudinary = async (path: string, folder: string) => {
   return cloudinary.uploader
     .upload(path, { folder })
     .then((data: UploadApiResponse) => {
@@ -19,16 +19,15 @@ const  uploadToCloudinary = async (path : string , folder: string) => {
     })
     .catch((error) => {
       console.log(error);
-    }); 
+    });
 };
 
 const removeFromCloudinary = async (public_id) => {
-    await cloudinary.uploader.destroy(public_id, (error, result) => {
-        if (error) {
-            console.log(error);
-        }
-        console.log(result);
-        }
-    );
-}
+  await cloudinary.uploader.destroy(public_id, (error, result) => {
+    if (error) {
+      console.log(error);
+    }
+    console.log(result);
+  });
+};
 export { uploadToCloudinary, removeFromCloudinary };

@@ -43,7 +43,7 @@ userRouter.post(
 );
 userRouter.get("/getAllTrainers", tokenVerify, getAllTrainers);
 
-userRouter.get("/getTrainer/:id", tokenVerify, getSingleTrainer);
+userRouter.get("/getTrainer/:id", tokenVerify,isPremiumUser, getSingleTrainer);
 
 userRouter.get("/attandance", attendance);
 export default userRouter;

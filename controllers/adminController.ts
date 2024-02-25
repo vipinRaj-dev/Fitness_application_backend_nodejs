@@ -4,7 +4,7 @@ import { User, UserType } from "../models/UserModel";
 import { Trainer, TrainerType } from "../models/TrainerModel";
 import { hashPassword } from "../utils/password";
 
-interface RequestedUser {
+interface RequestedUser { 
   email: string;
   role: string;
   userId: string;

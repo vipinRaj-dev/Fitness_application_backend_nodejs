@@ -7,6 +7,7 @@ import {
   trainerProfileImageUpdate,
 } from "../controllers/trainerProfileController";
 import upload from "../middleware/upload";
+import { allClients } from "../controllers/trainerUserControllers";
 
 const trainerRouter: express.Router = express.Router();
 
@@ -27,4 +28,7 @@ trainerRouter.put(
   upload.single("image"),
   addCertificateAndClient
 );
+
+
+trainerRouter.get(('/allClients') , tokenVerify , allClients) 
 export default trainerRouter;

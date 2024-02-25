@@ -7,15 +7,17 @@ interface Nutrition {
   fat: number;
 }
 
-interface ListOfFood extends Document {
+export interface ListOfFood extends Document {
   _id?: string;
-  itemName: string;
+  foodname: string;
+  quantity : number;
+  unit: string;
   description: string;
-  vegetarian: boolean;
   nutrition: Nutrition;
   ingredients: string[];
   photoUrl: string;
-  foodType: 'fruit' | 'vegetable' | 'meat' | 'grain' | 'dairy';
+  publicId?: string;
+  foodtype: string;
   createdAt: Date;
 }
 
@@ -27,13 +29,15 @@ const NutritionSchema = new Schema<Nutrition>({
 });
 
 const ListOfFoodSchema = new Schema<ListOfFood>({
-  itemName: { type: String, required: true },
+  foodname: { type: String, required: true },
+  quantity : { type: Number, required: true},
+  unit: { type: String, required: true },
   description: { type: String, required: true },
-  vegetarian: { type: Boolean, required: true },
   nutrition: { type: NutritionSchema, required: true },
   ingredients: { type: [String], required: true },
   photoUrl: { type: String, required: true },
-  foodType: { type: String, enum: ['fruit', 'vegetable', 'meat', 'grain', 'dairy'], required: true },
+  publicId: { type: String , required: false},
+  foodtype: { type: String,  required: true },
   createdAt: { type: Date, default: Date.now },
 });
 

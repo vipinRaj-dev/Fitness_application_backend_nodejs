@@ -22,4 +22,6 @@ console.log('Hello World')
 // }
 
 
-console.log('curret date is: ', new Date().toDateString())
+// console.log('curret date is: ', new Date().toDateString())
+
+

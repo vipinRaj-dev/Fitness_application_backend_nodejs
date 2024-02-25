@@ -4,6 +4,7 @@ import { User } from "../models/UserModel";
 dotenv.config();
 import Stripe from "stripe";
 import { TrainerPayment } from "../models/trainerPaymentModel";
+import { Trainer } from "../models/TrainerModel";
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY);
 
 export const createCheckoutSession = async (req: any, res: any) => {
@@ -129,7 +130,7 @@ export const handleWebhook = async (request, response) => {
       transactionId = "";
       receiptUrl = "";
     };
-    await updateAdminPayment()
+    await updateAdminPayment();
   }
   if (
     userId &&
@@ -159,7 +160,7 @@ export const handleWebhook = async (request, response) => {
       });
       await paymentDocument.save();
 
-        console.log("paymentDocument", paymentDocument);
+      console.log("paymentDocument", paymentDocument);
 
       let month = 1;
       const calculatedDueDate = new Date();
@@ -170,10 +171,22 @@ export const handleWebhook = async (request, response) => {
       await User.updateOne(
         { _id: userId },
         {
-          $set: { trainerPaymentDueDate: calculatedDueDate , trainerId : metadata.trainer_reference_id},
+          $set: {
+            trainerPaymentDueDate: calculatedDueDate,
+            trainerId: metadata.trainer_reference_id,
+          },
           $push: { trainerPaymentDetails: paymentDocument._id },
         }
       );
+
+      await Trainer.updateOne(
+        { _id: metadata.trainer_reference_id },
+
+        {
+          $push: { payments: paymentDocument._id, clients: userId },
+        }
+      );
+
       userId = "";
       metadata = "";
       transactionId = "";
@@ -181,6 +194,6 @@ export const handleWebhook = async (request, response) => {
     };
     await updateTrainerPayment();
   }
-  
+
   response.send().end();
 };
