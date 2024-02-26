@@ -13,12 +13,10 @@ export const trainerProfile = async (
   try {
     let requstedUser: any = req.headers["user"];
 
-    // console.log(requstedUser);
-
     let trainerData: TrainerType | null = await Trainer.findById(
       requstedUser.userId
     ).select(
-      "_id name email mobileNumber isBlocked profilePicture publicId experience specializedIn price description"
+      "_id name email mobileNumber isBlocked profilePicture publicId experience specializedIn price description certifications transformationClients"
     );
 
     if (!trainerData) {
@@ -26,9 +24,15 @@ export const trainerProfile = async (
         msg: "no trainer data",
       });
     }
-    // console.log(trainerData);
 
-    res.status(200).json({ msg: "trainer details", trainer: trainerData });
+    const response = {
+      msg: "trainer details",
+      trainer: trainerData,
+      transformationClientsCount: trainerData.transformationClients.length,
+      certificationsCount: trainerData.certifications.length,
+    };
+
+    res.status(200).json(response);
   } catch (error) {
     console.error(error);
     res.status(500).json({
@@ -100,15 +104,6 @@ export const trainerProfileImageUpdate = async (
       price,
     } = req.body;
 
-    // console.log(
-    //   name,
-    //   mobileNumber,
-    //   experience,
-    //   specializedIn,
-    //   description,
-    //   price
-    // );
-
     const isTrainerExists = await Trainer.findById(id);
     if (!isTrainerExists) {
       return res.status(400).json({
@@ -164,6 +159,7 @@ export const trainerProfileImageUpdate = async (
       );
       console.log("profileUpdate", profileUpdate);
     }
+
     res.status(200).json({ msg: "profile updated", data });
   } catch (error) {
     console.error(error);
@@ -236,13 +232,56 @@ export const addCertificateAndClient = async (
             },
           }
         );
-      }else{
+      } else {
         console.log("no field found");
       }
       console.log("updatedData", updatedData);
       res.status(200).json({ msg: "certificate addded" });
     } else {
       return res.status(400).json({ msg: "no file found" });
+    }
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({
+      msg: "server error",
+    });
+  }
+};
+
+export const deleteCertificateOrClient = async (
+  req: express.Request,
+  res: express.Response
+) => {
+  try {
+    let requstedUser: any = req.headers["user"];
+    const id = requstedUser.userId;
+    console.log(req.body);
+    const { deleteId, field, publicId } = req.body;
+
+    const trainerData = await Trainer.findById(id);
+
+    if (!trainerData) {
+      return res.status(400).json({
+        msg: "no trainer found",
+      });
+    }
+
+    if (publicId) {
+      await removeFromCloudinary(publicId);
+
+      if (field === "certificate") {
+        await Trainer.updateOne(
+          { _id: id },
+          { $pull: { certifications: { _id: deleteId } } }
+        );
+        res.status(200).json({ msg: "certificate deleted" });
+      } else if (field === "client") {
+        await Trainer.updateOne(
+          { _id: id },
+          { $pull: { transformationClients: { _id: deleteId } } }
+        );
+        res.status(200).json({ msg: "client deleted" });
+      }
     }
   } catch (error) {
     console.error(error);

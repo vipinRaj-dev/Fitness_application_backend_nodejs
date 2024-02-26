@@ -2,7 +2,7 @@ import express from "express";
 import { tokenVerify } from "../middleware/tokenVerify";
 import {
   addCertificateAndClient,
-  // profileUpdate,
+  deleteCertificateOrClient,
   trainerProfile,
   trainerProfileImageUpdate,
 } from "../controllers/trainerProfileController";
@@ -28,6 +28,8 @@ trainerRouter.put(
   upload.single("image"),
   addCertificateAndClient
 );
+
+trainerRouter.delete("/deleteCertificateOrClient", tokenVerify, deleteCertificateOrClient);
 
 
 trainerRouter.get(('/allClients') , tokenVerify , allClients) 
