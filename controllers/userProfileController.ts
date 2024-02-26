@@ -1,16 +1,13 @@
 import express from "express";
 
 import { UserType, User } from "../models/UserModel";
-import { AttendanceType, Attendance } from "../models/AttendanceModel"; 
+import { AttendanceType, Attendance } from "../models/AttendanceModel";
 import {
   removeFromCloudinary,
   uploadToCloudinary,
 } from "../imageUploadConfig/cloudinary";
 import { WorkoutLog, WorkoutLogType } from "../models/WorkoutLogModel";
 import { FoodLog } from "../models/FoodLogModel";
-
-
-
 
 export const userProfile = async (
   req: express.Request,
@@ -24,7 +21,7 @@ export const userProfile = async (
     let userData: UserType | null = await User.findById(
       requstedUser.userId
     ).select(
-      "_id name email mobileNumber weight height userBlocked profileImage publicId"
+      "_id name email mobileNumber weight height userBlocked profileImage publicId healthIssues"
     );
 
     if (!userData) {
@@ -90,7 +87,18 @@ export const userProfileImageUpdate = async (
     const updateData = req.body;
     delete updateData.profileImage;
     delete updateData.publicId;
-    // console.log("updateData", updateData);
+    console.log("updateData", updateData);
+
+    const healthIssues = {
+      BloodPressure: updateData.BloodPressure,
+      Diabetes: updateData.Diabetes,
+      cholesterol: updateData.cholesterol,
+      HeartDisease: updateData.HeartDisease,
+      KidneyDisease: updateData.KidneyDisease,
+      LiverDisease: updateData.LiverDisease,
+      Thyroid: updateData.Thyroid,
+      Others: updateData.Others,
+    };
 
     try {
       const existingUser = await User.findOne({ email: updateData.email });
@@ -99,9 +107,20 @@ export const userProfileImageUpdate = async (
         return res.status(400).json({ msg: "Email already in use" });
       }
 
-      const updatedUser = await User.findByIdAndUpdate(id, updateData, {
-        new: true,
-      });
+      const updatedUser = await User.findByIdAndUpdate(
+        id,
+        {
+          name: updateData.name,
+          email: updateData.email,
+          mobileNumber: updateData.mobileNumber,
+          weight: updateData.weight,
+          height: updateData.height,
+          healthIssues: healthIssues,
+          userBlocked: updateData.userBlocked,
+        },
+        { new: true }
+      );
+
       console.log("updatedUser", updatedUser);
     } catch (error) {
       console.log("error", error.message, error.stack);

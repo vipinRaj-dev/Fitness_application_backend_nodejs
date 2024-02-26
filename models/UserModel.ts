@@ -42,6 +42,30 @@ const SetFoodFromTrainer = new Schema(
   { _id: false }
 );
 
+
+export interface healthIssuesType extends Document {
+  _id?: string;
+  BloodPressure: number;
+  Diabetes: number;
+  cholesterol: number;
+  HeartDisease: boolean;
+  KidneyDisease: boolean;
+  LiverDisease: boolean;
+  Thyroid: boolean;
+  Others: boolean;
+}
+const HealthIssuesSchema = new Schema<healthIssuesType>({
+  BloodPressure: { type: Number, default: 0},
+  Diabetes: { type: Number, default: 0},
+  cholesterol: { type: Number , default: 0},
+  HeartDisease: { type: Boolean , default: false},
+  KidneyDisease: { type: Boolean , default: false},
+  LiverDisease: { type: Boolean , default: false},
+  Thyroid: { type: Boolean , default: false},
+  Others: { type: Boolean , default: false},
+});
+
+
 export interface UserType extends Document {
   _id?: string;
   admissionNumber?: number;
@@ -53,7 +77,7 @@ export interface UserType extends Document {
   height?: number;
   role: string;
   userBlocked: boolean;
-  healthIssues?: string[];
+  healthIssues?: healthIssuesType;
   isPremiumUser?: boolean;
   trainerId?: mongoose.Types.ObjectId;
   dueDate?: Date;
@@ -83,7 +107,7 @@ const UserSchema: Schema<UserType> = new Schema(
     height: { type: Number, default: 0 },
     role: { type: String, default: "user" }, 
     userBlocked: { type: Boolean, default: false },
-    healthIssues: { type: [String], default: [] },
+    healthIssues: { type: HealthIssuesSchema },
     isPremiumUser: { type: Boolean, default: false },
     trainerId: mongoose.Types.ObjectId,
     dueDate: Date,

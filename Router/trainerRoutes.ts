@@ -7,7 +7,7 @@ import {
   trainerProfileImageUpdate,
 } from "../controllers/trainerProfileController";
 import upload from "../middleware/upload";
-import { allClients } from "../controllers/trainerUserControllers";
+import { SingleClient, allClients } from "../controllers/trainerUserControllers";
 
 const trainerRouter: express.Router = express.Router();
 
@@ -33,4 +33,7 @@ trainerRouter.delete("/deleteCertificateOrClient", tokenVerify, deleteCertificat
 
 
 trainerRouter.get(('/allClients') , tokenVerify , allClients) 
+
+
+trainerRouter.get("/client/:id", tokenVerify, SingleClient);
 export default trainerRouter;
