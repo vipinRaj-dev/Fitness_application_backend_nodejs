@@ -31,7 +31,7 @@ const NutritionSchema = new Schema<Nutrition>({
 const ListOfFoodSchema = new Schema<ListOfFood>({
   foodname: { type: String, required: true },
   quantity : { type: Number, required: true},
-  unit: { type: String, required: true },
+  unit: { type: String, required: true }, 
   description: { type: String, required: true },
   nutrition: { type: NutritionSchema, required: true },
   ingredients: { type: [String], required: true },

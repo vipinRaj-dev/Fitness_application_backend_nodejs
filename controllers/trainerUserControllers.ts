@@ -7,12 +7,12 @@ export const allClients = async (req: express.Request, res: express.Response) =>
     console.log(requstedUser);
 
     const allClients = await Trainer.findById(requstedUser.userId).populate('clients');
-    console.log(allClients.clients);
+    // console.log(allClients.clients);
     res.status(200).json(allClients.clients)
   } catch (error) {
     console.error(error);
     res.status(500).json({
-      msg: "server error",
+      msg: "server error", 
     });
   }
 };
