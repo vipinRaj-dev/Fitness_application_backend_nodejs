@@ -32,13 +32,18 @@ export const SingleClient = async (
     let requstedUser: any = req.headers["user"];
     const id = requstedUser.userId;
     const clientId = req.params.id;
-    const singleClient = await Trainer.findById(id).populate("clients");
-    // console.log(singleClient.clients);
+    // const singleClient = await Trainer.findById(id).populate("clients");
+    // // console.log(singleClient.clients);
 
-    const client = singleClient.clients.find(
-      (client: any) => client._id == clientId
+    // const client = singleClient.clients.find(
+    //   (client: any) => client._id == clientId
+    // );
+    // console.log(client);
+
+    const client = await User.findById(clientId).populate(
+      "latestFoodByTrainer.foodId"
     );
-    console.log(client);
+    // console.log(client.latestFoodByTrainer);
     res.status(200).json(client);
   } catch (error) {
     console.error(error);
@@ -117,4 +122,36 @@ export const removeFoodTrainer = async (
   );
 
   res.status(200).json({ msg: "food removed" });
+};
+
+export const setTime = async (req: express.Request, res: express.Response) => {
+  try {
+    const clientId = req.params.clientId;
+    const listFoodId = req.params.listFoodId;
+
+    const client = await User.findById(clientId);
+
+    const AddTimeDetails = {
+      time: req.body.time,
+      timePeriod: req.body.timePeriod,
+      quantity: req.body.quantity,
+    };
+    // console.log(AddTimeDetails);
+    const clientFood = client.latestFoodByTrainer.find(
+      (food: any) => food._id == listFoodId
+    );
+    if (clientFood) {
+      clientFood.time = AddTimeDetails.time;
+      clientFood.timePeriod = AddTimeDetails.timePeriod;
+      clientFood.quantity = AddTimeDetails.quantity;
+
+     await client.save();
+      
+    }
+
+    res.status(200).json({ msg: "time set succesfully" });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ msg: "server error" });
+  }
 };

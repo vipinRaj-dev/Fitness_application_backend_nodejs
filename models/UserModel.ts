@@ -19,26 +19,25 @@ const SetWorkoutFromTrainer = new Schema(
 );
 
 export interface FoodTypeFromTrainer extends Document {
+  _id?: string;
   date: Date;
   foodId: mongoose.Types.ObjectId;
-  timePeriod?: "morning" | "afternoon" | "evening";
+  timePeriod?: string
   time?: string;
-  quantity?: string;
+  quantity?: number;
 }
 
-const SetFoodFromTrainer = new Schema(
-  {
-    date: { type: Date, required: true },
-    foodId: { type: mongoose.Types.ObjectId, ref: "Food", required: true },
-    timePeriod: {
-      type: String,
-      enum: ["morning", "afternoon", "evening"],
-    },
-    time: { type: String },
-    quantity: { type: String },
+const SetFoodFromTrainer = new Schema({
+  date: { type: Date, required: true },
+  foodId: { type: mongoose.Types.ObjectId, ref: "Food", required: true },
+  timePeriod: {
+    type: String,
+
+    default: "morning",
   },
-  { _id: false }
-);
+  time: { type: String, default: "00:00" },
+  quantity: { type: Number, default: 0 },
+});
 
 export interface healthIssuesType extends Document {
   _id?: string;
