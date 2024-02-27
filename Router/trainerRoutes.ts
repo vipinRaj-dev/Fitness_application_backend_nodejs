@@ -7,7 +7,8 @@ import {
   trainerProfileImageUpdate,
 } from "../controllers/trainerProfileController";
 import upload from "../middleware/upload";
-import { SingleClient, allClients } from "../controllers/trainerUserControllers";
+import { SingleClient, TrainerGetAllFood, addFoodTrainer, allClients, removeFoodTrainer } from "../controllers/trainerUserControllers";
+import { getAllFood } from "../controllers/adminFoodController";
 
 const trainerRouter: express.Router = express.Router();
 
@@ -30,10 +31,22 @@ trainerRouter.put(
 );
 
 trainerRouter.delete("/deleteCertificateOrClient", tokenVerify, deleteCertificateOrClient);
-
+ 
 
 trainerRouter.get(('/allClients') , tokenVerify , allClients) 
 
 
 trainerRouter.get("/client/:id", tokenVerify, SingleClient);
+
+
+
+trainerRouter.get('/allFood/:id' , tokenVerify , TrainerGetAllFood)
+
+
+trainerRouter.post("/addFood/:id" , tokenVerify , addFoodTrainer)
+
+
+trainerRouter.delete("/deleteFood/:clientId/:foodId" , tokenVerify , removeFoodTrainer)
+
+
 export default trainerRouter;

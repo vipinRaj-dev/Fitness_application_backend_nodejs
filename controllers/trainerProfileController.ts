@@ -12,7 +12,7 @@ export const trainerProfile = async (
 ) => {
   try {
     let requstedUser: any = req.headers["user"];
-
+    console.log(requstedUser);
     let trainerData: TrainerType | null = await Trainer.findById(
       requstedUser.userId
     ).select(

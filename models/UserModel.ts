@@ -8,7 +8,7 @@ export interface WorkoutTypeFromTrainer extends Document {
   workoutId: mongoose.Types.ObjectId;
   workoutSet: [[number, number]];
 }
- 
+
 const SetWorkoutFromTrainer = new Schema(
   {
     date: { type: Date, required: true },
@@ -19,29 +19,26 @@ const SetWorkoutFromTrainer = new Schema(
 );
 
 export interface FoodTypeFromTrainer extends Document {
-  _id?: string;
   date: Date;
   foodId: mongoose.Types.ObjectId;
-  timePeriod: "morning" | "afternoon" | "evening";
-  time: string;
-  quantity: string;
+  timePeriod?: "morning" | "afternoon" | "evening";
+  time?: string;
+  quantity?: string;
 }
 
 const SetFoodFromTrainer = new Schema(
   {
     date: { type: Date, required: true },
-    foodId: { type: mongoose.Types.ObjectId, required: true },
+    foodId: { type: mongoose.Types.ObjectId, ref: "Food", required: true },
     timePeriod: {
       type: String,
       enum: ["morning", "afternoon", "evening"],
-      required: true,
     },
-    time: { type: String, required: true },
-    quantity: { type: String, required: true },
+    time: { type: String },
+    quantity: { type: String },
   },
   { _id: false }
 );
-
 
 export interface healthIssuesType extends Document {
   _id?: string;
@@ -52,19 +49,16 @@ export interface healthIssuesType extends Document {
   KidneyDisease: boolean;
   LiverDisease: boolean;
   Thyroid: boolean;
-  Others: boolean;
 }
 const HealthIssuesSchema = new Schema<healthIssuesType>({
-  BloodPressure: { type: Number, default: 0},
-  Diabetes: { type: Number, default: 0},
-  cholesterol: { type: Number , default: 0},
-  HeartDisease: { type: Boolean , default: false},
-  KidneyDisease: { type: Boolean , default: false},
-  LiverDisease: { type: Boolean , default: false},
-  Thyroid: { type: Boolean , default: false},
-  Others: { type: Boolean , default: false},
+  BloodPressure: { type: Number, default: 0 },
+  Diabetes: { type: Number, default: 0 },
+  cholesterol: { type: Number, default: 0 },
+  HeartDisease: { type: Boolean, default: false },
+  KidneyDisease: { type: Boolean, default: false },
+  LiverDisease: { type: Boolean, default: false },
+  Thyroid: { type: Boolean, default: false },
 });
-
 
 export interface UserType extends Document {
   _id?: string;
@@ -81,7 +75,7 @@ export interface UserType extends Document {
   isPremiumUser?: boolean;
   trainerId?: mongoose.Types.ObjectId;
   dueDate?: Date;
-  trainerPaymentDueDate?: Date; 
+  trainerPaymentDueDate?: Date;
   vegetarian?: boolean;
   profileImage?: string;
   publicId?: string;
@@ -90,7 +84,7 @@ export interface UserType extends Document {
   trainerPaymentDetails?: mongoose.Types.ObjectId[];
   latestWorkoutByTrainer?: [WorkoutTypeFromTrainer];
   latestFoodByTrainer?: [FoodTypeFromTrainer];
-  trialEndsAt: Date,
+  trialEndsAt: Date;
   createdAt?: Date;
   updatedAt?: Date;
 }
@@ -105,7 +99,7 @@ const UserSchema: Schema<UserType> = new Schema(
     password: { type: String, required: true },
     weight: { type: Number, default: 0 },
     height: { type: Number, default: 0 },
-    role: { type: String, default: "user" }, 
+    role: { type: String, default: "user" },
     userBlocked: { type: Boolean, default: false },
     healthIssues: { type: HealthIssuesSchema },
     isPremiumUser: { type: Boolean, default: false },
@@ -116,7 +110,10 @@ const UserSchema: Schema<UserType> = new Schema(
     publicId: String,
     profileImage: String,
 
-    subscriptionDetails: { type: [mongoose.Types.ObjectId], ref: "AdminPayment" },
+    subscriptionDetails: {
+      type: [mongoose.Types.ObjectId],
+      ref: "AdminPayment",
+    },
     trainerPaymentDetails: {
       type: [mongoose.Types.ObjectId],
       ref: "TrainerPayment",
@@ -126,7 +123,7 @@ const UserSchema: Schema<UserType> = new Schema(
     latestFoodByTrainer: [SetFoodFromTrainer],
 
     trialEndsAt: Date,
-    
+
     // attendance: [
     //   {
     //     type: Schema.Types.ObjectId,
