@@ -53,10 +53,15 @@ async function markAttendance() {
   for (const user of users) {
     // console.log("user that has the values corectly", user);
     const today = new Date();
-    today.setUTCHours(0, 0, 0, 0);
+    // today.setUTCHours(0, 0, 0, 0);
+    today.setHours(0, 0, 0, 0);
+    const tomorrow = new Date(today.getTime() + 24 * 60 * 60 * 1000);
     const existingAttendance = await Attendance.findOne({
       userId: user._id,
-      date: today,
+      date: {
+        $gte: today,
+        $lt: tomorrow,
+      },
     });
 
     if (!existingAttendance) {
@@ -69,16 +74,16 @@ async function markAttendance() {
 
       const ans = await attendance.save();
       console.log("attandance created to the user", ans);
-    }
+    }   
   }
-}
+}   
 
 if (hostName && port && mongo_uri) {
   mongoose
     .connect(mongo_uri)
     .then(() => {
       console.log("Database connected succesfully");
-      // markAttendance();
+      markAttendance();
       app.listen(Number(port), () => {
         console.log(`server is listening at http://${hostName}:${port}`);
       });

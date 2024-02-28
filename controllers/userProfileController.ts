@@ -202,6 +202,7 @@ export const addFoodLog = async (
         { $push: { foodLogs: foodLogData._id } }
       );
       // console.log("attendanceUpdate", attendanceUpdate);
+      res.status(200).json({ msg: "food log added successfully" });
     }
   } catch (error) {
     console.error(error);
