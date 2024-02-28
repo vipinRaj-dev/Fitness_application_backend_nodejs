@@ -6,7 +6,7 @@ export interface FoodLogType extends Document {
   date: Date;
   foodId: mongoose.Types.ObjectId;
   status: boolean;
-  timePeriod: "morning" | "afternoon" | "night" | "";
+  timePeriod: "morning" | "afternoon" | "evening" | "";
   time: string;
   quantity: string;
   createdAt: Date;

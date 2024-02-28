@@ -8,6 +8,8 @@ import authRouter from "./Router/authRoute";
 import userRouter from "./Router/userRouter";
 import adminRouter from "./Router/adminRouter";
 import trainerRoutes from "./Router/trainerRoutes";
+import { User } from "./models/UserModel";
+import { Attendance } from "./models/AttendanceModel";
 const app: express.Application = express();
 
 //cors
@@ -21,7 +23,7 @@ app.use(
 // app.use(express.json());
 app.use((req, res, next) => {
   // console.log(req.path);
-  if (req.path === '/user/webhook') {
+  if (req.path === "/user/webhook") {
     next();
   } else {
     express.json()(req, res, next);
@@ -41,15 +43,42 @@ app.use("/admin", adminRouter);
 
 app.use("/user", userRouter);
 
-app.use('/trainer' ,  trainerRoutes)
+app.use("/trainer", trainerRoutes);
 
+async function markAttendance() {
+  const users = await User.find({
+    $or: [{ isPremiumUser: true }, { trialEndsAt: { $gte: new Date() } }],
+  });
 
+  for (const user of users) {
+    // console.log("user that has the values corectly", user);
+    const today = new Date();
+    today.setUTCHours(0, 0, 0, 0);
+    const existingAttendance = await Attendance.findOne({
+      userId: user._id,
+      date: today,
+    });
+
+    if (!existingAttendance) {
+      const attendance = new Attendance({
+        date: today,
+        userId: user._id,
+        isPresent: false,
+        foodLogs: [],
+      });
+
+      const ans = await attendance.save();
+      console.log("attandance created to the user", ans);
+    }
+  }
+}
 
 if (hostName && port && mongo_uri) {
   mongoose
     .connect(mongo_uri)
     .then(() => {
       console.log("Database connected succesfully");
+      // markAttendance();
       app.listen(Number(port), () => {
         console.log(`server is listening at http://${hostName}:${port}`);
       });

@@ -25,3 +25,15 @@ console.log('Hello World')
 // console.log('curret date is: ', new Date().toDateString())
 
 
+const today = new Date()
+
+const todayNow = new Date()
+
+
+console.log('today is: ', today)
+console.log('todayNow is: ', todayNow)
+
+
+// i want to find the date difference between today and todayNow
+const dateDifference = today - todayNow
+console.log('dateDifference is: ', dateDifference)

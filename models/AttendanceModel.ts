@@ -12,7 +12,7 @@ export interface AttendanceType extends Document {
 }
 
 
-export const AttendanceSchema: Schema<AttendanceType> = new Schema({
+export const AttendanceSchema: Schema<AttendanceType> = new Schema({ 
   date: Date,
   userId: { type: mongoose.Schema.Types.ObjectId, ref: "User" },
   isPresent: { type: Boolean, default: false },

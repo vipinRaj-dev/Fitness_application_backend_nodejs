@@ -153,6 +153,61 @@ export const userProfileImageUpdate = async (
   }
 };
 
+export const addFoodLog = async (
+  req: express.Request,
+  res: express.Response
+) => {
+  try {
+    const requstedUser: any = req.headers["user"];
+    const { foodId, time, timePeriod, quantity } = req.body;
+    const userId = requstedUser.userId;
+
+    const foodLog = new FoodLog({
+      date: new Date(),
+      userId,
+      foodId,
+      status: true,
+      time,
+      timePeriod,
+      quantity,
+    });
+
+    const foodLogData = await foodLog.save();
+
+    // console.log("foodLogData", foodLogData);
+    const today = new Date();
+    today.setHours(0, 0, 0, 0); 
+
+    const tomorrow = new Date(today.getTime() + 24 * 60 * 60 * 1000);
+
+    const attendanceCount = await Attendance.countDocuments({
+      userId: userId,
+      date: {
+        $gte: today,
+        $lt: tomorrow,
+      }, 
+    });
+
+    if (attendanceCount === 0) {
+      console.log("no attendance found");
+    } else {
+      const attendanceUpdate = await Attendance.updateOne(
+        {
+          userId: userId,
+          date: {
+            $gte: today,
+            $lt: tomorrow,
+          },
+        },
+        { $push: { foodLogs: foodLogData._id } }
+      );
+      // console.log("attendanceUpdate", attendanceUpdate);
+    }
+  } catch (error) {
+    console.error(error);
+  }
+};
+
 export const attendance = async (
   req: express.Request,
   res: express.Response

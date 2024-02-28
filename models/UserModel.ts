@@ -22,7 +22,7 @@ export interface FoodTypeFromTrainer extends Document {
   _id?: string;
   date: Date;
   foodId: mongoose.Types.ObjectId;
-  timePeriod?: string
+  timePeriod?: string;
   time?: string;
   quantity?: number;
 }
@@ -84,6 +84,7 @@ export interface UserType extends Document {
   latestWorkoutByTrainer?: [WorkoutTypeFromTrainer];
   latestFoodByTrainer?: [FoodTypeFromTrainer];
   trialEndsAt: Date;
+  attendanceId: mongoose.Types.ObjectId;
   createdAt?: Date;
   updatedAt?: Date;
 }
@@ -122,7 +123,7 @@ const UserSchema: Schema<UserType> = new Schema(
     latestFoodByTrainer: [SetFoodFromTrainer],
 
     trialEndsAt: Date,
-
+    attendanceId: { type: mongoose.Schema.Types.ObjectId, ref: "Attendance" },
     // attendance: [
     //   {
     //     type: Schema.Types.ObjectId,

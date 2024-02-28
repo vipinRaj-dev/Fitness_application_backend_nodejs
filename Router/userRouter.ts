@@ -7,6 +7,7 @@ const stripe = Stripe(process.env.STRIPE_SECRET_KEY);
 import { tokenVerify } from "../middleware/tokenVerify";
 import { isPremiumUser } from "../middleware/isPremiumUser";
 import {
+  addFoodLog,
   attendance,
   userHomePage,
   userProfile,
@@ -47,6 +48,9 @@ userRouter.post(
 userRouter.get("/getAllTrainers", tokenVerify, getAllTrainers);
 
 userRouter.get("/getTrainer/:id", tokenVerify,isPremiumUser, getSingleTrainer);
+
+
+userRouter.put("/addFoodLog" , tokenVerify , addFoodLog)
 
 userRouter.get("/attandance", attendance);
 export default userRouter;
