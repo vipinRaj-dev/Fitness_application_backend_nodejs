@@ -9,6 +9,25 @@ import {
 import { WorkoutLog, WorkoutLogType } from "../models/WorkoutLogModel";
 import { FoodLog } from "../models/FoodLogModel";
 
+export const userHomePage = async (
+  req: express.Request,
+  res: express.Response
+) => {
+  console.log("userHomePage");
+
+  let requstedUser: any = req.headers["user"];
+
+  let userData: UserType | null = await User.findById(
+    requstedUser.userId
+  ).populate("latestFoodByTrainer.foodId");
+
+  // console.log("userData", userData.latestFoodByTrainer);
+
+  res
+    .status(200)
+    .json({ msg: "userHomePage", latestDiet: userData.latestFoodByTrainer });
+};
+
 export const userProfile = async (
   req: express.Request,
   res: express.Response
@@ -39,6 +58,7 @@ export const userProfile = async (
     });
   }
 };
+
 export const userProfileImageUpdate = async (
   req: express.Request,
   res: express.Response

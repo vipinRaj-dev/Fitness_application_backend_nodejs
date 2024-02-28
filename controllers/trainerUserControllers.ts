@@ -112,16 +112,21 @@ export const removeFoodTrainer = async (
   req: express.Request,
   res: express.Response
 ) => {
-  const clientId = req.params.clientId;
-  const foodId = req.params.foodId;
+  try {
+    const clientId = req.params.clientId;
+    const foodId = req.params.foodId;
+    // console.log(clientId, foodId);
+    const client = await User.findById(clientId);
+    const ans = await User.updateOne(
+      { _id: clientId },
+      { $pull: { latestFoodByTrainer: { foodId: foodId } } }
+    );
 
-  const client = await User.findById(clientId);
-  await User.updateOne(
-    { _id: clientId },
-    { $pull: { latestFoodByTrainer: { foodId: foodId } } }
-  );
-
-  res.status(200).json({ msg: "food removed" });
+    // console.log(ans);
+    res.status(200).json({ msg: "food removed" });
+  } catch (error) {
+    console.error(error);
+  }
 };
 
 export const setTime = async (req: express.Request, res: express.Response) => {
@@ -145,8 +150,7 @@ export const setTime = async (req: express.Request, res: express.Response) => {
       clientFood.timePeriod = AddTimeDetails.timePeriod;
       clientFood.quantity = AddTimeDetails.quantity;
 
-     await client.save();
-      
+      await client.save();
     }
 
     res.status(200).json({ msg: "time set succesfully" });

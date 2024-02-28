@@ -8,6 +8,7 @@ import { tokenVerify } from "../middleware/tokenVerify";
 import { isPremiumUser } from "../middleware/isPremiumUser";
 import {
   attendance,
+  userHomePage,
   userProfile,
   userProfileImageUpdate,
 } from "../controllers/userProfileController";
@@ -23,6 +24,8 @@ import {
 } from "../controllers/paymentController";
 
 const userRouter: express.Router = express.Router();
+
+userRouter.get('/homePage' , tokenVerify , isPremiumUser , userHomePage)
 
 userRouter.get("/profile", tokenVerify, isPremiumUser, userProfile);
 
