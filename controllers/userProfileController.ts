@@ -159,54 +159,99 @@ export const addFoodLog = async (
 ) => {
   try {
     const requstedUser: any = req.headers["user"];
-    const { foodId, time, timePeriod, quantity } = req.body;
+    const { foodId, time, timePeriod, quantity ,status } = req.body;
     const userId = requstedUser.userId;
 
+    // console.log('api fetched after the time up' ,foodId ,  time , timePeriod , quantity , status)
+    
     const foodLog = new FoodLog({
       date: new Date(),
       userId,
       foodId,
-      status: true,
-      time,
+      status: status, 
+      time,  
       timePeriod,
       quantity,
     });
 
     const foodLogData = await foodLog.save();
 
-    // console.log("foodLogData", foodLogData);
-    const today = new Date();
-    today.setHours(0, 0, 0, 0); 
+    const userData = await User.findById(userId).populate("attendanceId");
 
-    const tomorrow = new Date(today.getTime() + 24 * 60 * 60 * 1000);
-
-    const attendanceCount = await Attendance.countDocuments({
-      userId: userId,
-      date: {
-        $gte: today,
-        $lt: tomorrow,
-      }, 
-    });
-
-    if (attendanceCount === 0) {
+    if (!userData) {
       console.log("no attendance found");
     } else {
-      const attendanceUpdate = await Attendance.updateOne(
-        {
-          userId: userId,
-          date: {
-            $gte: today,
-            $lt: tomorrow,
-          },
-        },
-        { $push: { foodLogs: foodLogData._id } }
+      // console.log("attendanceUpdate", userData.attendanceId);
+      await Attendance.findByIdAndUpdate(
+        userData.attendanceId._id,
+        { $push: { foodLogs: foodLogData._id } },
+        { new: true }
       );
-      // console.log("attendanceUpdate", attendanceUpdate);
+
       res.status(200).json({ msg: "food log added successfully" });
     }
   } catch (error) {
     console.error(error);
   }
+};
+
+export const getFoodLog = async (
+  req: express.Request,
+  res: express.Response
+) => {
+  try {
+    interface PopulatedUser extends Document {
+      _id: string;
+      attendanceId: {
+        _id: string;
+        foodLogs: any[];
+      };
+    }
+    const requstedUser: any = req.headers["user"];
+    const userId = requstedUser.userId;
+
+    const addedFoodLog = (await User.findById(userId).populate({
+      path: "attendanceId",
+      populate: {
+        path: "foodLogs",
+      },
+    })) as PopulatedUser;
+    // console.log("addedFoodLog", addedFoodLog);
+
+    const arrayOfFoods = addedFoodLog?.attendanceId?.foodLogs?.map((log) => {
+      return log.foodId;
+    });
+
+    // console.log("arrayOfFoods", arrayOfFoods);
+    res.status(200).json({ msg: "food logs", arrayOfFoods });
+  } catch (error) {
+    console.error(error);
+  }
+};
+
+export const getDay = async (req: express.Request, res: express.Response) => {
+  const userDate = new Date(req.params.date); // assuming date is passed as a parameter in the request
+  const startOfUserDate = new Date(
+    userDate.getUTCFullYear(),
+    userDate.getUTCMonth(),
+    userDate.getUTCDate()
+  );
+  const startOfNextDate = new Date(
+    userDate.getUTCFullYear(),
+    userDate.getUTCMonth(),
+    userDate.getUTCDate() + 1
+  );
+
+  console.log("date", startOfUserDate);
+
+  const attandanceData = await Attendance.find({
+    date: {
+      $gte: startOfUserDate,
+      $lt: startOfNextDate,
+    },
+  });
+
+  console.log("attandanceData", attandanceData);
 };
 
 export const attendance = async (
@@ -244,3 +289,4 @@ export const attendance = async (
     console.error(error);
   }
 };
+ 

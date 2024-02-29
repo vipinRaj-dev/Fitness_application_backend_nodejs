@@ -124,12 +124,7 @@ const UserSchema: Schema<UserType> = new Schema(
 
     trialEndsAt: Date,
     attendanceId: { type: mongoose.Schema.Types.ObjectId, ref: "Attendance" },
-    // attendance: [
-    //   {
-    //     type: Schema.Types.ObjectId,
-    //     ref: Attendance,
-    //   },
-    // ],
+  
   },
   { timestamps: true }
 );

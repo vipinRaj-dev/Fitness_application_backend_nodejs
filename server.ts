@@ -2,6 +2,7 @@ import express from "express";
 import cors from "cors";
 import dotenv from "dotenv";
 import mongoose from "mongoose";
+import cron from 'node-cron';
 
 // importing the routes
 import authRouter from "./Router/authRoute";
@@ -53,30 +54,42 @@ async function markAttendance() {
   for (const user of users) {
     // console.log("user that has the values corectly", user);
     const today = new Date();
-    // today.setUTCHours(0, 0, 0, 0);
-    today.setHours(0, 0, 0, 0);
+    today.setUTCHours(0, 0, 0, 0);
+    // today.setHours(0, 0, 0, 0);
+    // today.setDate(today.getDate() + 1);
     const tomorrow = new Date(today.getTime() + 24 * 60 * 60 * 1000);
+    // console.log("today", today , "tomorrow", tomorrow);
     const existingAttendance = await Attendance.findOne({
       userId: user._id,
       date: {
-        $gte: today,
+        $gte: today, 
         $lt: tomorrow,
       },
     });
-
-    if (!existingAttendance) {
+  
+    if (!existingAttendance) { 
       const attendance = new Attendance({
         date: today,
         userId: user._id,
         isPresent: false,
         foodLogs: [],
-      });
+      });  
 
       const ans = await attendance.save();
-      console.log("attandance created to the user", ans);
-    }   
+
+      const userUpdation = await User.updateOne(
+        { _id: user._id },
+        { $set: { attendanceId: ans._id } }
+      );
+      console.log("attandance created to the user", userUpdation);
+    }
   }
-}   
+}
+
+cron.schedule('0 0 * * *', markAttendance, {
+  scheduled: true,
+  timezone: "Asia/Kolkata"
+});
 
 if (hostName && port && mongo_uri) {
   mongoose

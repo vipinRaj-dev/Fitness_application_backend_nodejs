@@ -9,6 +9,8 @@ import { isPremiumUser } from "../middleware/isPremiumUser";
 import {
   addFoodLog,
   attendance,
+  getDay,
+  getFoodLog,
   userHomePage,
   userProfile,
   userProfileImageUpdate,
@@ -52,5 +54,17 @@ userRouter.get("/getTrainer/:id", tokenVerify,isPremiumUser, getSingleTrainer);
 
 userRouter.put("/addFoodLog" , tokenVerify , addFoodLog)
 
+userRouter.get('/getFoodLog' , tokenVerify  , getFoodLog)
+
+
+
+
+
+
+userRouter.get('/getDate/:date' , getDay)
+
 userRouter.get("/attandance", attendance);
+
+
 export default userRouter;
+       
