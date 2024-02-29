@@ -111,10 +111,10 @@ export const handleWebhook = async (request, response) => {
 
       //   console.log("paymentDocument", paymentDocument);
 
-      const trialPeriod: number =
+      const numberOfMonths: number =
         metadata?.selectedPlan === "Monthly plan" ? 1 : 6;
       const calculatedDueDate = new Date();
-      calculatedDueDate.setMonth(calculatedDueDate.getMonth() + trialPeriod);
+      calculatedDueDate.setMonth(calculatedDueDate.getMonth() + numberOfMonths);
       //   console.log("new date", new Date());
       //   console.log("calculatedDueDate", calculatedDueDate);
       //   console.log("payemntDocument._id", paymentDocument._id);
@@ -160,14 +160,14 @@ export const handleWebhook = async (request, response) => {
       });
       await paymentDocument.save();
 
-      console.log("paymentDocument", paymentDocument);
+      // console.log("paymentDocument", paymentDocument);
 
       let month = 1;
       const calculatedDueDate = new Date();
       calculatedDueDate.setMonth(calculatedDueDate.getMonth() + month);
-      console.log("new date", new Date());
-      console.log("calculatedDueDate", calculatedDueDate);
-      console.log("payemntDocument._id", paymentDocument._id);
+      // console.log("new date", new Date());
+      // console.log("calculatedDueDate", calculatedDueDate);
+      // console.log("payemntDocument._id", paymentDocument._id);
       await User.updateOne(
         { _id: userId },
         {

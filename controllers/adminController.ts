@@ -4,7 +4,7 @@ import { User, UserType } from "../models/UserModel";
 import { Trainer, TrainerType } from "../models/TrainerModel";
 import { hashPassword } from "../utils/password";
 
-interface RequestedUser { 
+interface RequestedUser {
   email: string;
   role: string;
   userId: string;
@@ -59,16 +59,43 @@ export const adminProfileEdit = async (
   }
 };
 
+
 export const getAllUsers = async (
   req: express.Request,
   res: express.Response
 ) => {
+  const page = parseInt(req.query.page as string) - 1 || 0;
+  const limit = parseInt(req.query.limit as string) || 3;
+  const search = (req.query.search as string) || "";
+  // let sort = (req.query.sort as string) || "weight";
+
+  // console.log(page, limit, search);
+
+  const query = search
+    ? {
+        $or: [
+          { name: new RegExp(search, "i") },
+          { email: new RegExp(search, "i") },
+        ],
+      }
+    : {};
+
   try {
-    const users = await User.find(
-      {},
-      { name: 1, email: 1, role: 1, _id: 1, userBlocked: 1 }
-    );
-    res.status(200).json({ users });
+    const totalUsers = await User.countDocuments(query);
+
+    // console.log(totalUsers);
+
+    const users = await User.find(query)
+      // .sort({ sort: -1 })
+      .skip(page * limit)
+      .limit(limit);
+
+    res.status(200).json({
+      users,
+      page: page + 1,
+      limit,
+      totalUsers,
+    });
   } catch (error) {
     console.error(error);
     res.status(500).json({ message: error.message });
@@ -116,9 +143,9 @@ export const userProfileEdit = async (
   try {
     const id = req.params.id;
     const updateData = req.body;
-    let isTrainerExist : TrainerType;
+    let isTrainerExist: TrainerType;
 
-    isTrainerExist = await Trainer.findOne({ email : updateData.email });
+    isTrainerExist = await Trainer.findOne({ email: updateData.email });
     if (isTrainerExist) {
       return res.status(404).json({ message: "Email already exists" });
     }
@@ -176,7 +203,6 @@ export const blockUser = async (
 
 // TRAINER CONTROLLERS
 
-
 export const createTrainer = async (
   req: express.Request,
   res: express.Response
@@ -198,25 +224,59 @@ export const createTrainer = async (
   }
 };
 
-
 export const getAllTrainers = async (
   req: express.Request,
   res: express.Response
 ) => {
+  // try {
+  //   const trainer = await Trainer.find(
+  //     {},
+  //     { name: 1, email: 1, role: 1, _id: 1, isBlocked: 1 }
+  //   );
+  //   // console.log('trainer' , trainer)
+  //   res.status(200).json({ trainer });
+  // } catch (error) {
+  //   console.error(error);
+  //   res.status(500).json({ message: error.message });
+  // }
+
+  const page = parseInt(req.query.page as string) - 1 || 0;
+  const limit = parseInt(req.query.limit as string) || 3;
+  const search = (req.query.search as string) || "";
+  // let sort = (req.query.sort as string) || "weight";
+
+  // console.log(page, limit, search);
+
+  const query = search
+    ? {
+        $or: [
+          { name: new RegExp(search, "i") },
+          { email: new RegExp(search, "i") },
+        ],
+      }
+    : {};
+
   try {
-    
-    const trainer = await Trainer.find(
-      {},
-      { name: 1, email: 1, role: 1, _id: 1, isBlocked: 1 }
-      );
-      // console.log('trainer' , trainer)
-    res.status(200).json({ trainer });
+    const totalTrainers = await Trainer.countDocuments(query);
+
+    // console.log(totalTrainers);
+
+    const trainer = await Trainer.find(query)
+      // .sort({ sort: -1 })
+      .skip(page * limit)
+      .limit(limit);
+
+    res.status(200).json({
+      trainer,
+      page: page + 1,
+      limit,
+      totalTrainers,
+    });
   } catch (error) {
     console.error(error);
     res.status(500).json({ message: error.message });
   }
 };
-
 
 export const blockTrainer = async (
   req: express.Request,
@@ -231,7 +291,9 @@ export const blockTrainer = async (
       // console.log(trainerDetails);
       trainerDetails.isBlocked = !trainerDetails.isBlocked;
       await trainerDetails.save();
-      res.status(200).json({ message: "User blocked", trainer: trainerDetails });
+      res
+        .status(200)
+        .json({ message: "User blocked", trainer: trainerDetails });
     }
   } catch (error) {
     console.error(error);
@@ -239,8 +301,10 @@ export const blockTrainer = async (
   }
 };
 
-
-export const getTrainer = async (req: express.Request, res: express.Response) => {
+export const getTrainer = async (
+  req: express.Request,
+  res: express.Response
+) => {
   try {
     const id = req.params.id;
     const trainer = await Trainer.findById(id);
@@ -254,7 +318,6 @@ export const getTrainer = async (req: express.Request, res: express.Response) =>
   }
 };
 
-
 export const trainerProfileEdit = async (
   req: express.Request,
   res: express.Response
@@ -262,9 +325,9 @@ export const trainerProfileEdit = async (
   try {
     const id = req.params.id;
     const updateData = req.body;
-    let isUserExist : UserType;
+    let isUserExist: UserType;
 
-    isUserExist = await User.findOne({ email : updateData.email });
+    isUserExist = await User.findOne({ email: updateData.email });
     if (isUserExist) {
       return res.status(404).json({ message: "Email already exists" });
     }
@@ -276,7 +339,9 @@ export const trainerProfileEdit = async (
     if (!isTrainerUpdated) {
       return res.status(404).json({ message: "Trainer not found" });
     } else {
-      res.status(200).json({ message: "Trainer updated", user: isTrainerUpdated });
+      res
+        .status(200)
+        .json({ message: "Trainer updated", user: isTrainerUpdated });
     }
   } catch (error) {
     console.error(error);

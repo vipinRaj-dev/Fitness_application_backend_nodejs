@@ -107,7 +107,7 @@ export const userProfileImageUpdate = async (
     const updateData = req.body;
     delete updateData.profileImage;
     delete updateData.publicId;
-    console.log("updateData", updateData);
+    // console.log("updateData", updateData);
 
     const healthIssues = {
       BloodPressure: updateData.BloodPressure,
@@ -141,7 +141,7 @@ export const userProfileImageUpdate = async (
         { new: true }
       );
 
-      console.log("updatedUser", updatedUser);
+      // console.log("updatedUser", updatedUser);
     } catch (error) {
       console.log("error", error.message, error.stack);
     }

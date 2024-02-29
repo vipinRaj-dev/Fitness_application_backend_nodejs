@@ -101,7 +101,7 @@ const UserSchema: Schema<UserType> = new Schema(
     height: { type: Number, default: 0 },
     role: { type: String, default: "user" },
     userBlocked: { type: Boolean, default: false },
-    healthIssues: { type: HealthIssuesSchema },
+    healthIssues: { type: HealthIssuesSchema ,default: {} },
     isPremiumUser: { type: Boolean, default: false },
     trainerId: mongoose.Types.ObjectId,
     dueDate: Date,

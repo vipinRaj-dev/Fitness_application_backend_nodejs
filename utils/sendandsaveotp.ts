@@ -10,7 +10,7 @@ export async function SaveOTPAndTempUser({
 }: {
   email: string;
   name?: string;
-  password?: string;
+  password?: string; 
 }) {
   //generate otp
   const Otp = Math.floor(1000 + Math.random() * 9000);
