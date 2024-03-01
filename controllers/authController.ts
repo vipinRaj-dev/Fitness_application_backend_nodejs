@@ -20,6 +20,8 @@ export const userRegistrationSendOtp = async (
 
     const { name, email, password } = req.body;
 
+    console.log("Request body:", name, email, password);
+
     let user: UserType | TrainerType | AdminType;
 
     user = await User.findOne({ email: email });
@@ -54,11 +56,11 @@ export const userRegistrationSendOtp = async (
 
 export const SaveUser = async (req: express.Request, res: express.Response) => {
   try {
-    let { otp } = req.body;
+    let { otp , data} = req.body;
     // console.log("Request body:", req.body);
     let OTP = parseInt(otp);
     console.log("otp:", OTP);
-    let otpDoc = await otpVerify(OTP);
+    let otpDoc = await otpVerify(OTP , data.email);
 
     if (!otpDoc) {
       return res.status(401).json({ msg: "otp verification failed" });
@@ -164,6 +166,9 @@ export const checkrole = async (
       let isUserBlocked = await User.findById(requstedUser.userId).select(
         "userBlocked"
       );
+      if(!isUserBlocked){
+        return res.status(404).json({msg: "user not found"})
+      }
       console.log("requstedUser", requstedUser);
       console.log("isUserBlocked", isUserBlocked);
 

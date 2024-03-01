@@ -27,7 +27,7 @@ export async function SaveOTPAndTempUser({
   newOTP
     .save()
     .then((otp: any) => {
-      console.log("OTP saved successfully:", otp);
+      console.log("OTP saved successfully:", otp.otp);
     })
     .catch((error: any) => {
       console.error("Error saving OTP:", error);
