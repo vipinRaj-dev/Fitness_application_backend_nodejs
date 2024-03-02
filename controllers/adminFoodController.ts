@@ -37,7 +37,7 @@ export const addFood = async (req: express.Request, res: express.Response) => {
         description,
         quantity,
         unit,
-        nutrition: {
+        nutrition: {  
           calories,
           protein,
           carbs: carbohydrate,

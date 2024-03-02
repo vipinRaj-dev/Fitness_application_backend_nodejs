@@ -1,6 +1,7 @@
 import express from "express";
 
 import { Trainer } from "../models/TrainerModel";
+import { User } from "../models/UserModel";
 
 export const getAllTrainers = async (
   req: express.Request,
@@ -8,8 +9,13 @@ export const getAllTrainers = async (
 ) => {
   try {
     console.log("get all trainers");
-    const allTrainers = await Trainer.find().select(
-      "_id name email isBlocked profilePicture experience specializedIn price description   "
+
+    const {userId}: any = req.headers["user"];
+    
+    const user = await User.findById(userId);
+    const TrainerId =  user?.trainerId
+    const allTrainers = await Trainer.find({ _id: { $ne: TrainerId } }).select(
+      "_id name email isBlocked profilePicture experience specializedIn price description"
     );
     if (!allTrainers) {
       return res.status(400).json({

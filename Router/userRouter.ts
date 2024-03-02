@@ -61,9 +61,9 @@ userRouter.get('/getFoodLog' , tokenVerify  , getFoodLog)
 
 
 
-userRouter.get('/getDate/:date' , getDay)
+// userRouter.get('/getDate/:date' , getDay)
 
-userRouter.get("/attandance", attendance);
+// userRouter.get("/attandance", attendance);
 
 
 export default userRouter;
