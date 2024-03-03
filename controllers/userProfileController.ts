@@ -15,17 +15,42 @@ export const userHomePage = async (
 ) => {
   console.log("userHomePage");
 
+  type dietFoodType = {
+    _id: string;
+    attendanceId: {
+      _id: string;
+      foodLogs: any[];
+    };
+  };
+
   let requstedUser: any = req.headers["user"];
 
-  let userData: UserType | null = await User.findById(
+  let dietFood: dietFoodType = await User.findById(
     requstedUser.userId
-  ).populate("latestFoodByTrainer.foodId");
+  ).populate({
+    path: "attendanceId",
+    populate: {
+      path: "foodLogs",
+      populate: {
+        path: "foodId",
+      },
+    },
+  });
 
-  // console.log("userData", userData.latestFoodByTrainer);
+  const eatedFoodIds = dietFood.attendanceId?.foodLogs
+    .filter((food) => food.status === true)
+    .map((food) => food.foodId._id);
+
+  // console.log("dietFood", dietFood.attendanceId.foodLogs);
+  // console.log("eatedFood", eatedFoodIds);
 
   res
     .status(200)
-    .json({ msg: "userHomePage", latestDiet: userData.latestFoodByTrainer });
+    .json({
+      msg: "userHomePage",
+      dietFood: dietFood.attendanceId.foodLogs,
+      addedFood: eatedFoodIds,
+    });
 };
 
 export const userProfile = async (
@@ -159,77 +184,85 @@ export const addFoodLog = async (
 ) => {
   try {
     const requstedUser: any = req.headers["user"];
-    const { foodId, time, timePeriod, quantity ,status } = req.body;
+    const { foodId, time } = req.body;
     const userId = requstedUser.userId;
+
+    const currentTime = new Date();
+    const foodTime = new Date();
+
+    const [hours, minutes] = time.split(":").map(Number);
+    foodTime.setHours(hours, minutes);
+
+    const foodTime1HoursBefore = new Date(foodTime.getTime() - 1000 * 60 * 60);
+
+    if (foodTime1HoursBefore > currentTime) {
+      return res.status(201).json({ msg: "time not reached yet" });
+    }
+
+    const startOfUserDate = new Date();
+    startOfUserDate.setHours(0, 0, 0, 0);
+
+    const startOfNextDate = new Date(startOfUserDate);
+    startOfNextDate.setDate(startOfUserDate.getDate() + 1);
+
+    const foodLogData = await FoodLog.findOne({
+      userId: userId,
+      foodId: foodId,
+      time: time,
+      date: {
+        $gte: startOfUserDate, 
+        $lt: startOfNextDate,
+      },
+    });
+
+    // console.log("foodLogData", foodLogData);
+
+    if (foodTime > currentTime) {
+      if (foodLogData) {
+        console.log("foodLogData", foodLogData);
+        foodLogData.status = true;
+        await foodLogData.save();
+        res.status(200).json({ msg: "food log added successfully" });
+      }
+    } else {
+      console.log("time passed");
+      res.status(400).json({ msg: "time passed" });
+    }
 
     // console.log('api fetched after the time up' ,foodId ,  time , timePeriod , quantity , status)
-    
-    const foodLog = new FoodLog({
-      date: new Date(),
-      userId,
-      foodId,
-      status: status, 
-      time,  
-      timePeriod,
-      quantity,
-    });
+  
+    // const foodLog = new FoodLog({ 
+    //   date: new Date(),
+    //   userId,
+    //   foodId,
+    //   time,
+    //   timePeriod,
+    //   quantity,
+    // });
 
-    const foodLogData = await foodLog.save();
+    // const foodLogData = await foodLog.save();
 
-    const userData = await User.findById(userId).populate("attendanceId");
+    // const userData = await User.findById(userId).populate("attendanceId");
 
-    if (!userData) {
-      console.log("no attendance found");
-    } else {
-      // console.log("attendanceUpdate", userData.attendanceId);
-      await Attendance.findByIdAndUpdate(
-        userData.attendanceId._id,
-        { $push: { foodLogs: foodLogData._id } },
-        { new: true }
-      );
+    // if (!userData) {
+    //   console.log("no attendance found");
+    // } else {
+    //   // console.log("attendanceUpdate", userData.attendanceId);
+    //   await Attendance.findByIdAndUpdate(
+    //     userData.attendanceId._id,
+    //     { $push: { foodLogs: foodLogData._id } },
+    //     { new: true }
+    //   );
 
-      res.status(200).json({ msg: "food log added successfully" });
-    }
-  } catch (error) {
-    console.error(error);
-  }
-};
-
-export const getFoodLog = async (
-  req: express.Request,
-  res: express.Response
-) => {
-  try {
-    interface PopulatedUser extends Document {
-      _id: string;
-      attendanceId: {
-        _id: string;
-        foodLogs: any[];
-      };
-    }
-    const requstedUser: any = req.headers["user"];
-    const userId = requstedUser.userId;
-
-    const addedFoodLog = (await User.findById(userId).populate({
-      path: "attendanceId",
-      populate: {
-        path: "foodLogs",
-      },
-    })) as PopulatedUser;
-    // console.log("addedFoodLog", addedFoodLog);
-
-    const arrayOfFoods = addedFoodLog?.attendanceId?.foodLogs?.map((log) => {
-      return log.foodId;
-    });
-
-    // console.log("arrayOfFoods", arrayOfFoods);
-    res.status(200).json({ msg: "food logs", arrayOfFoods });
+    //   res.status(200).json({ msg: "food log added successfully" });
+    // }
   } catch (error) {
     console.error(error);
   }
 };
 
 export const getDay = async (req: express.Request, res: express.Response) => {
+  const userId = "65dc815d67fd459be02c9b73";
   const userDate = new Date(req.params.date); // assuming date is passed as a parameter in the request
   const startOfUserDate = new Date(
     userDate.getUTCFullYear(),
@@ -245,6 +278,7 @@ export const getDay = async (req: express.Request, res: express.Response) => {
   console.log("date", startOfUserDate);
 
   const attandanceData = await Attendance.find({
+    userId: userId,
     date: {
       $gte: startOfUserDate,
       $lt: startOfNextDate,
@@ -252,6 +286,7 @@ export const getDay = async (req: express.Request, res: express.Response) => {
   });
 
   console.log("attandanceData", attandanceData);
+  res.status(200).json({ msg: "attandanceData", attandanceData });
 };
 
 export const attendance = async (
@@ -289,4 +324,3 @@ export const attendance = async (
     console.error(error);
   }
 };
- 

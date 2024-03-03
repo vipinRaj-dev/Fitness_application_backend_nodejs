@@ -11,6 +11,7 @@ import adminRouter from "./Router/adminRouter";
 import trainerRoutes from "./Router/trainerRoutes";
 import { User } from "./models/UserModel";
 import { Attendance } from "./models/AttendanceModel";
+import { FoodLog } from "./models/FoodLogModel";
 const app: express.Application = express();
 
 //cors
@@ -54,9 +55,7 @@ async function markAttendance() {
   for (const user of users) {
     // console.log("user that has the values corectly", user);
     const today = new Date();
-    today.setUTCHours(0, 0, 0, 0);
-    // today.setHours(0, 0, 0, 0);
-    // today.setDate(today.getDate() + 1);
+    today.setHours(0, 0, 0, 0);
     const tomorrow = new Date(today.getTime() + 24 * 60 * 60 * 1000);
     // console.log("today", today , "tomorrow", tomorrow);
     const existingAttendance = await Attendance.findOne({
@@ -68,15 +67,40 @@ async function markAttendance() {
     });
   
     if (!existingAttendance) { 
+
+
+      // creating food logs for each food in the latestFoodByTrainer
+      const foodLogsIds = await Promise.all(user.latestFoodByTrainer.map(async (food) => {
+
+
+        const foodLogData = new FoodLog({
+          date: new Date(),
+          userId: user._id,
+          foodId: food.foodId,
+          status: false,
+          timePeriod: food.timePeriod,
+          time: food.time,
+          quantity: food.quantity,
+        });
+
+
+        const foodLogId =  await foodLogData.save();
+
+        return foodLogId._id;
+      }));
+
+
+
+
       const attendance = new Attendance({
         date: today,
         userId: user._id,
         isPresent: false,
-        foodLogs: [],
+        foodLogs: foodLogsIds,
       });  
 
       const ans = await attendance.save();
-
+      
       const userUpdation = await User.updateOne(
         { _id: user._id },
         { $set: { attendanceId: ans._id } }

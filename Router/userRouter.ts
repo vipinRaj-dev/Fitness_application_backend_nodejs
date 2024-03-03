@@ -10,7 +10,6 @@ import {
   addFoodLog,
   attendance,
   getDay,
-  getFoodLog,
   userHomePage,
   userProfile,
   userProfileImageUpdate,
@@ -28,7 +27,7 @@ import {
 
 const userRouter: express.Router = express.Router();
 
-userRouter.get('/homePage' , tokenVerify , isPremiumUser , userHomePage)
+userRouter.get("/homePage", tokenVerify, isPremiumUser, userHomePage);
 
 userRouter.get("/profile", tokenVerify, isPremiumUser, userProfile);
 
@@ -41,7 +40,6 @@ userRouter.put(
 
 userRouter.post("/create-checkout-session", tokenVerify, createCheckoutSession);
 
-
 userRouter.post(
   "/webhook",
   express.raw({ type: "application/json" }),
@@ -49,22 +47,15 @@ userRouter.post(
 );
 userRouter.get("/getAllTrainers", tokenVerify, getAllTrainers);
 
-userRouter.get("/getTrainer/:id", tokenVerify,isPremiumUser, getSingleTrainer);
+userRouter.get("/getTrainer/:id", tokenVerify, isPremiumUser, getSingleTrainer);
 
-
-userRouter.put("/addFoodLog" , tokenVerify , addFoodLog)
-
-userRouter.get('/getFoodLog' , tokenVerify  , getFoodLog)
+userRouter.put("/addFoodLog", tokenVerify, addFoodLog);
 
 
 
 
-
-
-// userRouter.get('/getDate/:date' , getDay)
+userRouter.get("/getDate/:date", getDay);
 
 // userRouter.get("/attandance", attendance);
 
-
 export default userRouter;
-       
