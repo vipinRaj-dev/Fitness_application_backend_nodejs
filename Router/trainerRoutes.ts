@@ -14,6 +14,7 @@ import {
   allClients,
   removeFoodTrainer,
   setTime,
+  singleFoodDelete,
 } from "../controllers/trainerUserControllers";
 import { getAllFood } from "../controllers/adminFoodController";
 
@@ -57,6 +58,9 @@ trainerRouter.delete(
   removeFoodTrainer
 );
 
-trainerRouter.put("/addTimeDetails/:clientId/:listFoodId", tokenVerify, setTime);
+
+trainerRouter.delete("/singleFoodDelete/:clientId/:foodDocId", tokenVerify, singleFoodDelete);
+
+trainerRouter.put("/addTimeDetails/:clientId/:foodDocId", tokenVerify, setTime);
 
 export default trainerRouter;

@@ -38,25 +38,25 @@ export const allClients = async (
       }
     : {};
 
- try {
-  const totalClients = await Trainer.findById(requstedUser.userId).populate({
-    path: 'clients',
-    match: query, 
-    options: { skip: page * limit, limit: limit } 
-  });
+  try {
+    const totalClients = await Trainer.findById(requstedUser.userId).populate({
+      path: "clients",
+      match: query,
+      options: { skip: page * limit, limit: limit },
+    });
 
-  // console.log(totalClients);
+    // console.log(totalClients);
 
-  res.status(200).json({
-    allClients: totalClients.clients,
-    page: page + 1,
-    limit,
-    totalClients: totalClients.clients.length,
-  });
-} catch (error) {
-  console.error(error);
-  res.status(500).json({ message: error.message });
-}
+    res.status(200).json({
+      allClients: totalClients.clients,
+      page: page + 1,
+      limit,
+      totalClients: totalClients.clients.length,
+    });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: error.message });
+  }
 };
 
 export const SingleClient = async (
@@ -132,7 +132,7 @@ export const addFoodTrainer = async (
       { $push: { latestFoodByTrainer: foodToAdd } }
     );
 
-    console.log(ans);
+    // console.log(ans);
 
     res.status(200).json({ msg: "food added", foodId: food._id });
   } catch (error) {
@@ -150,11 +150,19 @@ export const removeFoodTrainer = async (
   try {
     const clientId = req.params.clientId;
     const foodId = req.params.foodId;
-    // console.log(clientId, foodId);
+    console.log(foodId);
     const client = await User.findById(clientId);
+
+    const findFood = client.latestFoodByTrainer.find((food: any) => {
+      // console.log(food);
+      return food.foodId == foodId;
+    });
+
+    // console.log("findFood" , findFood);
+
     const ans = await User.updateOne(
       { _id: clientId },
-      { $pull: { latestFoodByTrainer: { foodId: foodId } } }
+      { $pull: { latestFoodByTrainer: { _id: findFood._id } } }
     );
 
     // console.log(ans);
@@ -164,10 +172,31 @@ export const removeFoodTrainer = async (
   }
 };
 
+export const singleFoodDelete = async (
+  req: express.Request,
+  res: express.Response
+) => {
+  try {
+    const clientId = req.params.clientId; 
+    const foodDocId = req.params.foodDocId;
+ 
+    console.log(clientId, foodDocId);
+    const ans = await User.updateOne(
+      { _id: clientId },
+      { $pull: { latestFoodByTrainer: { _id: foodDocId } } }
+    );
+     console.log(ans);
+     res.status(200).json({ msg: "food removed" });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ msg: "server error" });
+  }
+};
+
 export const setTime = async (req: express.Request, res: express.Response) => {
   try {
     const clientId = req.params.clientId;
-    const listFoodId = req.params.listFoodId;
+    const foodDocId = req.params.foodDocId;
 
     const client = await User.findById(clientId);
 
@@ -178,7 +207,7 @@ export const setTime = async (req: express.Request, res: express.Response) => {
     };
     // console.log(AddTimeDetails);
     const clientFood = client.latestFoodByTrainer.find(
-      (food: any) => food._id == listFoodId
+      (food: any) => food._id == foodDocId
     );
     if (clientFood) {
       clientFood.time = AddTimeDetails.time;
