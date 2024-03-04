@@ -17,12 +17,11 @@ import {
   singleFoodDelete,
 } from "../controllers/trainerUserControllers";
 import { getAllFood } from "../controllers/adminFoodController";
+import { isTrainerBlocked } from "../middleware/trainerBlock";
 
 const trainerRouter: express.Router = express.Router();
 
-trainerRouter.get("/profile", tokenVerify, trainerProfile);
-
-// trainerRouter.put("/profileUpdate", tokenVerify, profileUpdate);
+trainerRouter.get("/profile", tokenVerify, isTrainerBlocked, trainerProfile);
 
 trainerRouter.put(
   "/profileUpdate",
@@ -46,7 +45,7 @@ trainerRouter.delete(
 
 trainerRouter.get("/allClients", tokenVerify, allClients);
 
-trainerRouter.get("/client/:id", tokenVerify, SingleClient);
+trainerRouter.get("/client/:id", tokenVerify,isTrainerBlocked, SingleClient);
 
 trainerRouter.get("/allFood/:id", tokenVerify, TrainerGetAllFood);
 
@@ -58,8 +57,11 @@ trainerRouter.delete(
   removeFoodTrainer
 );
 
-
-trainerRouter.delete("/singleFoodDelete/:clientId/:foodDocId", tokenVerify, singleFoodDelete);
+trainerRouter.delete(
+  "/singleFoodDelete/:clientId/:foodDocId",
+  tokenVerify,
+  singleFoodDelete
+);
 
 trainerRouter.put("/addTimeDetails/:clientId/:foodDocId", tokenVerify, setTime);
 

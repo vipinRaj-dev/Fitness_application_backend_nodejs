@@ -44,13 +44,11 @@ export const userHomePage = async (
   // console.log("dietFood", dietFood.attendanceId.foodLogs);
   // console.log("eatedFood", eatedFoodIds);
 
-  res
-    .status(200)
-    .json({
-      msg: "userHomePage",
-      dietFood: dietFood.attendanceId.foodLogs,
-      addedFood: eatedFoodIds,
-    });
+  res.status(200).json({
+    msg: "userHomePage",
+    dietFood: dietFood.attendanceId.foodLogs,
+    addedFood: eatedFoodIds,
+  });
 };
 
 export const userProfile = async (
@@ -210,7 +208,7 @@ export const addFoodLog = async (
       foodId: foodId,
       time: time,
       date: {
-        $gte: startOfUserDate, 
+        $gte: startOfUserDate,
         $lt: startOfNextDate,
       },
     });
@@ -219,7 +217,7 @@ export const addFoodLog = async (
 
     if (foodTime > currentTime) {
       if (foodLogData) {
-        console.log("foodLogData", foodLogData);
+        // console.log("foodLogData", foodLogData);
         foodLogData.status = true;
         await foodLogData.save();
         res.status(200).json({ msg: "food log added successfully" });
@@ -228,34 +226,6 @@ export const addFoodLog = async (
       console.log("time passed");
       res.status(400).json({ msg: "time passed" });
     }
-
-    // console.log('api fetched after the time up' ,foodId ,  time , timePeriod , quantity , status)
-  
-    // const foodLog = new FoodLog({ 
-    //   date: new Date(),
-    //   userId,
-    //   foodId,
-    //   time,
-    //   timePeriod,
-    //   quantity,
-    // });
-
-    // const foodLogData = await foodLog.save();
-
-    // const userData = await User.findById(userId).populate("attendanceId");
-
-    // if (!userData) {
-    //   console.log("no attendance found");
-    // } else {
-    //   // console.log("attendanceUpdate", userData.attendanceId);
-    //   await Attendance.findByIdAndUpdate(
-    //     userData.attendanceId._id,
-    //     { $push: { foodLogs: foodLogData._id } },
-    //     { new: true }
-    //   );
-
-    //   res.status(200).json({ msg: "food log added successfully" });
-    // }
   } catch (error) {
     console.error(error);
   }

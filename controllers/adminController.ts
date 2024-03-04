@@ -203,7 +203,7 @@ export const blockUser = async (
 
 // TRAINER CONTROLLERS
 
-export const createTrainer = async (
+export const createTrainer = async ( 
   req: express.Request,
   res: express.Response
 ) => {

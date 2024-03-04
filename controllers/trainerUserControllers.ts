@@ -67,13 +67,6 @@ export const SingleClient = async (
     let requstedUser: any = req.headers["user"];
     const id = requstedUser.userId;
     const clientId = req.params.id;
-    // const singleClient = await Trainer.findById(id).populate("clients");
-    // // console.log(singleClient.clients);
-
-    // const client = singleClient.clients.find(
-    //   (client: any) => client._id == clientId
-    // );
-    // console.log(client);
 
     const client = await User.findById(clientId).populate(
       "latestFoodByTrainer.foodId"
@@ -177,16 +170,16 @@ export const singleFoodDelete = async (
   res: express.Response
 ) => {
   try {
-    const clientId = req.params.clientId; 
+    const clientId = req.params.clientId;
     const foodDocId = req.params.foodDocId;
- 
+
     console.log(clientId, foodDocId);
     const ans = await User.updateOne(
       { _id: clientId },
       { $pull: { latestFoodByTrainer: { _id: foodDocId } } }
     );
-     console.log(ans);
-     res.status(200).json({ msg: "food removed" });
+    console.log(ans);
+    res.status(200).json({ msg: "food removed" });
   } catch (error) {
     console.error(error);
     res.status(500).json({ msg: "server error" });

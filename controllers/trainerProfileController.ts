@@ -19,12 +19,6 @@ export const trainerProfile = async (
       "_id name email mobileNumber isBlocked profilePicture publicId experience specializedIn price description certifications transformationClients"
     );
 
-    if (!trainerData) {
-      return res.status(400).json({
-        msg: "no trainer data",
-      });
-    }
-
     const response = {
       msg: "trainer details",
       trainer: trainerData,
