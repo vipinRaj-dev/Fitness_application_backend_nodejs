@@ -45,10 +45,10 @@ trainerRouter.delete(
 
 trainerRouter.get("/allClients", tokenVerify, allClients);
 
-trainerRouter.get("/client/:id", tokenVerify,isTrainerBlocked, SingleClient);
+trainerRouter.get("/client/:id", SingleClient);
 
-trainerRouter.get("/allFood/:id", tokenVerify, TrainerGetAllFood);
-
+trainerRouter.get("/allFood/:id", TrainerGetAllFood);
+                                
 trainerRouter.post("/addFood/:id", tokenVerify, addFoodTrainer);
 
 trainerRouter.delete(

@@ -17,6 +17,8 @@ export const userHomePage = async (
 
   type dietFoodType = {
     _id: string;
+    trainerId: string;
+    trainerPaymentDueDate: Date;
     attendanceId: {
       _id: string;
       foodLogs: any[];
@@ -25,7 +27,7 @@ export const userHomePage = async (
 
   let requstedUser: any = req.headers["user"];
 
-  let dietFood: dietFoodType = await User.findById(
+  let userDetails: dietFoodType = await User.findById(
     requstedUser.userId
   ).populate({
     path: "attendanceId",
@@ -37,17 +39,24 @@ export const userHomePage = async (
     },
   });
 
-  const eatedFoodDocIds = dietFood.attendanceId?.foodLogs
+  const hasTrainer = userDetails?.trainerId
+    ? userDetails.trainerPaymentDueDate > new Date()
+      ? true
+      : false
+    : false;
+
+  const eatedFoodDocIds = userDetails.attendanceId?.foodLogs
     .filter((food) => food.status === true)
     .map((food) => food._id);
 
-  // console.log("dietFood", dietFood.attendanceId.foodLogs);
+  // console.log("userDetails", userDetails.attendanceId.foodLogs);
   // console.log("eatedFood", eatedFoodDocIds);
 
-  res.status(200).json({
+  res.status(200).json({   
     msg: "userHomePage",
-    dietFood: dietFood.attendanceId.foodLogs,
+    dietFood: userDetails?.attendanceId?.foodLogs,
     addedFoodDocIds: eatedFoodDocIds,
+    hasTrainer
   });
 };
 

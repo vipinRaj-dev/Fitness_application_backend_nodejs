@@ -65,6 +65,7 @@ export const SingleClient = async (
 ) => {
   try {
     const clientId = req.params.id;
+    // console.log('clientid' , clientId)
 
     const client = await User.findById(clientId).populate(
       "latestFoodByTrainer.foodId"
@@ -104,6 +105,7 @@ export const TrainerGetAllFood = async (
     const totalFoodCount = await Food.countDocuments(query);
 
     const clientId = req.params.id;
+    // console.log("clientid ", clientId);
     const allFood = await Food.find(query)
       .skip(page * limit)
       .limit(limit);

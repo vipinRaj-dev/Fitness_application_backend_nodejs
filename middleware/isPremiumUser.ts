@@ -11,7 +11,7 @@ export let isPremiumUser = async (
 
     const user = await User.findById(requstedUser.userId);
     if (user) {
-      if (user.isPremiumUser) {
+      if (user.isPremiumUser && user.dueDate > new Date() ) {
         next(); 
       } else if (user.trialEndsAt > new Date()) {
         next();
