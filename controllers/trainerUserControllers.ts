@@ -64,8 +64,6 @@ export const SingleClient = async (
   res: express.Response
 ) => {
   try {
-    let requstedUser: any = req.headers["user"];
-    const id = requstedUser.userId;
     const clientId = req.params.id;
 
     const client = await User.findById(clientId).populate(
@@ -86,12 +84,40 @@ export const TrainerGetAllFood = async (
   res: express.Response
 ) => {
   try {
+    const page = parseInt(req.query.page as string) - 1 || 0;
+    const limit = parseInt(req.query.limit as string) || 3;
+    const search = (req.query.search as string) || "";
+    const filter = (req.query.filter as string) || "";
+
+    const query = {
+      ...(search
+        ? {
+            $or: [
+              { foodname: new RegExp(search, "i") },
+              { ingredients: new RegExp(search, "i") },
+            ],
+          }
+        : {}),
+      ...(filter ? { foodtype: filter } : {}),
+    };
+
+    const totalFoodCount = await Food.countDocuments(query);
+
     const clientId = req.params.id;
-    const allFood = await Food.find();
+    const allFood = await Food.find(query)
+      .skip(page * limit)
+      .limit(limit);
+
     const user = await User.findById({ _id: clientId });
     const listOfFood = user?.latestFoodByTrainer;
     const foodIds = listOfFood.map((food) => food.foodId);
-    res.status(200).json({ allFood: allFood, listOfFood: foodIds });
+    res.status(200).json({
+      allFood: allFood,
+      listOfFood: foodIds,
+      page: page + 1,
+      limit,
+      totalFoodCount,
+    });
   } catch (error) {
     console.error("Error getting all food:", error);
     res.status(500).json({ msg: "Error getting all food", error });
@@ -103,9 +129,6 @@ export const addFoodTrainer = async (
   res: express.Response
 ) => {
   try {
-    let requstedUser: any = req.headers["user"];
-    const trainerId = requstedUser.userId;
-
     const clientId = req.params.id;
     const { foodId } = req.body;
 

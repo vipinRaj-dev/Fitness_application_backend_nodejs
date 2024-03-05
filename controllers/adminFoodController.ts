@@ -64,8 +64,35 @@ export const getAllFood = async (
   res: express.Response
 ) => {
   try {
-    const allFood = await Food.find();
-    res.status(200).json(allFood);
+        const page = parseInt(req.query.page as string) - 1 || 0;
+    const limit = parseInt(req.query.limit as string) || 3;
+    const search = (req.query.search as string) || "";
+    const filter = (req.query.filter as string) || "";
+
+    const query = {
+      ...(search
+        ? {
+            $or: [
+              { foodname: new RegExp(search, "i") },
+              { ingredients: new RegExp(search, "i") },
+            ],
+          }
+        : {}),
+      ...(filter ? { foodtype: filter } : {}),
+    };
+
+    const totalFoodCount = await Food.countDocuments(query);
+
+    const allFood = await Food.find(query)
+      .skip(page * limit)
+      .limit(limit);
+
+    res.status(200).json({
+      allFood: allFood,
+      page: page + 1,
+      limit,
+      totalFoodCount,
+    });
   } catch (error) {
     console.error("Error getting all food:", error);
     res.status(500).json({ msg: "Error getting all food", error });

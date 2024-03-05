@@ -37,17 +37,17 @@ export const userHomePage = async (
     },
   });
 
-  const eatedFoodIds = dietFood.attendanceId?.foodLogs
+  const eatedFoodDocIds = dietFood.attendanceId?.foodLogs
     .filter((food) => food.status === true)
-    .map((food) => food.foodId._id);
+    .map((food) => food._id);
 
   // console.log("dietFood", dietFood.attendanceId.foodLogs);
-  // console.log("eatedFood", eatedFoodIds);
+  // console.log("eatedFood", eatedFoodDocIds);
 
   res.status(200).json({
     msg: "userHomePage",
     dietFood: dietFood.attendanceId.foodLogs,
-    addedFood: eatedFoodIds,
+    addedFoodDocIds: eatedFoodDocIds,
   });
 };
 
@@ -181,9 +181,7 @@ export const addFoodLog = async (
   res: express.Response
 ) => {
   try {
-    const requstedUser: any = req.headers["user"];
-    const { foodId, time } = req.body;
-    const userId = requstedUser.userId;
+    const { time, foodDocId } = req.body;
 
     const currentTime = new Date();
     const foodTime = new Date();
@@ -197,23 +195,7 @@ export const addFoodLog = async (
       return res.status(201).json({ msg: "time not reached yet" });
     }
 
-    const startOfUserDate = new Date();
-    startOfUserDate.setHours(0, 0, 0, 0);
-
-    const startOfNextDate = new Date(startOfUserDate);
-    startOfNextDate.setDate(startOfUserDate.getDate() + 1);
-
-    const foodLogData = await FoodLog.findOne({
-      userId: userId,
-      foodId: foodId,
-      time: time,
-      date: {
-        $gte: startOfUserDate,
-        $lt: startOfNextDate,
-      },
-    });
-
-    // console.log("foodLogData", foodLogData);
+    const foodLogData = await FoodLog.findById(foodDocId);
 
     if (foodTime > currentTime) {
       if (foodLogData) {

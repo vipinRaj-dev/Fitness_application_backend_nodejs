@@ -174,6 +174,7 @@ export const checkrole = async (
       }
       // console.log("requstedUser", requstedUser);
       console.log("isUserBlocked", isUserBlocked);
+      console.log(requstedUser.userId)
 
       if (isUserBlocked.userBlocked) {
         return res
@@ -184,7 +185,7 @@ export const checkrole = async (
 
     res
       .status(200)
-      .json({ role: requstedUser.role, email: requstedUser.email });
+      .json({ role: requstedUser.role, email: requstedUser.email , userId : requstedUser.userId });
   } catch (error) {
     console.error(error);
   }

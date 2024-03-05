@@ -59,7 +59,6 @@ export const adminProfileEdit = async (
   }
 };
 
-
 export const getAllUsers = async (
   req: express.Request,
   res: express.Response
@@ -203,7 +202,7 @@ export const blockUser = async (
 
 // TRAINER CONTROLLERS
 
-export const createTrainer = async ( 
+export const createTrainer = async (
   req: express.Request,
   res: express.Response
 ) => {
@@ -228,18 +227,6 @@ export const getAllTrainers = async (
   req: express.Request,
   res: express.Response
 ) => {
-  // try {
-  //   const trainer = await Trainer.find(
-  //     {},
-  //     { name: 1, email: 1, role: 1, _id: 1, isBlocked: 1 }
-  //   );
-  //   // console.log('trainer' , trainer)
-  //   res.status(200).json({ trainer });
-  // } catch (error) {
-  //   console.error(error);
-  //   res.status(500).json({ message: error.message });
-  // }
-
   const page = parseInt(req.query.page as string) - 1 || 0;
   const limit = parseInt(req.query.limit as string) || 3;
   const search = (req.query.search as string) || "";
