@@ -52,11 +52,11 @@ export const userHomePage = async (
   // console.log("userDetails", userDetails.attendanceId.foodLogs);
   // console.log("eatedFood", eatedFoodDocIds);
 
-  res.status(200).json({   
+  res.status(200).json({
     msg: "userHomePage",
     dietFood: userDetails?.attendanceId?.foodLogs,
     addedFoodDocIds: eatedFoodDocIds,
-    hasTrainer
+    hasTrainer,
   });
 };
 
@@ -72,9 +72,10 @@ export const userProfile = async (
     let userData: UserType | null = await User.findById(
       requstedUser.userId
     ).select(
-      "_id name email mobileNumber weight height userBlocked profileImage publicId healthIssues"
+      "_id name email mobileNumber weight height userBlocked profileImage publicId healthIssues createdAt"
     );
 
+    console.log("userData", userData);
     if (!userData) {
       return res.status(400).json({
         msg: "no user data",
@@ -223,26 +224,41 @@ export const addFoodLog = async (
 };
 
 export const getDay = async (req: express.Request, res: express.Response) => {
-  const userId = "65dc815d67fd459be02c9b73";
+  let requstedUser: any = req.headers["user"];
+  const id = requstedUser.userId;
   const userDate = new Date(req.params.date); // assuming date is passed as a parameter in the request
-  const startOfUserDate = new Date(
-    userDate.getUTCFullYear(),
-    userDate.getUTCMonth(),
-    userDate.getUTCDate()
-  );
-  const startOfNextDate = new Date(
-    userDate.getUTCFullYear(),
-    userDate.getUTCMonth(),
-    userDate.getUTCDate() + 1
-  );
+  console.log("userDate", userDate);
+  // console.log("id", id);
+  // const startOfUserDate = new Date(
+  //   userDate.getUTCFullYear(),
+  //   userDate.getUTCMonth(),
+  //   userDate.getUTCDate()
+  // );
+  // const startOfNextDate = new Date(
+  //   userDate.getUTCFullYear(),
+  //   userDate.getUTCMonth(),
+  //   userDate.getUTCDate() + 1
+  // );
 
-  console.log("date", startOfUserDate);
+  // const startOfUserDate = userDate.setHours(0, 0, 0, 0);
+  // const endOfTheDay = userDate.setHours(23, 59, 59, 999);
 
-  const attandanceData = await Attendance.find({
-    userId: userId,
+  const startOfUserDate = new Date(userDate.setHours(0, 0, 0, 0));
+  const endOfTheDay = new Date(userDate.setHours(23, 59, 59, 999));
+
+  console.log("startOfUserDate", startOfUserDate);
+  console.log("endOfTheDay", endOfTheDay);
+
+  const attandanceData = await Attendance.findOne({
+    userId: id,
     date: {
       $gte: startOfUserDate,
-      $lt: startOfNextDate,
+      $lt: endOfTheDay,
+    },
+  }).populate({
+    path: "foodLogs",
+    populate: {
+      path: "foodId",
     },
   });
 

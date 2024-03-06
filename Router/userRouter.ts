@@ -54,7 +54,7 @@ userRouter.put("/addFoodLog", tokenVerify, addFoodLog);
 
 
 
-userRouter.get("/getDate/:date", getDay);
+userRouter.get("/getDate/:date",tokenVerify, getDay);
 
 // userRouter.get("/attandance", attendance);
 
