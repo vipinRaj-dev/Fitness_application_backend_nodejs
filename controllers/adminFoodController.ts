@@ -4,6 +4,7 @@ import {
   uploadToCloudinary,
 } from "../imageUploadConfig/cloudinary";
 import { Food } from "../models/ListOfFood";
+import { User } from "../models/UserModel";
 
 export const addFood = async (req: express.Request, res: express.Response) => {
   console.log("addFood");
@@ -64,7 +65,7 @@ export const getAllFood = async (
   res: express.Response
 ) => {
   try {
-        const page = parseInt(req.query.page as string) - 1 || 0;
+    const page = parseInt(req.query.page as string) - 1 || 0;
     const limit = parseInt(req.query.limit as string) || 3;
     const search = (req.query.search as string) || "";
     const filter = (req.query.filter as string) || "";
@@ -83,12 +84,18 @@ export const getAllFood = async (
 
     const totalFoodCount = await Food.countDocuments(query);
 
+    const clientId = req.params.id;
+    // console.log("clientid ", clientId);
     const allFood = await Food.find(query)
       .skip(page * limit)
       .limit(limit);
 
+    const user = await User.findById({ _id: clientId });
+    const listOfFood = user?.latestDiet;
+    const foodIds = listOfFood.map((food) => food.foodId);
     res.status(200).json({
       allFood: allFood,
+      listOfFood: foodIds,
       page: page + 1,
       limit,
       totalFoodCount,
@@ -98,6 +105,7 @@ export const getAllFood = async (
     res.status(500).json({ msg: "Error getting all food", error });
   }
 };
+
 
 export const getSingleFood = async (
   req: express.Request,

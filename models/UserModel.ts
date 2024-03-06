@@ -2,14 +2,14 @@ import mongoose, { Schema, Document } from "mongoose";
 
 import { Attendance, AttendanceType } from "./AttendanceModel";
 
-export interface WorkoutTypeFromTrainer extends Document {
+export interface workoutType extends Document {
   _id?: string;
   date: Date;
   workoutId: mongoose.Types.ObjectId;
   workoutSet: [[number, number]];
 }
 
-const SetWorkoutFromTrainer = new Schema(
+const setWorkoutSet = new Schema(
   {
     date: { type: Date, required: true },
     workoutId: { type: mongoose.Types.ObjectId, required: true },
@@ -18,7 +18,7 @@ const SetWorkoutFromTrainer = new Schema(
   { _id: false }
 );
 
-export interface FoodTypeFromTrainer extends Document {
+export interface FoodTypeWithTime extends Document {
   _id?: string;
   date: Date;
   foodId: mongoose.Types.ObjectId;
@@ -27,7 +27,7 @@ export interface FoodTypeFromTrainer extends Document {
   quantity?: number;
 }
 
-const SetFoodFromTrainer = new Schema({
+const setFoodtime = new Schema({
   date: { type: Date, required: true },
   foodId: { type: mongoose.Types.ObjectId, ref: "Food", required: true },
   timePeriod: {
@@ -81,8 +81,8 @@ export interface UserType extends Document {
   // attendance?: [AttendanceType];
   subscriptionDetails?: mongoose.Types.ObjectId[];
   trainerPaymentDetails?: mongoose.Types.ObjectId[];
-  latestWorkoutByTrainer?: [WorkoutTypeFromTrainer];
-  latestFoodByTrainer?: [FoodTypeFromTrainer];
+  latestWorkout?: [workoutType];
+  latestDiet?: [FoodTypeWithTime];
   trialEndsAt: Date;
   attendanceId: mongoose.Types.ObjectId;
   createdAt?: Date;
@@ -119,8 +119,8 @@ const UserSchema: Schema<UserType> = new Schema(
       ref: "TrainerPayment",
     },
 
-    latestWorkoutByTrainer: [SetWorkoutFromTrainer],
-    latestFoodByTrainer: [SetFoodFromTrainer],
+    latestWorkout: [setWorkoutSet],
+    latestDiet: [setFoodtime],
 
     trialEndsAt: Date,
     attendanceId: { type: mongoose.Schema.Types.ObjectId, ref: "Attendance" },

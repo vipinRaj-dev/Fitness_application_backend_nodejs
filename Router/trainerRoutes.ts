@@ -7,16 +7,7 @@ import {
   trainerProfileImageUpdate,
 } from "../controllers/trainerProfileController";
 import upload from "../middleware/upload";
-import {
-  SingleClient,
-  TrainerGetAllFood,
-  addFoodTrainer,
-  allClients,
-  removeFoodTrainer,
-  setTime,
-  singleFoodDelete,
-} from "../controllers/trainerUserControllers";
-import { getAllFood } from "../controllers/adminFoodController";
+import { allClients } from "../controllers/trainerUserControllers";
 import { isTrainerBlocked } from "../middleware/trainerBlock";
 
 const trainerRouter: express.Router = express.Router();
@@ -45,24 +36,24 @@ trainerRouter.delete(
 
 trainerRouter.get("/allClients", tokenVerify, allClients);
 
-trainerRouter.get("/client/:id", SingleClient);
+// trainerRouter.get("/client/:id", SingleClient);
 
-trainerRouter.get("/allFood/:id", TrainerGetAllFood);
-                                
-trainerRouter.post("/addFood/:id", tokenVerify, addFoodTrainer);
+// trainerRouter.get("/allFood/:id", TrainerGetAllFood);
 
-trainerRouter.delete(
-  "/deleteFood/:clientId/:foodId",
-  tokenVerify,
-  removeFoodTrainer
-);
+// trainerRouter.post("/addFood/:id", tokenVerify, addFoodTrainer);
 
-trainerRouter.delete(
-  "/singleFoodDelete/:clientId/:foodDocId",
-  tokenVerify,
-  singleFoodDelete
-);
+// trainerRouter.delete(
+//   "/deleteFood/:clientId/:foodId",
+//   tokenVerify,
+//   removeFoodTrainer
+// );
 
-trainerRouter.put("/addTimeDetails/:clientId/:foodDocId", tokenVerify, setTime);
+// trainerRouter.delete(
+//   "/singleFoodDelete/:clientId/:foodDocId",
+//   tokenVerify,
+//   singleFoodDelete
+// );
+
+// trainerRouter.put("/addTimeDetails/:clientId/:foodDocId", tokenVerify, setTime);
 
 export default trainerRouter;

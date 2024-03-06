@@ -12,6 +12,7 @@ import trainerRoutes from "./Router/trainerRoutes";
 import { User } from "./models/UserModel";
 import { Attendance } from "./models/AttendanceModel";
 import { FoodLog } from "./models/FoodLogModel";
+import foodRouter from "./Router/router";
 const app: express.Application = express();
 
 //cors
@@ -47,6 +48,8 @@ app.use("/user", userRouter);
 
 app.use("/trainer", trainerRoutes);
 
+app.use('/food' , foodRouter)
+
 async function markAttendance() {
   const users = await User.find({
     $or: [{ isPremiumUser: true }, { trialEndsAt: { $gte: new Date() } }],
@@ -69,8 +72,8 @@ async function markAttendance() {
     if (!existingAttendance) { 
 
 
-      // creating food logs for each food in the latestFoodByTrainer
-      const foodLogsIds = await Promise.all(user.latestFoodByTrainer.map(async (food) => {
+      // creating food logs for each food in the latestDiet
+      const foodLogsIds = await Promise.all(user.latestDiet.map(async (food) => {
 
 
         const foodLogData = new FoodLog({
