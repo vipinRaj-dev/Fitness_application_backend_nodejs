@@ -50,6 +50,8 @@ let receiptUrl: string;
 const endpointSecret =
   "whsec_fecaf7dd03cff4bae38d6e153a36ed764714f82ea43044821c6e464f741209fd";
 
+
+
 export const handleWebhook = async (request, response) => {
   const sig = request.headers["stripe-signature"];
 
@@ -89,16 +91,16 @@ export const handleWebhook = async (request, response) => {
 
   // Return a 200 response to acknowledge receipt of the event
   if (userId && transactionId && receiptUrl && !metadata.trainer_reference_id) {
-    console.log(
-      "userId",
-      userId,
-      "transactionId",
-      transactionId,
-      "receiptUrl",
-      receiptUrl,
-      "metadata",
-      metadata
-    );
+    // console.log(
+    //   "userId",
+    //   userId,
+    //   "transactionId",
+    //   transactionId,
+    //   "receiptUrl",
+    //   receiptUrl,
+    //   "metadata",
+    //   metadata
+    // );
     const updateAdminPayment = async () => {
       const paymentDocument = new AdminPayment({
         planSelected: metadata.selectedPlan,
@@ -139,16 +141,16 @@ export const handleWebhook = async (request, response) => {
     metadata &&
     metadata.trainer_reference_id
   ) {
-    console.log(
-      "userId",
-      userId,
-      "transactionId",
-      transactionId,
-      "receiptUrl",
-      receiptUrl,
-      "metadata",
-      metadata.trainer_reference_id
-    );
+    // console.log(
+    //   "userId",
+    //   userId,
+    //   "transactionId",
+    //   transactionId,
+    //   "receiptUrl",
+    //   receiptUrl,
+    //   "metadata",
+    //   metadata.trainer_reference_id
+    // );
     const updateTrainerPayment = async () => {
       const paymentDocument = new TrainerPayment({
         planSelected: metadata.selectedPlan,

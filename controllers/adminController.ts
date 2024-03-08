@@ -3,6 +3,7 @@ import { Admin, AdminType } from "../models/AdminModel";
 import { User, UserType } from "../models/UserModel";
 import { Trainer, TrainerType } from "../models/TrainerModel";
 import { hashPassword } from "../utils/password";
+import { AdminPayment } from "../models/PaymentsModel";
 
 interface RequestedUser {
   email: string;
@@ -330,6 +331,25 @@ export const trainerProfileEdit = async (
         .status(200)
         .json({ message: "Trainer updated", user: isTrainerUpdated });
     }
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: error.message });
+  }
+};
+
+// payment controllers
+
+export const getAdminPayments = async (
+  req: express.Request,
+  res: express.Response
+) => {
+  try {
+    const payments = await AdminPayment.find().populate({
+      path : 'clientDetails',
+      select : 'name email isPremium dueDate profileImage'
+    })
+    console.log('payments' , payments);
+    res.status(200).json({ payments });
   } catch (error) {
     console.error(error);
     res.status(500).json({ message: error.message });

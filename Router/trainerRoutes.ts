@@ -7,7 +7,7 @@ import {
   trainerProfileImageUpdate,
 } from "../controllers/trainerProfileController";
 import upload from "../middleware/upload";
-import { allClients } from "../controllers/trainerUserControllers";
+import { allClients, getClientFoodDetails } from "../controllers/trainerUserControllers";
 import { isTrainerBlocked } from "../middleware/trainerBlock";
 
 const trainerRouter: express.Router = express.Router();
@@ -36,24 +36,6 @@ trainerRouter.delete(
 
 trainerRouter.get("/allClients", tokenVerify, allClients);
 
-// trainerRouter.get("/client/:id", SingleClient);
-
-// trainerRouter.get("/allFood/:id", TrainerGetAllFood);
-
-// trainerRouter.post("/addFood/:id", tokenVerify, addFoodTrainer);
-
-// trainerRouter.delete(
-//   "/deleteFood/:clientId/:foodId",
-//   tokenVerify,
-//   removeFoodTrainer
-// );
-
-// trainerRouter.delete(
-//   "/singleFoodDelete/:clientId/:foodDocId",
-//   tokenVerify,
-//   singleFoodDelete
-// );
-
-// trainerRouter.put("/addTimeDetails/:clientId/:foodDocId", tokenVerify, setTime);
+trainerRouter.get('/getFood/:userId/:date', tokenVerify, getClientFoodDetails);
 
 export default trainerRouter;

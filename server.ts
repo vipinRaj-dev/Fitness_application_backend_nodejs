@@ -12,7 +12,7 @@ import trainerRoutes from "./Router/trainerRoutes";
 import { User } from "./models/UserModel";
 import { Attendance } from "./models/AttendanceModel";
 import { FoodLog } from "./models/FoodLogModel";
-import foodRouter from "./Router/router";
+import foodRouter from "./Router/foodRouter";
 const app: express.Application = express();
 
 //cors

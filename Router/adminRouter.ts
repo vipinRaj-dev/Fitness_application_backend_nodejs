@@ -7,6 +7,7 @@ import {
   createTrainer,
   createUser,
   dashboard,
+  getAdminPayments,
   getAllTrainers,
   getAllUsers,
   getTrainer,
@@ -58,5 +59,11 @@ adminRouter.get("/trainer/:id", getTrainer);
 adminRouter.put("/trainer/:id", trainerProfileEdit);
 
 adminRouter.put("/trainer/block/:id", blockTrainer);
+
+
+
+// payment routes
+
+adminRouter.get("/payments", getAdminPayments);
 
 export default adminRouter;

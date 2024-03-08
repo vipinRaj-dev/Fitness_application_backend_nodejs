@@ -13,7 +13,7 @@ export const AdminPaymentSchema: Schema<AdminPaymentType> = new Schema(
   {
     planSelected: String,
     transactionId: String,
-    clientDetails: mongoose.Types.ObjectId,
+    clientDetails: {type : Schema.Types.ObjectId , ref : 'User'},
     amount: Number,
     receiptUrl: String,
   },

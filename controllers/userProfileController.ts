@@ -13,8 +13,6 @@ export const userHomePage = async (
   req: express.Request,
   res: express.Response
 ) => {
-  console.log("userHomePage");
-
   type dietFoodType = {
     _id: string;
     trainerId: string;
@@ -57,6 +55,7 @@ export const userHomePage = async (
     dietFood: userDetails?.attendanceId?.foodLogs,
     addedFoodDocIds: eatedFoodDocIds,
     hasTrainer,
+    attendanceDocId: userDetails?.attendanceId?._id,
   });
 };
 
@@ -191,7 +190,9 @@ export const addFoodLog = async (
   res: express.Response
 ) => {
   try {
-    const { time, foodDocId } = req.body;
+    const { time, foodDocId, attendanceId } = req.body;
+
+    console.log("attendanceId", attendanceId);
 
     const currentTime = new Date();
     const foodTime = new Date();
@@ -212,6 +213,8 @@ export const addFoodLog = async (
         // console.log("foodLogData", foodLogData);
         foodLogData.status = true;
         await foodLogData.save();
+        await Attendance.findByIdAndUpdate(attendanceId, { isPresent: true });
+
         res.status(200).json({ msg: "food log added successfully" });
       }
     } else {
@@ -227,21 +230,7 @@ export const getDay = async (req: express.Request, res: express.Response) => {
   let requstedUser: any = req.headers["user"];
   const id = requstedUser.userId;
   const userDate = new Date(req.params.date); // assuming date is passed as a parameter in the request
-  console.log("userDate", userDate);
-  // console.log("id", id);
-  // const startOfUserDate = new Date(
-  //   userDate.getUTCFullYear(),
-  //   userDate.getUTCMonth(),
-  //   userDate.getUTCDate()
-  // );
-  // const startOfNextDate = new Date(
-  //   userDate.getUTCFullYear(),
-  //   userDate.getUTCMonth(),
-  //   userDate.getUTCDate() + 1
-  // );
-
-  // const startOfUserDate = userDate.setHours(0, 0, 0, 0);
-  // const endOfTheDay = userDate.setHours(23, 59, 59, 999);
+  // console.log("userDate", userDate);
 
   const startOfUserDate = new Date(userDate.setHours(0, 0, 0, 0));
   const endOfTheDay = new Date(userDate.setHours(23, 59, 59, 999));
@@ -262,7 +251,7 @@ export const getDay = async (req: express.Request, res: express.Response) => {
     },
   });
 
-  console.log("attandanceData", attandanceData);
+  // console.log("attandanceData", attandanceData);
   res.status(200).json({ msg: "attandanceData", attandanceData });
 };
 
