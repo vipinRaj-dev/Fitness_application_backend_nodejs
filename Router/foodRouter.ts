@@ -4,15 +4,21 @@ import {
   clientDetailsAndLatestFood,
   decreasePerFoodQuantity,
   deletePerFood,
+  getAllFood,
   setTimeDetails,
 } from "../controllers/userTrainerFoodController";
-import { getAllFood } from "../controllers/adminFoodController";
+
+
+// import { getAllFood } from "../controllers/adminFoodController";
 
 const foodRouter: express.Router = express.Router();
 
 foodRouter.get("/client/:id", clientDetailsAndLatestFood);
 
+// foodRouter.get("/allFood/:id", getAllFood);
+
 foodRouter.get("/allFood/:id", getAllFood);
+
 
 foodRouter.post("/addFood/:id", addFoodToLatestDiet);
 

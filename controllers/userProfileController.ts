@@ -74,7 +74,7 @@ export const userProfile = async (
       "_id name email mobileNumber weight height userBlocked profileImage publicId healthIssues createdAt"
     );
 
-    console.log("userData", userData);
+    // console.log("userData", userData);
     if (!userData) {
       return res.status(400).json({
         msg: "no user data",

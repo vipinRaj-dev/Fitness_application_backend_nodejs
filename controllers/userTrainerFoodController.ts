@@ -77,7 +77,7 @@ export const deletePerFood = async (
     res.status(500).json({ msg: "server error" });
   }
 };
-
+  
 export const getAllFood = async (
   req: express.Request,
   res: express.Response

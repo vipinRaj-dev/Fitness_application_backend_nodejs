@@ -30,4 +30,35 @@ const removeFromCloudinary = async (public_id) => {
     console.log(result);
   });
 };
-export { uploadToCloudinary, removeFromCloudinary };
+
+const uploadVideoToCloudinary = async (path: string, folder: string) => {
+  return cloudinary.uploader
+    .upload(path, { resource_type: "video", folder })
+    .then((data: UploadApiResponse) => {
+      return { url: data.url, public_id: data.public_id };
+    })
+    .catch((error) => {
+      throw error
+      console.log("error while uplaoding video to cloudinary", error);
+    });
+};
+
+const removeVideoFromCloudinary = async (public_id) => {
+  await cloudinary.uploader.destroy(
+    public_id,
+    { resource_type: "video" },
+    (error, result) => {
+      if (error) {
+        console.log(error);
+      }
+      console.log(result);
+    }
+  );
+};
+
+export {
+  uploadToCloudinary,
+  removeFromCloudinary,
+  removeVideoFromCloudinary,
+  uploadVideoToCloudinary,
+};

@@ -17,7 +17,7 @@ import {
 } from "../controllers/adminController";
 import { isAdmin } from "../middleware/isAdmin";
 import upload from "../middleware/upload";
-import { addFood, deleteFood, getAllFood, getSingleFood, updateFood } from "../controllers/adminFoodController";
+import { addFood, addWorkout, deleteFood, deleteWorkout, getAllFood, getAllWorkout, getSingleFood, getSingleWorkout, updateFood, updateWorkout } from "../controllers/adminFoodController";
 
 const adminRouter: express.Router = express.Router();
 
@@ -47,6 +47,16 @@ adminRouter.get("/food/:id", getSingleFood)
 adminRouter.put("/editFood/:id", upload.single("image"), updateFood)
 
 adminRouter.delete("/deleteFood/:id", deleteFood)
+
+adminRouter.post('/addWorkout' , upload.single('video') , addWorkout)
+
+adminRouter.get('/workouts' , getAllWorkout)
+
+adminRouter.delete('/deleteWorkout/:workoutId' , deleteWorkout)
+
+adminRouter.get('/workout/:workoutId' , getSingleWorkout)
+
+adminRouter.put('/editWorkout/:workoutId' , upload.single('video') , updateWorkout)
 
 // TRAINER ROUTES
 

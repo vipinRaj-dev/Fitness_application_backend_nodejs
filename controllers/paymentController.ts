@@ -42,17 +42,15 @@ export const createCheckoutSession = async (req: any, res: any) => {
   res.json({ id: session.id });
 };
 
-let userId: string;
-let metadata: any;
-let transactionId: string;
-let receiptUrl: string;
 // This is your Stripe CLI webhook secret for testing your endpoint locally.
 const endpointSecret =
   "whsec_fecaf7dd03cff4bae38d6e153a36ed764714f82ea43044821c6e464f741209fd";
 
-
-
 export const handleWebhook = async (request, response) => {
+  let userId: string;
+  let metadata: any;
+  let transactionId: string;
+  // let receiptUrl: string;
   const sig = request.headers["stripe-signature"];
 
   let event;
@@ -68,29 +66,33 @@ export const handleWebhook = async (request, response) => {
   // Handle the event
   switch (event.type) {
     case "payment_intent.succeeded":
-      const paymentIntent = event.data.object;
-      transactionId = paymentIntent.id;
+      // const paymentIntent = event.data.object;
+      // transactionId = paymentIntent.id;
+      // console.log('payemntIntent' , paymentIntent)
       //   console.log("Transaction ID is", transactionId);
       break;
     case "checkout.session.completed":
       const session = event.data.object;
       userId = session.client_reference_id;
       metadata = session.metadata;
-      console.log("Checkout Session completed!", metadata);
+      transactionId = session.payment_intent
+      // console.log("Checkout Session completed!", metadata);
+      // console.log("session", session);
       //   console.log("userId is", userId);
       break;
 
     case "charge.succeeded":
-      const charge = event.data.object;
-      receiptUrl = charge.receipt_url;
-      //   console.log("Receipt URL is", receiptUrl);
+      // const charge = event.data.object;
+      // receiptUrl = charge.receipt_url;
+      // console.log("Charge Succeeded!", charge);
+      //   console.log("Receipt URL is", receiptUrl);  
       break;
     default:
-    //   console.log(`Unhandled event type ${event.type}`);
+      // console.log(`Unhandled event type ${event.type}`);
   }
 
   // Return a 200 response to acknowledge receipt of the event
-  if (userId && transactionId && receiptUrl && !metadata.trainer_reference_id) {
+  if (userId && !metadata.trainer_reference_id) {
     // console.log(
     //   "userId",
     //   userId,
@@ -104,10 +106,9 @@ export const handleWebhook = async (request, response) => {
     const updateAdminPayment = async () => {
       const paymentDocument = new AdminPayment({
         planSelected: metadata.selectedPlan,
-        transactionId: transactionId,
+        transactionId : transactionId,
         clientDetails: userId,
         amount: metadata.amountPaid,
-        receiptUrl: receiptUrl,
       });
       await paymentDocument.save();
 
@@ -127,17 +128,15 @@ export const handleWebhook = async (request, response) => {
           $push: { subscriptionDetails: paymentDocument._id },
         }
       );
-      userId = "";
-      metadata = "";
-      transactionId = "";
-      receiptUrl = "";
+      // userId = "";
+      // metadata = "";
+      // transactionId = "";
+      // receiptUrl = "";
     };
     await updateAdminPayment();
   }
   if (
     userId &&
-    transactionId &&
-    receiptUrl &&
     metadata &&
     metadata.trainer_reference_id
   ) {
@@ -154,11 +153,10 @@ export const handleWebhook = async (request, response) => {
     const updateTrainerPayment = async () => {
       const paymentDocument = new TrainerPayment({
         planSelected: metadata.selectedPlan,
-        transactionId: transactionId,
         clientDetails: userId,
         trainersId: metadata.trainer_reference_id,
         amount: metadata.amountPaid,
-        receiptUrl: receiptUrl,
+        transactionId : transactionId
       });
       await paymentDocument.save();
 
@@ -189,10 +187,8 @@ export const handleWebhook = async (request, response) => {
         }
       );
 
-      userId = "";
-      metadata = "";
-      transactionId = "";
-      receiptUrl = "";
+      // userId = "";
+      // metadata = "";
     };
     await updateTrainerPayment();
   }
