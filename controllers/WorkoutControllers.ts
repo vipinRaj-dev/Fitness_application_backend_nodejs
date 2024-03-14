@@ -220,3 +220,28 @@ export const deleteWorkoutSet = async (
     res.status(500).json({ message: "Internal Server Error" });
   }
 };
+
+export const deleteWorkout = async (
+  req: express.Request,
+  res: express.Response
+) => {
+  try {
+    const { documentId, workoutSetId } = req.params;
+    console.log('deleteWorkout', documentId, workoutSetId)
+    const workoutLog = await WorkoutLog.findOne({ _id: documentId });
+    const workoutfound = workoutLog?.workOuts.find((workout) => {
+      return workout._id.toString() == workoutSetId;
+    });
+
+    if (workoutfound) {
+      workoutLog?.workOuts.pull({ _id: workoutfound._id });
+      await workoutLog?.save();
+      res.status(200).json({ message: "Workout Set deleted Successfully" });
+    } else {
+      res.status(404).json({ message: "Workout Set not found" });
+    }
+  } catch (error) {
+    console.log(error);
+    res.status(500).json({ message: "Internal Server Error" });
+  }
+};

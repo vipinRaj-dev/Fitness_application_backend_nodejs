@@ -1,5 +1,6 @@
 import express from "express";
 import {
+  deleteWorkout,
     deleteWorkoutSet,
   editSet,
   getTrainerWorkouts,
@@ -21,5 +22,7 @@ workoutRouter.delete(
   "/deleteSet/:documentId/:workoutSetId/:eachWorkoutSetId" ,
   deleteWorkoutSet
 );
+
+workoutRouter.delete('/deleteWorkout/:documentId/:workoutSetId', deleteWorkout)
 
 export default workoutRouter;
