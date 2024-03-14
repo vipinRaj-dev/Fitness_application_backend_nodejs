@@ -8,7 +8,7 @@ interface ListOfWorkouts extends Document {
   videoUrl: string;
   publicId: string;
   thumbnailUrl: string;
-  createdAt: Date;
+  createdAt: Date; 
 }
 
 const ListOfWorkoutsSchema = new Schema<ListOfWorkouts>({

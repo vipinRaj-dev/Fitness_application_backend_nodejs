@@ -17,7 +17,8 @@ import {
 } from "../controllers/adminController";
 import { isAdmin } from "../middleware/isAdmin";
 import upload from "../middleware/upload";
-import { addFood, addWorkout, deleteFood, deleteWorkout, getAllFood, getAllWorkout, getSingleFood, getSingleWorkout, updateFood, updateWorkout } from "../controllers/adminFoodController";
+import { addFood, deleteFood, getAllFood, getSingleFood, updateFood } from "../controllers/adminFoodController";
+import { addWorkout, deleteWorkout, getAllWorkout, getSingleWorkout, updateWorkout } from "../controllers/adminWorkoutController";
 
 const adminRouter: express.Router = express.Router();
 

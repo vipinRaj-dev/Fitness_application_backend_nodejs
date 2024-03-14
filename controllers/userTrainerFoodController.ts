@@ -4,7 +4,7 @@ import { Trainer } from "../models/TrainerModel";
 import { User } from "../models/UserModel";
 import { Food } from "../models/ListOfFood";
 
-export const clientDetailsAndLatestFood = async (
+export const clientDetailsAndLatestFood = async ( 
   req: express.Request,
   res: express.Response
 ) => {

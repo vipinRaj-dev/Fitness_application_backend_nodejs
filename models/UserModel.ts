@@ -1,22 +1,30 @@
 import mongoose, { Schema, Document } from "mongoose";
 
-import { Attendance, AttendanceType } from "./AttendanceModel";
-
 export interface workoutType extends Document {
-  _id?: string;
+  _id: string;
   date: Date;
   workoutId: mongoose.Types.ObjectId;
-  workoutSet: [[number, number]];
+  workoutSet: [
+    {
+      reps: number;
+      weight: number;
+    }
+  ];
 }
 
-const setWorkoutSet = new Schema(
-  {
-    date: { type: Date, required: true },
-    workoutId: { type: mongoose.Types.ObjectId, required: true },
-    workoutSet: { type: [[Number, Number]], required: true },
+const setWorkoutSet = new Schema({
+  date: { type: Date, required: true },
+  workoutId: { type: mongoose.Types.ObjectId, required: true },
+  workoutSet: {
+    type: [
+      {
+        reps: Number,
+        weight: Number,
+      },
+    ],
+    required: true,
   },
-  { _id: false }
-);
+});
 
 export interface FoodTypeWithTime extends Document {
   _id?: string;
@@ -32,7 +40,6 @@ const setFoodtime = new Schema({
   foodId: { type: mongoose.Types.ObjectId, ref: "Food", required: true },
   timePeriod: {
     type: String,
-
     default: "morning",
   },
   time: { type: String, default: "00:00" },
@@ -81,7 +88,7 @@ export interface UserType extends Document {
   // attendance?: [AttendanceType];
   subscriptionDetails?: mongoose.Types.ObjectId[];
   trainerPaymentDetails?: mongoose.Types.ObjectId[];
-  latestWorkout?: [workoutType];
+  // latestWorkout?: [workoutType];
   latestDiet?: [FoodTypeWithTime];
   trialEndsAt: Date;
   attendanceId: mongoose.Types.ObjectId;
@@ -97,11 +104,11 @@ const UserSchema: Schema<UserType> = new Schema(
     email: { type: String, required: true, unique: true },
     mobileNumber: Number,
     password: { type: String, required: true },
-    weight: { type: Number, default: 0 },
+    weight: { type: Number, default: 0 }, 
     height: { type: Number, default: 0 },
     role: { type: String, default: "user" },
     userBlocked: { type: Boolean, default: false },
-    healthIssues: { type: HealthIssuesSchema ,default: {} },
+    healthIssues: { type: HealthIssuesSchema, default: {} },
     isPremiumUser: { type: Boolean, default: false },
     trainerId: mongoose.Types.ObjectId,
     dueDate: Date,
@@ -119,12 +126,11 @@ const UserSchema: Schema<UserType> = new Schema(
       ref: "TrainerPayment",
     },
 
-    latestWorkout: [setWorkoutSet],
+    // latestWorkout: [setWorkoutSet],
     latestDiet: [setFoodtime],
 
     trialEndsAt: Date,
     attendanceId: { type: mongoose.Schema.Types.ObjectId, ref: "Attendance" },
-  
   },
   { timestamps: true }
 );

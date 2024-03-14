@@ -13,6 +13,7 @@ import { User } from "./models/UserModel";
 import { Attendance } from "./models/AttendanceModel";
 import { FoodLog } from "./models/FoodLogModel";
 import foodRouter from "./Router/foodRouter";
+import workoutRouter from "./Router/workoutRouter";
 const app: express.Application = express();
 
 //cors
@@ -49,6 +50,8 @@ app.use("/user", userRouter);
 app.use("/trainer", trainerRoutes);
 
 app.use('/food' , foodRouter)
+
+app.use('/workouts' , workoutRouter)
 
 async function markAttendance() {
   const users = await User.find({
