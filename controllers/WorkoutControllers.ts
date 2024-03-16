@@ -31,6 +31,8 @@ export type WorkoutLogType = {
   updatedAt: Date;
 };
 
+// Trainer realted controllers
+
 export const getWorkouts = async (
   req: express.Request,
   res: express.Response
@@ -221,13 +223,39 @@ export const deleteWorkoutSet = async (
   }
 };
 
+export const addNewSet = async (
+  req: express.Request,
+  res: express.Response
+) => {
+  try {
+    const { documentId, workoutSetId, reps, weight } = req.body;
+
+    const workoutLog = await WorkoutLog.findOne({ _id: documentId });
+
+    const workoutfound = workoutLog?.workOuts.find((workout) => {
+      return workout._id == workoutSetId;
+    });
+
+    if (workoutfound) {
+      workoutfound.workoutSet.push({ reps, weight, completedReps: 0 });
+      await workoutLog?.save();
+      res.status(200).json({ message: "Workout Add Set Successfully" });
+    }else{
+      res.status(404).json({ message: "Workout Set not found" });
+    }
+  } catch (error) {
+    console.log(error);
+    res.status(500).json({ message: "Internal Server Error" });
+  }
+};
+
 export const deleteWorkout = async (
   req: express.Request,
   res: express.Response
 ) => {
   try {
     const { documentId, workoutSetId } = req.params;
-    console.log('deleteWorkout', documentId, workoutSetId)
+    console.log("deleteWorkout", documentId, workoutSetId);
     const workoutLog = await WorkoutLog.findOne({ _id: documentId });
     const workoutfound = workoutLog?.workOuts.find((workout) => {
       return workout._id.toString() == workoutSetId;
@@ -239,6 +267,69 @@ export const deleteWorkout = async (
       res.status(200).json({ message: "Workout Set deleted Successfully" });
     } else {
       res.status(404).json({ message: "Workout Set not found" });
+    }
+  } catch (error) {
+    console.log(error);
+    res.status(500).json({ message: "Internal Server Error" });
+  }
+};
+
+// user with trainer related controllers
+
+export const getWorkoutsUser = async (
+  req: express.Request,
+  res: express.Response
+) => {
+  try {
+    let { userId }: any = req.headers["user"];
+
+    console.log(userId);
+    const date = new Date();
+    const startDate = date.setHours(0, 0, 0, 0);
+    const endDate = date.setHours(23, 59, 59, 999);
+    const workOutLogData = await WorkoutLog.findOne({
+      userId,
+      date: { $gte: startDate, $lt: endDate },
+    }).populate("workOuts.workoutId");
+
+    if (workOutLogData) {
+      console.log(workOutLogData);
+
+      res.status(200).json({
+        workOutData: workOutLogData.workOuts,
+        documentId: workOutLogData._id,
+      });
+    } else {
+      res.status(404).json({ message: "No Workouts Found" });
+    }
+  } catch (error) {
+    console.log(error);
+    res.status(500).json({ message: "Internal Server Error" });
+  }
+};
+
+export const updateCompletedReps = async (
+  req: express.Request,
+  res: express.Response
+) => {
+  try {
+    const { documentId, workoutSetId, eachWorkoutSetId, completedReps } =
+      req.body;
+
+    const workoutLog = await WorkoutLog.findOne({ _id: documentId });
+
+    const workoutfound = workoutLog?.workOuts.find((workout) => {
+      return workout._id == workoutSetId;
+    });
+
+    const foundSet = workoutfound?.workoutSet.find((set) => {
+      return set._id == eachWorkoutSetId;
+    });
+
+    if (foundSet) {
+      foundSet.completedReps = completedReps;
+      await workoutLog?.save();
+      res.status(200).json({ message: "Workout Set Successfully" });
     }
   } catch (error) {
     console.log(error);

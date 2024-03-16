@@ -59,33 +59,36 @@ export const allClients = async (
     res.status(500).json({ message: error.message });
   }
 };
-export const getClientFoodDetails = async (
-  req : express.Request,
-  res : express.Response
-) => {
 
-  const { userId, date } = req.params;
-  console.log(userId, date); 
-  const userDate = new Date(req.params.date);
-  const startOfUserDate = new Date(userDate.setHours(0, 0, 0, 0));
-  const endOfTheDay = new Date(userDate.setHours(23, 59, 59, 999));
 
-  console.log("startOfUserDate", startOfUserDate);
-  console.log("endOfTheDay", endOfTheDay);
 
-  const attandanceData = await Attendance.findOne({
-    userId: userId,
-    date: {
-      $gte: startOfUserDate,
-      $lt: endOfTheDay,
-    },
-  }).populate({
-    path: "foodLogs",
-    populate: {
-      path: "foodId",
-    },
-  });
+// export const getClientFoodDetails = async (
+//   req : express.Request,
+//   res : express.Response
+// ) => {
+ 
+//   const { userId, date } = req.params;
+//   console.log(userId, date); 
+//   const userDate = new Date(req.params.date);
+//   const startOfUserDate = new Date(userDate.setHours(0, 0, 0, 0));
+//   const endOfTheDay = new Date(userDate.setHours(23, 59, 59, 999));
 
-  // console.log("attandanceData", attandanceData);
-  res.status(200).json({ msg: "attandanceData", attandanceData });
-}
+//   console.log("startOfUserDate", startOfUserDate);
+//   console.log("endOfTheDay", endOfTheDay);
+
+//   const attandanceData = await Attendance.findOne({
+//     userId: userId,
+//     date: {
+//       $gte: startOfUserDate,
+//       $lt: endOfTheDay,
+//     },
+//   }).populate({
+//     path: "foodLogs",
+//     populate: {
+//       path: "foodId",
+//     },
+//   });
+
+//   // console.log("attandanceData", attandanceData);
+//   res.status(200).json({ msg: "attandanceData", attandanceData });
+// }

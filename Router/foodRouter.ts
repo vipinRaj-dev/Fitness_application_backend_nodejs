@@ -5,20 +5,17 @@ import {
   decreasePerFoodQuantity,
   deletePerFood,
   getAllFood,
+  getClientFoodDetails,
   setTimeDetails,
 } from "../controllers/userTrainerFoodController";
 
 
-// import { getAllFood } from "../controllers/adminFoodController";
 
 const foodRouter: express.Router = express.Router();
 
 foodRouter.get("/client/:id", clientDetailsAndLatestFood);
 
-// foodRouter.get("/allFood/:id", getAllFood);
-
 foodRouter.get("/allFood/:id", getAllFood);
-
 
 foodRouter.post("/addFood/:id", addFoodToLatestDiet);
 
@@ -28,6 +25,7 @@ foodRouter.delete("/deletePerFood/:clientId/:foodDocId", deletePerFood);
 
 foodRouter.delete("/deleteFood/:clientId/:foodId", decreasePerFoodQuantity);
 
+foodRouter.get('/getFood/:userId/:date', getClientFoodDetails);
 
 
 

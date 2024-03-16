@@ -3,8 +3,9 @@ import express from "express";
 import { Trainer } from "../models/TrainerModel";
 import { User } from "../models/UserModel";
 import { Food } from "../models/ListOfFood";
+import { Attendance } from "../models/AttendanceModel";
 
-export const clientDetailsAndLatestFood = async ( 
+export const clientDetailsAndLatestFood = async (
   req: express.Request,
   res: express.Response
 ) => {
@@ -77,7 +78,7 @@ export const deletePerFood = async (
     res.status(500).json({ msg: "server error" });
   }
 };
-  
+
 export const getAllFood = async (
   req: express.Request,
   res: express.Response
@@ -159,33 +160,68 @@ export const addFoodToLatestDiet = async (
   }
 };
 
-
 export const decreasePerFoodQuantity = async (
-    req: express.Request,
-    res: express.Response
-  ) => {
-    try {
-      const clientId = req.params.clientId;
-      const foodId = req.params.foodId;
-      console.log(foodId);
-      const client = await User.findById(clientId);
-  
-      const findFood = client.latestDiet.find((food: any) => {
-        // console.log(food);
-        return food.foodId == foodId;
-      });
-  
-      // console.log("findFood" , findFood);
-  
-      const ans = await User.updateOne(
-        { _id: clientId },
-        { $pull: { latestDiet: { _id: findFood._id } } }
-      );
-  
-      // console.log(ans);
-      res.status(200).json({ msg: "food removed" });
-    } catch (error) {
-      console.error(error);
-    }
-  };
-  
+  req: express.Request,
+  res: express.Response
+) => {
+  try {
+    const clientId = req.params.clientId;
+    const foodId = req.params.foodId;
+    console.log(foodId);
+    const client = await User.findById(clientId);
+
+    const findFood = client.latestDiet.find((food: any) => {
+      // console.log(food);
+      return food.foodId == foodId;
+    });
+
+    // console.log("findFood" , findFood);
+
+    const ans = await User.updateOne(
+      { _id: clientId },
+      { $pull: { latestDiet: { _id: findFood._id } } }
+    );
+
+    // console.log(ans);
+    res.status(200).json({ msg: "food removed" });
+  } catch (error) {
+    console.error(error);
+  }
+};
+
+export const getClientFoodDetails = async (
+  req: express.Request,
+  res: express.Response
+) => {
+  const { userId, date } = req.params;
+  console.log(userId, date);
+  const userDate = new Date(req.params.date);
+  const startOfUserDate = new Date(userDate.setHours(0, 0, 0, 0));
+  const endOfTheDay = new Date(userDate.setHours(23, 59, 59, 999));
+
+  console.log("startOfUserDate", startOfUserDate);
+  console.log("endOfTheDay", endOfTheDay);
+
+  const attandanceData = await Attendance.findOne({
+    userId: userId,
+    date: {
+      $gte: startOfUserDate,
+      $lt: endOfTheDay,
+    },
+  })
+    .populate({
+      path: "foodLogs",
+      populate: {
+        path: "foodId",
+      },
+    })
+    .populate({
+      path: 'workOutLogs',
+      populate: {
+        path: 'workOuts.workoutId'
+      }
+    });
+
+  // console.log("attandanceData", attandanceData.workOutLogs);
+  res.status(200).json({ msg: "attandanceData", attandanceData });
+};
