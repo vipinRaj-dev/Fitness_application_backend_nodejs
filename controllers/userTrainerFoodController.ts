@@ -66,12 +66,12 @@ export const deletePerFood = async (
     const clientId = req.params.clientId;
     const foodDocId = req.params.foodDocId;
 
-    console.log(clientId, foodDocId);
+    // console.log(clientId, foodDocId);
     const ans = await User.updateOne(
       { _id: clientId },
       { $pull: { latestDiet: { _id: foodDocId } } }
     );
-    console.log(ans);
+    // console.log(ans);
     res.status(200).json({ msg: "food removed" });
   } catch (error) {
     console.error(error);
@@ -167,7 +167,7 @@ export const decreasePerFoodQuantity = async (
   try {
     const clientId = req.params.clientId;
     const foodId = req.params.foodId;
-    console.log(foodId);
+    // console.log(foodId);
     const client = await User.findById(clientId);
 
     const findFood = client.latestDiet.find((food: any) => {
@@ -194,13 +194,13 @@ export const getClientFoodDetails = async (
   res: express.Response
 ) => {
   const { userId, date } = req.params;
-  console.log(userId, date);
+  // console.log(userId, date);
   const userDate = new Date(req.params.date);
   const startOfUserDate = new Date(userDate.setHours(0, 0, 0, 0));
   const endOfTheDay = new Date(userDate.setHours(23, 59, 59, 999));
 
-  console.log("startOfUserDate", startOfUserDate);
-  console.log("endOfTheDay", endOfTheDay);
+  // console.log("startOfUserDate", startOfUserDate);
+  // console.log("endOfTheDay", endOfTheDay);
 
   const attandanceData = await Attendance.findOne({
     userId: userId,

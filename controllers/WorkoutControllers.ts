@@ -255,7 +255,7 @@ export const deleteWorkout = async (
 ) => {
   try {
     const { documentId, workoutSetId } = req.params;
-    console.log("deleteWorkout", documentId, workoutSetId);
+    // console.log("deleteWorkout", documentId, workoutSetId);
     const workoutLog = await WorkoutLog.findOne({ _id: documentId });
     const workoutfound = workoutLog?.workOuts.find((workout) => {
       return workout._id.toString() == workoutSetId;
@@ -283,7 +283,7 @@ export const getWorkoutsUser = async (
   try {
     let { userId }: any = req.headers["user"];
 
-    console.log(userId);
+    // console.log(userId);
     const date = new Date();
     const startDate = date.setHours(0, 0, 0, 0);
     const endDate = date.setHours(23, 59, 59, 999);

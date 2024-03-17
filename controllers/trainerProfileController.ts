@@ -12,7 +12,7 @@ export const trainerProfile = async (
 ) => {
   try {
     let requstedUser: any = req.headers["user"];
-    console.log(requstedUser);
+    // console.log(requstedUser);
     let trainerData: TrainerType | null = await Trainer.findById(
       requstedUser.userId
     ).select(
@@ -131,7 +131,7 @@ export const trainerProfileImageUpdate = async (
       } else {
         console.log("no public id found");
       }
-      console.log(req.file);
+      // console.log(req.file);
 
       try {
         data = await uploadToCloudinary(req.file.path, "trainer-Images");
@@ -151,7 +151,7 @@ export const trainerProfileImageUpdate = async (
         { _id: id },
         { $set: { profilePicture: data.url, publicId: data.public_id } }
       );
-      console.log("profileUpdate", profileUpdate);
+      // console.log("profileUpdate", profileUpdate);
     }
 
     res.status(200).json({ msg: "profile updated", data });
@@ -171,7 +171,7 @@ export const addCertificateAndClient = async (
     let requstedUser: any = req.headers["user"];
     const id = requstedUser.userId;
 
-    console.log(req.body.name, req.body.content, req.body);
+    // console.log(req.body.name, req.body.content, req.body);
     const { name, content, field } = req.body;
 
     const isTrainerExists = await Trainer.findById(id);
@@ -182,7 +182,7 @@ export const addCertificateAndClient = async (
     }
 
     let data;
-    console.log(req.file);
+    // console.log(req.file);
     if (req.file) {
       try {
         data = await uploadToCloudinary(req.file.path, "trainer-Images");
@@ -229,7 +229,7 @@ export const addCertificateAndClient = async (
       } else {
         console.log("no field found");
       }
-      console.log("updatedData", updatedData);
+      // console.log("updatedData", updatedData);
       res.status(200).json({ msg: "certificate addded" });
     } else {
       return res.status(400).json({ msg: "no file found" });
