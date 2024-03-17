@@ -8,10 +8,9 @@ import { tokenVerify } from "../middleware/tokenVerify";
 import { isPremiumUser } from "../middleware/isPremiumUser";
 import {
   addFoodLog,
-  attendance,
   getDay,
   userHomePage,
-  userProfile,
+  userProfile, 
   userProfileImageUpdate,
 } from "../controllers/userProfileController";
 

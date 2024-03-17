@@ -244,49 +244,21 @@ export const getDay = async (req: express.Request, res: express.Response) => {
       $gte: startOfUserDate,
       $lt: endOfTheDay,
     },
-  }).populate({
-    path: "foodLogs",
-    populate: {
-      path: "foodId",
-    },
-  });
+  })
+    .populate({
+      path: "foodLogs",
+      populate: {
+        path: "foodId",
+      },
+    })
+    .populate({
+      path: "workOutLogs",
+      populate: {
+        path: "workOuts.workoutId",
+      },
+    });
 
-  // console.log("attandanceData", attandanceData);
+  // console.log("attandanceData", attandanceData);  
   res.status(200).json({ msg: "attandanceData", attandanceData });
 };
 
-export const attendance = async (
-  req: express.Request,
-  res: express.Response
-) => {
-  try {
-    let workoutlogsData = await WorkoutLog.find({});
-    let workoutlogsIds = workoutlogsData.map((log) => log._id);
-
-    let foodLogsData = await FoodLog.find({});
-    let foodLogsIds = foodLogsData.map((log) => log._id);
-
-    let attandanceAdd = await Attendance.findByIdAndUpdate(
-      "65d0218ab836966a19492a46",
-      {
-        $push: {
-          workOutLogs: { $each: workoutlogsIds },
-          foodLogs: { $each: foodLogsIds },
-        },
-      },
-      { new: true }
-    );
-
-    let attendanceData = await Attendance.findById(
-      "65d0218ab836966a19492a46"
-    ).populate("workOutLogs foodLogs");
-    // console.log("attendanceData", attendanceData);
-
-    let workoutloguser = await WorkoutLog.findById(
-      "65d161f831fa069aa7e1d541"
-    ).populate("userId");
-    // console.log("workoutloguser", workoutloguser);
-  } catch (error) {
-    console.error(error);
-  }
-};

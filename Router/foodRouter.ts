@@ -25,7 +25,7 @@ foodRouter.delete("/deletePerFood/:clientId/:foodDocId", deletePerFood);
 
 foodRouter.delete("/deleteFood/:clientId/:foodId", decreasePerFoodQuantity);
 
-foodRouter.get('/getFood/:userId/:date', getClientFoodDetails);
+foodRouter.get('/getFoodAndWorkouts/:userId/:date', getClientFoodDetails);
 
 
 
