@@ -29,7 +29,7 @@ app.use((req, res, next) => {
   // console.log(req.path);
   if (req.path === "/user/webhook") {
     next();
-  } else {
+  } else { 
     express.json()(req, res, next);
   }
 });

@@ -18,8 +18,9 @@ export interface TrainerType extends Document {
   certifications: CertificationType[];
   transformationClients: TransformationClientType[];
   clients: mongoose.Types.ObjectId[];
-  reviews: ReviewType[];
   payments: mongoose.Types.ObjectId[];
+  reviews: mongoose.Types.ObjectId[];
+  avgRating: number;
   createdAt?: Date;
   updatedAt?: Date;
 }
@@ -36,12 +37,6 @@ interface TransformationClientType {
   content: string;
   photoUrl: string;
   publicId?: String;
-}
-
-interface ReviewType {
-  clientName: string;
-  content: string;
-  rating: number;
 }
 
 //  Trainer schema with the above intefaces
@@ -86,17 +81,10 @@ const trainerSchema = new Schema<TrainerType>(
       default: [],
     },
 
-    reviews: {
-      type: [
-        {
-          clientName: String,
-          content: String,
-          rating: Number,
-        },
-      ],
-      default: [],
-    },
-    payments:{type: [mongoose.Types.ObjectId], ref: "TrainerPayment"},
+    reviews: [{ type: mongoose.Types.ObjectId, ref: "Review", default: [] }],
+    avgRating: { type: Number, default: 0 },
+
+    payments: { type: [mongoose.Types.ObjectId], ref: "TrainerPayment" },
   },
   { timestamps: true }
 );

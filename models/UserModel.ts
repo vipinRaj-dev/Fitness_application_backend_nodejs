@@ -110,7 +110,7 @@ const UserSchema: Schema<UserType> = new Schema(
     userBlocked: { type: Boolean, default: false },
     healthIssues: { type: HealthIssuesSchema, default: {} },
     isPremiumUser: { type: Boolean, default: false },
-    trainerId: mongoose.Types.ObjectId,
+    trainerId: { type: mongoose.Schema.Types.ObjectId, ref: "Trainer" },
     dueDate: Date,
     trainerPaymentDueDate: Date,
     vegetarian: Boolean,

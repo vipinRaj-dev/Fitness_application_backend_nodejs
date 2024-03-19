@@ -8,6 +8,8 @@ import {
 } from "../imageUploadConfig/cloudinary";
 import { WorkoutLog, WorkoutLogType } from "../models/WorkoutLogModel";
 import { FoodLog } from "../models/FoodLogModel";
+import { Review } from "../models/ReviewModel";
+import { Trainer } from "../models/TrainerModel";
 
 export const userHomePage = async (
   req: express.Request,
@@ -68,11 +70,11 @@ export const userProfile = async (
 
     // console.log(requstedUser);
 
-    let userData: UserType | null = await User.findById(
-      requstedUser.userId
-    ).select(
-      "_id name email mobileNumber weight height userBlocked profileImage publicId healthIssues createdAt"
-    );
+    let userData: UserType | null = await User.findById(requstedUser.userId)
+      .select(
+        "_id name email mobileNumber weight height userBlocked profileImage publicId healthIssues createdAt trainerId trainerPaymentDueDate"
+      )
+      .populate("trainerId", "name profilePicture");
 
     // console.log("userData", userData);
     if (!userData) {
@@ -258,7 +260,47 @@ export const getDay = async (req: express.Request, res: express.Response) => {
       },
     });
 
-  // console.log("attandanceData", attandanceData);  
+  // console.log("attandanceData", attandanceData);
   res.status(200).json({ msg: "attandanceData", attandanceData });
 };
 
+export const setRating = async (
+  req: express.Request,
+  res: express.Response
+) => {
+  try {
+    const { rating, trainerId, content } = req.body;
+    let requstedUser: any = req.headers["user"];
+    const id = requstedUser.userId;
+
+    const newReview = new Review({
+      userId: id,
+      trainerId,
+      rating,
+      content,
+    });
+
+    const review = await newReview.save();
+
+    const averageReview = await Review.aggregate([
+      {
+        $group: {
+          _id: "$trainerId",
+          avgRating: { $avg: "$rating" },
+        },
+      },
+    ]);
+
+    const avgReviewRating = Math.round(averageReview[0].avgRating);
+
+    const updateInTrainer = await Trainer.findByIdAndUpdate(trainerId, {
+      $push: { reviews: review._id },
+      avgRating: avgReviewRating,
+    });
+    // console.log("updateInTrainer", updateInTrainer);
+    updateInTrainer && res.status(200).json({ msg: "review added" });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ msg: "server error", error });
+  }
+};

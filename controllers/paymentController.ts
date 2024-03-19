@@ -75,7 +75,7 @@ export const handleWebhook = async (request, response) => {
       const session = event.data.object;
       userId = session.client_reference_id;
       metadata = session.metadata;
-      transactionId = session.payment_intent
+      transactionId = session.payment_intent  
       // console.log("Checkout Session completed!", metadata);
       // console.log("session", session);
       //   console.log("userId is", userId);

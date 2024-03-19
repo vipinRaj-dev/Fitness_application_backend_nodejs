@@ -3,6 +3,7 @@ import { tokenVerify } from "../middleware/tokenVerify";
 import {
   addCertificateAndClient,
   deleteCertificateOrClient,
+  getReviews,
   trainerProfile,
   trainerProfileImageUpdate,
 } from "../controllers/trainerProfileController";
@@ -35,6 +36,8 @@ trainerRouter.delete(
 );
 
 trainerRouter.get("/allClients", tokenVerify, allClients);
+
+trainerRouter.get('/reviews' , tokenVerify, getReviews);
 
 // trainerRouter.get('/getFood/:userId/:date', tokenVerify, getClientFoodDetails);
 

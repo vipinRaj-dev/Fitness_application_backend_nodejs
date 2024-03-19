@@ -35,52 +35,6 @@ export const trainerProfile = async (
   }
 };
 
-// export const profileUpdate = async (
-//   req: express.Request,
-//   res: express.Response
-// ) => {
-//   try {
-//     let requstedUser: any = req.headers["user"];
-//     const id = requstedUser.userId;
-
-//     const {
-//       name,
-//       mobileNumber,
-//       experience,
-//       specializedIn,
-//       description,
-//       price,
-//     } = req.body;
-
-//     const isTrainerExists = await Trainer.findById(id);
-//     if (!isTrainerExists) {
-//       return res.status(400).json({
-//         msg: "no trainer found",
-//       });
-//     }
-//     await Trainer.updateOne(
-//       { _id: id },
-//       {
-//         $set: {
-//           name,
-//           mobileNumber,
-//           experience,
-//           specializedIn,
-//           description,
-//           price,
-//         },
-//       }
-//     );
-
-//     res.status(200).json({ msg: "profile updated" });
-//   } catch (error) {
-//     console.error(error);
-//     res.status(500).json({
-//       msg: "server error",
-//     });
-//   }
-// };
-
 export const trainerProfileImageUpdate = async (
   req: express.Request,
   res: express.Response
@@ -277,6 +231,59 @@ export const deleteCertificateOrClient = async (
         res.status(200).json({ msg: "client deleted" });
       }
     }
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({
+      msg: "server error",
+    });
+  }
+};
+
+export const getReviews = async (
+  req: express.Request,
+  res: express.Response
+) => {
+  try {
+    let requstedUser: any = req.headers["user"];
+    const id = requstedUser.userId;
+
+    const page = parseInt(req.query.page as string) - 1 || 0;
+    const limit = parseInt(req.query.limit as string) || 3;
+    const rating = parseInt(req.query.rating as string) || 0;
+    const trainerId = req.query.trainerId as string || id;
+
+
+    let populateOptions = {
+      path: "reviews",
+      populate: {
+        path: "userId",
+        select: "name profileImage",
+      },
+      match: rating ? { rating } : {},
+      options: { sort: { createdAt: -1 } },
+    };
+
+    const trainerData = await Trainer.findById(trainerId)
+      .populate(populateOptions)
+      .select("reviews");
+
+    const responseData = trainerData.reviews.slice(
+      page * limit,
+      page * limit + limit
+    );
+
+    if (!trainerData) {
+      return res.status(400).json({
+        msg: "no trainer found",
+      });
+    }
+
+    res.status(200).json({
+      reviews: responseData,
+      page: page + 1,
+      limit,
+      totalReviews: trainerData.reviews.length,
+    });
   } catch (error) {
     console.error(error);
     res.status(500).json({
