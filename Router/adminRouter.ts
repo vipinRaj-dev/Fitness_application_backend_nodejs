@@ -10,6 +10,7 @@ import {
   getAdminPayments,
   getAllTrainers,
   getAllUsers,
+  getGraphDataAdmin,
   getTrainer,
   getUser,
   trainerProfileEdit,
@@ -76,5 +77,10 @@ adminRouter.put("/trainer/block/:id", blockTrainer);
 // payment routes
 
 adminRouter.get("/payments", getAdminPayments);
+
+
+// graph routes
+
+adminRouter.get("/graph",  tokenVerify , isAdmin , getGraphDataAdmin )
 
 export default adminRouter;

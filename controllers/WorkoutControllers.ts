@@ -35,7 +35,7 @@ export type WorkoutLogType = {
 
 export const getWorkouts = async (
   req: express.Request,
-  res: express.Response
+  res: express.Response 
 ) => {
   // console.log("getWorkouts");
   try {

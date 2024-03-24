@@ -10,6 +10,7 @@ import { WorkoutLog, WorkoutLogType } from "../models/WorkoutLogModel";
 import { FoodLog } from "../models/FoodLogModel";
 import { Review } from "../models/ReviewModel";
 import { Trainer } from "../models/TrainerModel";
+import mongoose from "mongoose";
 
 export const userHomePage = async (
   req: express.Request,
@@ -59,6 +60,101 @@ export const userHomePage = async (
     hasTrainer,
     attendanceDocId: userDetails?.attendanceId?._id,
   });
+};
+
+export const getGraphDataUser = async (
+  req: express.Request,
+  res: express.Response
+) => {
+  try {
+    console.log("getGraphDataUser");
+    // i want the users attandance details aggregated by the 7 days like this
+
+    // how can i aggragate the data to get the above result
+
+    let requstedUser: any = req.headers["user"];
+    const id = requstedUser.userId;
+
+    const attendancePerDay = await Attendance.aggregate([
+      {
+        $match: {
+          userId: new mongoose.Types.ObjectId(id),
+          isPresent: true,
+        },
+      },
+      {
+        $project: {
+          dayOfWeek: {
+            $add: [
+              { $mod: [{ $subtract: [{ $dayOfWeek: "$date" }, 1] }, 7] },
+              1,
+            ],
+          },
+        },
+      },
+      {
+        $group: {
+          _id: "$dayOfWeek",
+          NoOfDays: { $sum: 1 },
+        },
+      },
+      {
+        $project: {
+          _id: 0,
+          day: {
+            $switch: {
+              branches: [
+                { case: { $eq: ["$_id", 1] }, then: "Mon" },
+                { case: { $eq: ["$_id", 2] }, then: "Tue" },
+                { case: { $eq: ["$_id", 3] }, then: "Wed" },
+                { case: { $eq: ["$_id", 4] }, then: "Thu" },
+                { case: { $eq: ["$_id", 5] }, then: "Fri" },
+                { case: { $eq: ["$_id", 6] }, then: "Sat" },
+                { case: { $eq: ["$_id", 7] }, then: "Sun" },
+              ],
+              default: "Unknown",
+            },
+          },
+          NoOfDays: 1,
+        },
+      },
+    ]);
+
+    // console.log("attendancePerDay", attendancePerDay);  
+
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+    const tomorrow = new Date(today);
+    tomorrow.setDate(tomorrow.getDate() + 1);
+
+    const foodStatusData = await FoodLog.aggregate([
+      {
+        $match: {
+          userId: new mongoose.Types.ObjectId(id),
+          date: {
+            $gte: today,
+            $lt: tomorrow,
+          },
+        },
+      },
+      {
+        $group: {
+          _id: "$timePeriod",
+          totalFood: { $sum: 1 },
+          completedCount: {
+            $sum: {
+              $cond: [{ $eq: ["$status", true] }, 1, 0],
+            },
+          },
+        },
+      },
+    ]);
+    // console.log("foodStatusData", foodStatusData);
+    res.status(200).json({ msg: "attendancePerDay", attendancePerDay , foodStatusData });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ msg: "server error", error });
+  }
 };
 
 export const userProfile = async (

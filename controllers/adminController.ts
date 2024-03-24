@@ -4,6 +4,8 @@ import { User, UserType } from "../models/UserModel";
 import { Trainer, TrainerType } from "../models/TrainerModel";
 import { hashPassword } from "../utils/password";
 import { AdminPayment } from "../models/PaymentsModel";
+import { Food } from "../models/ListOfFood";
+import { Workout } from "../models/ListOfWorkout";
 
 interface RequestedUser {
   email: string;
@@ -143,10 +145,14 @@ export const userProfileEdit = async (
   try {
     const id = req.params.id;
     const updateData = req.body;
-    let isTrainerExist: TrainerType;
 
-    isTrainerExist = await Trainer.findOne({ email: updateData.email });
-    if (isTrainerExist) {
+    // console.log(updateData);
+    let isUserExist = await Trainer.findOne({ email: updateData.email });
+
+    if (!isUserExist) {
+      isUserExist = await User.findOne({ email: updateData.email });
+    }
+    if (isUserExist) {
       return res.status(404).json({ message: "Email already exists" });
     }
 
@@ -345,11 +351,128 @@ export const getAdminPayments = async (
 ) => {
   try {
     const payments = await AdminPayment.find().populate({
-      path : 'clientDetails',
-      select : 'name email isPremium dueDate profileImage'
-    })
-    console.log('payments' , payments);
+      path: "clientDetails",
+      select: "name email isPremium dueDate profileImage",
+    });
+    console.log("payments", payments);
+
+    
     res.status(200).json({ payments });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: error.message });
+  }
+};
+
+//Graph controllers
+
+export const getGraphDataAdmin = async (
+  req: express.Request,
+  res: express.Response
+) => {
+  try {
+    console.log("graph data");
+    let totalRevenue: { totalRevenue: number }[],
+      premiumUsers: number,
+      trialUsers: number,
+      trialExpired: number,
+      totalTrainers: number;
+
+    totalRevenue = await AdminPayment.aggregate([
+      {
+        $group: {
+          _id: null,
+          totalRevenue: { $sum: "$amount" },
+        },
+      },
+      {
+        $project: {
+          _id: 0,
+          totalRevenue: 1,
+        },
+      },
+    ]);
+    premiumUsers = await User.countDocuments({ isPremiumUser: true });
+
+    trialUsers = await User.countDocuments({
+      trialEndsAt: { $gte: new Date() },
+      isPremiumUser: false,
+    });
+
+    trialExpired = await User.countDocuments({
+      trialEndsAt: { $lt: new Date() },
+      isPremiumUser: false,
+    });
+
+    totalTrainers = await Trainer.countDocuments();
+
+    const userCountPerMonth = await User.aggregate([
+      {
+        $project: {
+          month: { $month: "$createdAt" },
+        },
+      },
+      {
+        $group: {
+          _id: "$month",
+          count: { $sum: 1 },
+        },
+      },
+      {
+        $sort: { _id: 1 },
+      },
+    ]);
+
+    const monthlyPayments = await AdminPayment.aggregate([
+      {
+        $project: {
+          month: { $month: "$createdAt" },
+          createdAt: 1,
+          amount: 1,
+        },
+      },
+      {
+        $group: {
+          _id: "$month",
+          totalAmount: { $sum: "$amount" },
+          latestDate: { $max: "$createdAt" },
+        },
+      },
+      {
+        $sort: { latestDate: 1 },
+      },
+    ]);
+
+    const foodCountWithFoodtype = await Food.aggregate([
+      {
+        $group: {
+          _id: "$foodtype",
+          count: { $sum: 1 },
+        },
+      },
+    ]);
+
+    const trainerWiseClientCount = await Trainer.aggregate([
+      {
+        $project: {
+          name: 1,
+          clientCount: { $size: "$clients" },
+          _id: 0,
+        },
+      },
+    ]);
+
+    res.status(200).json({
+      totalRevenue: totalRevenue[0].totalRevenue,
+      premiumUsers,
+      trialUsers,
+      trialExpired,
+      totalTrainers,
+      userCountPerMonth,
+      monthlyPayments,
+      foodCountWithFoodtype,
+      trainerWiseClientCount,
+    });
   } catch (error) {
     console.error(error);
     res.status(500).json({ message: error.message });

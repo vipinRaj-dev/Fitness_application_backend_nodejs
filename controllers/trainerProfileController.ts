@@ -1,10 +1,11 @@
 import express from "express";
-
+const mongoose = require("mongoose");
 import { Trainer, TrainerType } from "../models/TrainerModel";
 import {
   removeFromCloudinary,
   uploadToCloudinary,
 } from "../imageUploadConfig/cloudinary";
+import { TrainerPayment } from "../models/trainerPaymentModel";
 
 export const trainerProfile = async (
   req: express.Request,
@@ -16,7 +17,7 @@ export const trainerProfile = async (
     let trainerData: TrainerType | null = await Trainer.findById(
       requstedUser.userId
     ).select(
-      "_id name email mobileNumber isBlocked profilePicture publicId experience specializedIn price description certifications transformationClients"
+      "_id name email mobileNumber isBlocked profilePicture publicId experience specializedIn price description certifications avgRating transformationClients"
     );
 
     const response = {
@@ -250,8 +251,7 @@ export const getReviews = async (
     const page = parseInt(req.query.page as string) - 1 || 0;
     const limit = parseInt(req.query.limit as string) || 3;
     const rating = parseInt(req.query.rating as string) || 0;
-    const trainerId = req.query.trainerId as string || id;
-
+    const trainerId = (req.query.trainerId as string) || id;
 
     let populateOptions = {
       path: "reviews",
@@ -283,6 +283,91 @@ export const getReviews = async (
       page: page + 1,
       limit,
       totalReviews: trainerData.reviews.length,
+    });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({
+      msg: "server error",
+    });
+  }
+};
+
+export const getPayments = async (
+  req: express.Request,
+  res: express.Response
+) => {
+  try {
+    let requstedUser: any = req.headers["user"];
+    const id = requstedUser.userId;
+
+    const trainerData = await Trainer.findById(id).populate({
+      path: "payments",
+      populate: {
+        path: "clientDetails",
+        select: "name profileImage",
+      },
+      select: "amount transactionId clientDetails",
+    });
+
+    // console.log(id);
+    const monthlyPayments = await TrainerPayment.aggregate([
+      {
+        $match: {
+          trainersId: new mongoose.Types.ObjectId(id),
+        },
+      },
+      {
+        $project: {
+          month: { $month: "$createdAt" },
+          createdAt: 1,
+          amount: 1,
+          trainersId: 1,
+        },
+      },
+
+      {
+        $group: {
+          _id: { $month: "$createdAt" },
+          totalAmount: { $sum: "$amount" },
+          latestDate: { $max: "$createdAt" },
+        },
+      },
+      {
+        $sort: { latestDate: 1 },
+      },
+    ]);
+
+    const userCountPerMonth = await TrainerPayment.aggregate([
+      {
+        $match: {
+          trainersId: new mongoose.Types.ObjectId(id),
+        },
+      },
+      {
+        $project: {
+          month: { $month: "$createdAt" },
+          createdAt: 1,
+          amount: 1,
+          trainersId: 1,
+          clientDetails: 1,
+        },
+      },
+      {
+        $group: {
+          _id: { $month: "$createdAt" },
+          clientCount: { $sum: 1 },
+          latestDate: { $max: "$createdAt" },
+        },
+      },
+      {
+        $sort: { latestDate: 1 },
+      },
+    ]);
+    // console.log(userCountPerMonth);
+    res.status(200).json({
+      payments: trainerData.payments,
+      monthlyPayments,
+      userCountPerMonth,
     });
   } catch (error) {
     console.error(error);

@@ -78,7 +78,7 @@ export const deletePerFood = async (
     res.status(500).json({ msg: "server error" });
   }
 };
-
+  
 export const getAllFood = async (
   req: express.Request,
   res: express.Response
@@ -193,35 +193,40 @@ export const getClientFoodDetails = async (
   req: express.Request,
   res: express.Response
 ) => {
-  const { userId, date } = req.params;
-  // console.log(userId, date);
-  const userDate = new Date(req.params.date);
-  const startOfUserDate = new Date(userDate.setHours(0, 0, 0, 0));
-  const endOfTheDay = new Date(userDate.setHours(23, 59, 59, 999));
+  try {
+    const { userId, date } = req.params;
+    // console.log(userId, date);
+    const userDate = new Date(req.params.date);
+    const startOfUserDate = new Date(userDate.setHours(0, 0, 0, 0));
+    const endOfTheDay = new Date(userDate.setHours(23, 59, 59, 999));
 
-  // console.log("startOfUserDate", startOfUserDate);
-  // console.log("endOfTheDay", endOfTheDay);
+    // console.log("startOfUserDate", startOfUserDate);
+    // console.log("endOfTheDay", endOfTheDay);
 
-  const attandanceData = await Attendance.findOne({
-    userId: userId,
-    date: {
-      $gte: startOfUserDate,
-      $lt: endOfTheDay,
-    },
-  })
-    .populate({
-      path: "foodLogs",
-      populate: {
-        path: "foodId",
-      },
+    const attandanceData = await Attendance.findOne({
+      userId: userId,
+      date: {
+        $gte: startOfUserDate,
+        $lt: endOfTheDay,   
+      }, 
     })
-    .populate({
-      path: 'workOutLogs',
-      populate: {
-        path: 'workOuts.workoutId'
-      }
-    });
+      .populate({
+        path: "foodLogs",
+        populate: {
+          path: "foodId",
+        },
+      })
+      .populate({
+        path: "workOutLogs",
+        populate: {
+          path: "workOuts.workoutId",
+        },
+      });
 
-  // console.log("attandanceData", attandanceData.workOutLogs);
-  res.status(200).json({ msg: "attandanceData", attandanceData });
+    // console.log("attandanceData", attandanceData.workOutLogs);
+    res.status(200).json({ msg: "attandanceData", attandanceData });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ msg: "server error" });
+  }
 };

@@ -1,19 +1,18 @@
 import express from "express";
 import {
   removeFromCloudinary,
-  removeVideoFromCloudinary,
   uploadToCloudinary,
-  uploadVideoToCloudinary,
 } from "../imageUploadConfig/cloudinary";
 import { Food } from "../models/ListOfFood";
-import { User } from "../models/UserModel";
-import { Workout } from "../models/ListOfWorkout";
 
 export const addFood = async (req: express.Request, res: express.Response) => {
   console.log("addFood");
-  console.log(req.body);
+  // console.log(req.body);
   console.log(req.file);
 
+  if (!req.file) {
+    return res.status(400).json({ msg: "Please upload an image" });
+  }
   const {
     foodname,
     quantity,
@@ -29,7 +28,7 @@ export const addFood = async (req: express.Request, res: express.Response) => {
 
   try {
     let data = await uploadToCloudinary(req.file.path, "food-Images");
-    console.log("data:", data);
+    // console.log("data:", data);
 
     if (data && data.url && data.public_id) {
       //   console.log("data.url:", data.url);
@@ -55,7 +54,9 @@ export const addFood = async (req: express.Request, res: express.Response) => {
         foodtype,
       });
       const savedFood = await newFood.save();
-      console.log("savedFood:", savedFood);
+      // console.log("savedFood:", savedFood);
+    }else{
+      res.status(401).json({msg : 'Image not updated'})
     }
   } catch (error) {
     console.error("Error uploading to Cloudinary:", error);
@@ -202,4 +203,3 @@ export const deleteFood = async (
     res.status(500).json({ msg: "Error deleting food", error });
   }
 };
-

@@ -9,6 +9,7 @@ import { isPremiumUser } from "../middleware/isPremiumUser";
 import {
   addFoodLog,
   getDay,
+  getGraphDataUser,
   setRating,
   userHomePage,
   userProfile, 
@@ -28,6 +29,8 @@ import {
 const userRouter: express.Router = express.Router();
 
 userRouter.get("/homePage", tokenVerify, isPremiumUser, userHomePage);
+
+userRouter.get('/getGraphs' , tokenVerify , getGraphDataUser)
 
 userRouter.get("/profile", tokenVerify, isPremiumUser, userProfile);
 

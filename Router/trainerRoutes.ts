@@ -3,6 +3,7 @@ import { tokenVerify } from "../middleware/tokenVerify";
 import {
   addCertificateAndClient,
   deleteCertificateOrClient,
+  getPayments,
   getReviews,
   trainerProfile,
   trainerProfileImageUpdate,
@@ -39,6 +40,6 @@ trainerRouter.get("/allClients", tokenVerify, allClients);
 
 trainerRouter.get('/reviews' , tokenVerify, getReviews);
 
-// trainerRouter.get('/getFood/:userId/:date', tokenVerify, getClientFoodDetails);
+trainerRouter.get('/payments' , tokenVerify, getPayments);
 
 export default trainerRouter;
