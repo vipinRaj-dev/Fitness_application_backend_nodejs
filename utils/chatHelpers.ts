@@ -61,3 +61,33 @@ export const sendAndSaveMessage = async (message: any) => {
     console.error("Error in sending message", error);
   }
 };
+
+export const makeMsgSeen = async (senderId: string, receiverId: string) => {
+  try {
+    console.log("makeMsgSeen")
+    console.log("senderId", senderId, "receiverId", receiverId);
+
+    const chat = await Chat.findOne({
+      $or: [
+        { userId: senderId, trainerId: receiverId },
+        { userId: receiverId, trainerId: senderId },
+      ],
+    });
+
+    if (!chat) {
+      console.log("no chat found");
+      return;
+    } else {
+      chat.message.forEach(async (msg) => {
+        if (msg.senderId.toString() === receiverId.toString()) {
+          msg.isSeen = true;
+        }
+      });
+
+      await chat.save();
+      return { status: "success" };
+    }
+  } catch (error) {
+    console.error("Error in marking message seen", error);
+  }
+};

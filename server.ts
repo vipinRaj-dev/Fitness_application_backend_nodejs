@@ -22,7 +22,7 @@ import { Attendance } from "./models/AttendanceModel";
 import { FoodLog } from "./models/FoodLogModel";
 import foodRouter from "./Router/foodRouter";
 import { Trainer } from "./models/TrainerModel";
-import { sendAndSaveMessage } from "./utils/chatHelpers";
+import { makeMsgSeen, sendAndSaveMessage } from "./utils/chatHelpers";
 
 const app: express.Application = express();
 
@@ -129,13 +129,24 @@ io.on("connection", (socket: Socket) => {
 
         // console.log("message saved", messageSaved);
         if (messageSaved) {
-          console.log("message sent to the user", messageSaved);
+          // console.log("message sent to the user", messageSaved);
           socket
             .to(message.receiverId)
             .emit("messageRecieved", messageSaved.chatMessage);
 
           callBack({ status: "success from the server side" });
         }
+      });
+
+      socket.on("makeMsgSeen", async (data) => {
+        const { senderId, receiverId } = data;
+        const msgSeen = await makeMsgSeen(senderId, receiverId);
+
+        console.log("msg seen", msgSeen);
+        // if (msgSeen) {
+        //   callBack({ status: "success" }); 
+        // }
+      
       });
     } catch (error) {
       console.error("error in setting the user online", error);

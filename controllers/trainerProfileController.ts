@@ -6,6 +6,7 @@ import {
   uploadToCloudinary,
 } from "../imageUploadConfig/cloudinary";
 import { TrainerPayment } from "../models/trainerPaymentModel";
+import { Chat } from "../models/ChatSchema";
 
 export const trainerProfile = async (
   req: express.Request,
@@ -391,13 +392,35 @@ export const getClients = async (
 
     // console.log("trainer", trainerClients);
 
-    res
-      .status(200)
-      .json({
-        msg: "trainer clients",
-        clients: trainerClients?.clients,
-        trainerId: id,
-      });
+    const pendingMessageCountPerUser = await Chat.aggregate([
+      {
+        $match: {
+          trainerId: new mongoose.Types.ObjectId(id),
+        },
+      },
+      { $unwind: "$message" },
+      { 
+        $match: { 
+          "message.isSeen": false,
+          "message.receiverId": new mongoose.Types.ObjectId(id)
+        } 
+      },
+      {
+        $group: {
+          _id: "$userId",
+          count: { $sum: 1 },
+        },
+      },
+    ]);
+
+    // console.log("pendingMessageCountPerUser", pendingMessageCountPerUser);
+
+    res.status(200).json({
+      msg: "trainer clients",
+      clients: trainerClients?.clients,
+      trainerId: id,
+      pendingMessageCountPerUser,
+    });
   } catch (error) {
     console.error(error);
     res.status(500).json({ msg: "server error", error });
