@@ -134,7 +134,9 @@ io.on("connection", (socket: Socket) => {
             .to(message.receiverId)
             .emit("messageRecieved", messageSaved.chatMessage);
 
-          callBack({ status: "success from the server side" });
+          callBack({
+            status: "success from the server side",
+          });
         }
       });
 
@@ -143,10 +145,9 @@ io.on("connection", (socket: Socket) => {
         const msgSeen = await makeMsgSeen(senderId, receiverId);
 
         console.log("msg seen", msgSeen);
-        // if (msgSeen) {
-        //   callBack({ status: "success" }); 
-        // }
-      
+        if (msgSeen.status === "success") {
+          socket.to(senderId).emit("msgSeen", { senderId : senderId });
+        }
       });
     } catch (error) {
       console.error("error in setting the user online", error);

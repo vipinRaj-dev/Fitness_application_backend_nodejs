@@ -49,11 +49,12 @@ export const sendAndSaveMessage = async (message: any) => {
       });
     }
 
-    await chat.save();
+    chat = await chat.save();
 
-    console.log(chat);
+    const savedMessageId = chat.message[chat.message.length - 1]._id;
+    
     if (chat) {
-      return { receiverId, chatMessage };
+      return { receiverId, chatMessage, savedMessageId };
     } else {
       console.log("no chat is there");
     }
@@ -64,7 +65,7 @@ export const sendAndSaveMessage = async (message: any) => {
 
 export const makeMsgSeen = async (senderId: string, receiverId: string) => {
   try {
-    console.log("makeMsgSeen")
+    console.log("makeMsgSeen==========================")
     console.log("senderId", senderId, "receiverId", receiverId);
 
     const chat = await Chat.findOne({
