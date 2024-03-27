@@ -120,7 +120,7 @@ export const getGraphDataUser = async (
       },
     ]);
 
-    // console.log("attendancePerDay", attendancePerDay);  
+    // console.log("attendancePerDay", attendancePerDay);
 
     const today = new Date();
     today.setHours(0, 0, 0, 0);
@@ -150,7 +150,9 @@ export const getGraphDataUser = async (
       },
     ]);
     // console.log("foodStatusData", foodStatusData);
-    res.status(200).json({ msg: "attendancePerDay", attendancePerDay , foodStatusData });
+    res
+      .status(200)
+      .json({ msg: "attendancePerDay", attendancePerDay, foodStatusData });
   } catch (error) {
     console.error(error);
     res.status(500).json({ msg: "server error", error });
@@ -400,3 +402,5 @@ export const setRating = async (
     res.status(500).json({ msg: "server error", error });
   }
 };
+
+

@@ -3,6 +3,7 @@ import { tokenVerify } from "../middleware/tokenVerify";
 import {
   addCertificateAndClient,
   deleteCertificateOrClient,
+  getClients,
   getPayments,
   getReviews,
   trainerProfile,
@@ -38,8 +39,10 @@ trainerRouter.delete(
 
 trainerRouter.get("/allClients", tokenVerify, allClients);
 
-trainerRouter.get('/reviews' , tokenVerify, getReviews);
+trainerRouter.get("/reviews", tokenVerify, getReviews);
 
-trainerRouter.get('/payments' , tokenVerify, getPayments);
+trainerRouter.get("/payments", tokenVerify, getPayments);
+
+trainerRouter.get("/getClients", tokenVerify, getClients);
 
 export default trainerRouter;

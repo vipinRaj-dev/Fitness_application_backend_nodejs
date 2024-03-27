@@ -376,3 +376,30 @@ export const getPayments = async (
     });
   }
 };
+
+export const getClients = async (
+  req: express.Request,
+  res: express.Response
+) => {
+  try {
+    let requstedUser: any = req.headers["user"];
+    const id = requstedUser.userId;
+
+    const trainerClients = await Trainer.findById(id)
+      .populate("clients", "_id name profileImage isOnline")
+      .select("clients");
+
+    // console.log("trainer", trainerClients);
+
+    res
+      .status(200)
+      .json({
+        msg: "trainer clients",
+        clients: trainerClients?.clients,
+        trainerId: id,
+      });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ msg: "server error", error });
+  }
+};

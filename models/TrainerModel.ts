@@ -21,6 +21,7 @@ export interface TrainerType extends Document {
   payments: mongoose.Types.ObjectId[];
   reviews: mongoose.Types.ObjectId[];
   avgRating: number;
+  isOnline?: boolean;
   createdAt?: Date;
   updatedAt?: Date;
 }
@@ -85,6 +86,8 @@ const trainerSchema = new Schema<TrainerType>(
     avgRating: { type: Number, default: 0 },
 
     payments: { type: [mongoose.Types.ObjectId], ref: "TrainerPayment" },
+
+    isOnline: { type: Boolean, default: false },
   },
   { timestamps: true }
 );

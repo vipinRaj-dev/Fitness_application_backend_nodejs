@@ -10,8 +10,7 @@ export let tokenVerify = async (
   try {
     let tokenHeader = req.headers.authorization;
     // console.log(tokenHeader  , req.headers);
-    
-      
+
     if (!tokenHeader) {
       return res.status(401).json({ msg: "Not authorized" });
     }
@@ -25,20 +24,22 @@ export let tokenVerify = async (
     let secretkey: string | undefined = process.env.JWT_SECRET_KEY;
 
     if (secretkey) {
+      if (typeof words[1] !== "string" || words[1].split(".").length !== 3) {
+        return res.status(401).json({ msg: "Invalid token format" });
+      } else {
+        let decode: any = jwt.verify(words[1], secretkey);
 
-      let decode: any = jwt.verify(words[1], secretkey);
+        req.headers["user"] = decode;
+      }
 
-      
       // console.log(decode);
       // {
       //   email: 'admin@gmail.com',
       //   role: 'admin',
-      //   userId: '65c48928c4133be373d8cb8b', 
+      //   userId: '65c48928c4133be373d8cb8b',
       //   iat: 1707568108
       // }
-      
-      req.headers["user"] = decode;
-      
+
       next();
     } else {
       return res

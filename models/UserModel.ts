@@ -92,6 +92,7 @@ export interface UserType extends Document {
   latestDiet?: [FoodTypeWithTime];
   trialEndsAt: Date;
   attendanceId: mongoose.Types.ObjectId;
+  isOnline : boolean;
   createdAt?: Date;
   updatedAt?: Date;
 }
@@ -131,6 +132,7 @@ const UserSchema: Schema<UserType> = new Schema(
 
     trialEndsAt: Date,
     attendanceId: { type: mongoose.Schema.Types.ObjectId, ref: "Attendance" },
+    isOnline: { type: Boolean, default: false },
   },
   { timestamps: true }
 );

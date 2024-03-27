@@ -61,6 +61,8 @@ userRouter.get("/getDate/:date",tokenVerify, getDay);
 
 
 userRouter.post('/rating' , tokenVerify , setRating)
+
+
 // userRouter.get("/attandance", attendance);
 
 export default userRouter;
