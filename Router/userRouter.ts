@@ -12,7 +12,7 @@ import {
   getGraphDataUser,
   setRating,
   userHomePage,
-  userProfile, 
+  userProfile,
   userProfileImageUpdate,
 } from "../controllers/userProfileController";
 
@@ -30,7 +30,7 @@ const userRouter: express.Router = express.Router();
 
 userRouter.get("/homePage", tokenVerify, isPremiumUser, userHomePage);
 
-userRouter.get('/getGraphs' , tokenVerify , getGraphDataUser)
+userRouter.get("/getGraphs", tokenVerify, getGraphDataUser);
 
 userRouter.get("/profile", tokenVerify, isPremiumUser, userProfile);
 
@@ -54,14 +54,9 @@ userRouter.get("/getTrainer/:id", tokenVerify, isPremiumUser, getSingleTrainer);
 
 userRouter.put("/addFoodLog", tokenVerify, addFoodLog);
 
+userRouter.get("/getDate/:date", tokenVerify, getDay);
 
-
-
-userRouter.get("/getDate/:date",tokenVerify, getDay);
-
-
-userRouter.post('/rating' , tokenVerify , setRating)
-
+userRouter.post("/rating", tokenVerify, setRating);
 
 // userRouter.get("/attandance", attendance);
 
