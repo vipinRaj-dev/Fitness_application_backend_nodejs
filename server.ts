@@ -22,7 +22,12 @@ import { Attendance } from "./models/AttendanceModel";
 import { FoodLog } from "./models/FoodLogModel";
 import foodRouter from "./Router/foodRouter";
 import { Trainer } from "./models/TrainerModel";
-import { makeMsgSeen, sendAndSaveMessage } from "./utils/chatHelpers";
+import {
+  findChatDoc,
+  makeMsgSeen,
+  markAllSeen,
+  sendAndSaveMessage,
+} from "./utils/chatHelpers";
 
 const app: express.Application = express();
 
@@ -146,10 +151,19 @@ io.on("connection", (socket: Socket) => {
 
         console.log("msg seen", msgSeen);
         if (msgSeen.status === "success") {
-          socket.to(senderId).emit("msgSeen", { senderId : senderId });
+          socket.to(senderId).emit("msgSeen", { senderId: senderId });
         }
       });
-    } catch (error) {
+
+      socket.on("allSeen", async (data) => {
+        // console.log("all seen data", data);
+        const { trainerId, userId, from } = data;
+        const chatDoc = await findChatDoc(trainerId, userId);
+        markAllSeen(chatDoc, from === 'user' ? userId : trainerId);
+        socket.to(from === 'user' ? trainerId : userId).emit("allSeen");
+
+      });
+    } catch (error) { 
       console.error("error in setting the user online", error);
     }
   });
