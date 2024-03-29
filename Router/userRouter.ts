@@ -11,6 +11,7 @@ import {
   getDay,
   getGraphDataUser,
   setRating,
+  trainerOnlineStatus,
   userHomePage,
   userProfile,
   userProfileImageUpdate,
@@ -57,6 +58,8 @@ userRouter.put("/addFoodLog", tokenVerify, addFoodLog);
 userRouter.get("/getDate/:date", tokenVerify, getDay);
 
 userRouter.post("/rating", tokenVerify, setRating);
+
+userRouter.get('/getTrainerOnlineStatus/:trainerId/:userId' , tokenVerify , trainerOnlineStatus)
 
 // userRouter.get("/attandance", attendance);
 

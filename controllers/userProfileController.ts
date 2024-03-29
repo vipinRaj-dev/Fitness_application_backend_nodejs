@@ -11,6 +11,7 @@ import { FoodLog } from "../models/FoodLogModel";
 import { Review } from "../models/ReviewModel";
 import { Trainer } from "../models/TrainerModel";
 import mongoose from "mongoose";
+import { Chat } from "../models/ChatSchema";
 
 export const userHomePage = async (
   req: express.Request,
@@ -403,3 +404,52 @@ export const setRating = async (
   }
 };
 
+export const trainerOnlineStatus = async (
+  req: express.Request,
+  res: express.Response
+) => {
+  try {
+    const { trainerId, userId } = req.params;
+
+    const trainer = await Trainer.findById(trainerId);
+
+    if (!trainer) {
+      return res.status(400).json({ msg: "no trainer found" });
+    }
+
+    const onlineStatus = trainer.isOnline;
+
+    const pendingMessages = await Chat.aggregate([
+      {
+        $match: {
+          userId: new mongoose.Types.ObjectId(userId),
+        },
+      },
+      {
+        $unwind: "$message",
+      },
+      {
+        $match: {
+          "message.isSeen": false,
+          "message.receiverId": new mongoose.Types.ObjectId(userId),
+        },
+      },
+      {
+        $count: "pendingMessagesCount",
+      },
+    ]);
+
+    console.log("pendingMessages", pendingMessages);
+    const pendingMessageCount = pendingMessages[0]?.pendingMessagesCount || 0;
+    res
+      .status(200)
+      .json({
+        msg: "onlineStatus",
+        onlineStatus,
+        pendingMessageCount,
+      });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ msg: "server error", error });
+  }
+};
