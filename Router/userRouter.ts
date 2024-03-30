@@ -8,6 +8,7 @@ import { tokenVerify } from "../middleware/tokenVerify";
 import { isPremiumUser } from "../middleware/isPremiumUser";
 import {
   addFoodLog,
+  applyReason,
   getDay,
   getGraphDataUser,
   setRating,
@@ -61,6 +62,8 @@ userRouter.post("/rating", tokenVerify, setRating);
 
 userRouter.get('/getTrainerOnlineStatus/:trainerId/:userId' , tokenVerify , trainerOnlineStatus)
 
+
+userRouter.post('/applyReason' , tokenVerify , applyReason)
 // userRouter.get("/attandance", attendance);
 
 export default userRouter;

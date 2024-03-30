@@ -54,12 +54,90 @@ export const userHomePage = async (
   // console.log("userDetails", userDetails.attendanceId.foodLogs);
   // console.log("eatedFood", eatedFoodDocIds);
 
+  //getting the yesterday status
+
+  const today = new Date();
+  today.setHours(0, 0, 0, 0);
+  const yesterday = new Date(today.getTime());
+  yesterday.setDate(yesterday.getDate() - 1);
+
+  // console.log("today", today);
+  // console.log("yesterday", yesterday);
+
+  const yesterdayAttendanceReasonAndId = await Attendance.findOne({
+    userId: requstedUser.userId,
+    date: yesterday,
+  }).select("_id notCompleteReason");
+
+  // console.log("yesterdayAttendanceReasonAndId", yesterdayAttendanceReasonAndId);
+
+  let allTasksCompleted = true;
+
+  if (yesterdayAttendanceReasonAndId.notCompleteReason === "") {
+    const yesterdayAttendance = await Attendance.aggregate([
+      {
+        $match: {
+          userId: new mongoose.Types.ObjectId(requstedUser.userId),
+          date: yesterday,
+        },
+      },
+      {
+        $lookup: {
+          from: "foodlogs",
+          localField: "foodLogs",
+          foreignField: "_id",
+          as: "foodLogs",
+        },
+      },
+      {
+        $lookup: {
+          from: "workoutlogs",
+          localField: "workOutLogs",
+          foreignField: "_id",
+          as: "workOutLogs",
+        },
+      },
+      { $unwind: "$workOutLogs" },
+      { $unwind: "$workOutLogs.workOuts" },
+      { $unwind: "$workOutLogs.workOuts.workoutSet" },
+      {
+        $group: {
+          _id: "$_id",
+          allFoodStatusTrue: {
+            $first: { $allElementsTrue: "$foodLogs.status" },
+          },
+          minCompletedReps: {
+            $min: "$workOutLogs.workOuts.workoutSet.completedReps",
+          },
+        },
+      },
+      {
+        $addFields: {
+          allWorkoutsCompleted: {
+            $gt: ["$minCompletedReps", 0],
+          },
+        },
+      },
+    ]);
+
+    if (yesterdayAttendance[0]) {
+      allTasksCompleted =
+        yesterdayAttendance[0].allFoodStatusTrue &&
+        yesterdayAttendance[0].allWorkoutsCompleted;
+    } else {
+      allTasksCompleted = false;
+    }
+
+    // console.log("yesterdayAttendance", yesterdayAttendance);
+  }
   res.status(200).json({
     msg: "userHomePage",
     dietFood: userDetails?.attendanceId?.foodLogs,
     addedFoodDocIds: eatedFoodDocIds,
     hasTrainer,
     attendanceDocId: userDetails?.attendanceId?._id,
+    allTasksCompleted,
+    yesterdayAttendanceId: yesterdayAttendanceReasonAndId?._id,
   });
 };
 
@@ -336,11 +414,11 @@ export const getDay = async (req: express.Request, res: express.Response) => {
   const startOfUserDate = new Date(userDate.setHours(0, 0, 0, 0));
   const endOfTheDay = new Date(userDate.setHours(23, 59, 59, 999));
 
-  console.log("startOfUserDate", startOfUserDate);
-  console.log("endOfTheDay", endOfTheDay);
+  // console.log("startOfUserDate", startOfUserDate);
+  // console.log("endOfTheDay", endOfTheDay);
 
   const attandanceData = await Attendance.findOne({
-    userId: id,
+    userId: id, 
     date: {
       $gte: startOfUserDate,
       $lt: endOfTheDay,
@@ -441,13 +519,33 @@ export const trainerOnlineStatus = async (
 
     console.log("pendingMessages", pendingMessages);
     const pendingMessageCount = pendingMessages[0]?.pendingMessagesCount || 0;
-    res
-      .status(200)
-      .json({
-        msg: "onlineStatus",
-        onlineStatus,
-        pendingMessageCount,
-      });
+    res.status(200).json({
+      msg: "onlineStatus",
+      onlineStatus,
+      pendingMessageCount,
+    });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ msg: "server error", error });
+  }
+};
+
+export const applyReason = async (
+  req: express.Request,
+  res: express.Response
+) => {
+  try {
+    const { reason, yesterdayAttendanceId, agree } = req.body;
+
+    let reasonToAdd = agree ? reason : "Reason not Added";
+
+    const ans = await Attendance.findOneAndUpdate(
+      { _id: yesterdayAttendanceId },
+      { notCompleteReason: reasonToAdd }
+    );
+
+    console.log("ans", ans);
+    res.status(200).json({ msg: "reason applied successfully" });
   } catch (error) {
     console.error(error);
     res.status(500).json({ msg: "server error", error });
