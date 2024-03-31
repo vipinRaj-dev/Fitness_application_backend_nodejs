@@ -544,7 +544,7 @@ export const applyReason = async (
       { notCompleteReason: reasonToAdd }
     );
 
-    console.log("ans", ans);
+    // console.log("ans", ans);
     res.status(200).json({ msg: "reason applied successfully" });
   } catch (error) {
     console.error(error);
