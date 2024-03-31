@@ -418,7 +418,7 @@ export const getDay = async (req: express.Request, res: express.Response) => {
   // console.log("endOfTheDay", endOfTheDay);
 
   const attandanceData = await Attendance.findOne({
-    userId: id, 
+    userId: id,
     date: {
       $gte: startOfUserDate,
       $lt: endOfTheDay,
@@ -546,6 +546,21 @@ export const applyReason = async (
 
     // console.log("ans", ans);
     res.status(200).json({ msg: "reason applied successfully" });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ msg: "server error", error });
+  }
+};
+
+export const getUserName = async (
+  req: express.Request,
+  res: express.Response
+) => {
+  try {
+    const requestedUser: any = req.headers["user"];
+
+    console.log("requestedUser", requestedUser);
+    res.status(200).json({ msg: "user email", email: requestedUser.email });
   } catch (error) {
     console.error(error);
     res.status(500).json({ msg: "server error", error });

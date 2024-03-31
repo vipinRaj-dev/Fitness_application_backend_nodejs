@@ -155,6 +155,15 @@ io.on("connection", (socket: Socket) => {
         }
       });
 
+
+      // socket.on('updateLiveMsg' , async (data) => {
+
+      //   console.log("data in update live msg", data);
+      //   const {recieverId} = data;
+      //   socket.to(recieverId).emit('toReciever' , {msg : 'success by the server'});
+      // })
+
+
       socket.on("allSeen", async (data) => {
         // console.log("all seen data", data);
         const { trainerId, userId, from } = data;

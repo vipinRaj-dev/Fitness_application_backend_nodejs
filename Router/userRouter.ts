@@ -11,6 +11,7 @@ import {
   applyReason,
   getDay,
   getGraphDataUser,
+  getUserName,
   setRating,
   trainerOnlineStatus,
   userHomePage,
@@ -62,6 +63,7 @@ userRouter.post("/rating", tokenVerify, setRating);
 
 userRouter.get('/getTrainerOnlineStatus/:trainerId/:userId' , tokenVerify , trainerOnlineStatus)
 
+userRouter.get('/getUser' ,tokenVerify , getUserName)
 
 userRouter.post('/applyReason' , tokenVerify , applyReason)
 // userRouter.get("/attandance", attendance);
