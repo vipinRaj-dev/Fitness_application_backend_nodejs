@@ -15,7 +15,7 @@ import {
   setRating,
   trainerOnlineStatus,
   userHomePage,
-  userProfile,
+  userProfile, 
   userProfileImageUpdate,
 } from "../controllers/userProfileController";
 

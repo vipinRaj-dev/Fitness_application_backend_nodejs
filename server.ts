@@ -150,7 +150,7 @@ io.on("connection", (socket: Socket) => {
         const msgSeen = await makeMsgSeen(senderId, receiverId);
 
         console.log("msg seen", msgSeen);
-        if (msgSeen.status === "success") {
+        if (msgSeen?.status === "success") {
           socket.to(senderId).emit("msgSeen", { senderId: senderId });
         }
       });
@@ -178,10 +178,10 @@ io.on("connection", (socket: Socket) => {
   });
 
   socket.on("disconnect", async () => {
-    let recievedUser = users[socket.id];
+    let recievedUser = users[socket.id];  
 
     if (!recievedUser) return;
-
+   
     if (recievedUser.role === "trainer") {
       const trainerData = await Trainer.findOneAndUpdate(
         { _id: recievedUser.userId },

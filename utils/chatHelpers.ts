@@ -109,7 +109,7 @@ export const findChatDoc = async (trainerId: string, userId: string) => {
 
 export const markAllSeen = async (chatDoc: any, from: string) => {
   try {
-    chatDoc.message.forEach(async (msg) => {
+    chatDoc?.message.forEach(async (msg) => {
       if (msg.senderId.toString() !== from.toString()) {
         msg.isSeen = true;
       }
