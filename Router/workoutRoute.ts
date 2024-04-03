@@ -9,7 +9,7 @@ import {
   getWorkoutsUser,
   setWorkout,
   updateCompletedReps,
-} from "../controllers/WorkoutControllers";
+} from "../controllers/workoutController";
 import { tokenVerify } from "../middleware/tokenVerify";
 
 const workoutRouter = express.Router();

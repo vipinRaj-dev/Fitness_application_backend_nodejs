@@ -6,9 +6,9 @@ import {
 import { Food } from "../models/ListOfFood";
 
 export const addFood = async (req: express.Request, res: express.Response) => {
-  console.log("addFood");
+  // console.log("addFood");
   // console.log(req.body);
-  console.log(req.file);
+  // console.log(req.file);
 
   if (!req.file) {
     return res.status(400).json({ msg: "Please upload an image" });
@@ -55,18 +55,18 @@ export const addFood = async (req: express.Request, res: express.Response) => {
       });
       const savedFood = await newFood.save();
       // console.log("savedFood:", savedFood);
-    }else{
-      res.status(401).json({msg : 'Image not updated'})
+
+      res.status(200).json({ message: "Food added successfully" });
+    } else {
+      res.status(401).json({ msg: "Image not updated" });
     }
   } catch (error) {
     console.error("Error uploading to Cloudinary:", error);
     return res.status(500).json({ msg: "Error uploading image", error });
   }
-
-  res.status(200).json({ message: "Food added successfully" });
 };
 
-export const getAllFood = async (
+export const getAllFood = async (  
   req: express.Request,
   res: express.Response
 ) => {

@@ -3,11 +3,13 @@ import { AdminPayment } from "../models/PaymentsModel";
 import { User } from "../models/UserModel";
 dotenv.config();
 import Stripe from "stripe";
-import { TrainerPayment } from "../models/trainerPaymentModel";
+import { TrainerPayment } from "../models/TrainerPaymentModel";
 import { Trainer } from "../models/TrainerModel";
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY);
 
-export const createCheckoutSession = async (req: any, res: any) => {
+export const createCheckoutSession = async (req, res) => {
+  console.log('inside the createCheckoutSession');
+  
   const { amount, plan, trainerId } = req.body;
   const userId = req.headers["user"].userId;
   trainerId
@@ -47,12 +49,13 @@ const endpointSecret =
   "whsec_fecaf7dd03cff4bae38d6e153a36ed764714f82ea43044821c6e464f741209fd";
 
 export const handleWebhook = async (request, response) => {
+  console.log('inside the handleWebhook');
+
   let userId: string;
-  let metadata: any;
   let transactionId: string;
-  // let receiptUrl: string;
   const sig = request.headers["stripe-signature"];
 
+  let metadata;
   let event;
 
   try {
@@ -67,28 +70,23 @@ export const handleWebhook = async (request, response) => {
   switch (event.type) {
     case "payment_intent.succeeded":
       // const paymentIntent = event.data.object;
-      // transactionId = paymentIntent.id;
-      // console.log('payemntIntent' , paymentIntent)
-      //   console.log("Transaction ID is", transactionId);
+
       break;
     case "checkout.session.completed":
       const session = event.data.object;
       userId = session.client_reference_id;
       metadata = session.metadata;
-      transactionId = session.payment_intent  
+      transactionId = session.payment_intent;
       // console.log("Checkout Session completed!", metadata);
-      // console.log("session", session);
-      //   console.log("userId is", userId);
+
       break;
 
     case "charge.succeeded":
       // const charge = event.data.object;
-      // receiptUrl = charge.receipt_url;
-      // console.log("Charge Succeeded!", charge);
-      //   console.log("Receipt URL is", receiptUrl);  
+
       break;
     default:
-      // console.log(`Unhandled event type ${event.type}`);
+    // console.log(`Unhandled event type ${event.type}`);
   }
 
   // Return a 200 response to acknowledge receipt of the event
@@ -106,7 +104,7 @@ export const handleWebhook = async (request, response) => {
     const updateAdminPayment = async () => {
       const paymentDocument = new AdminPayment({
         planSelected: metadata.selectedPlan,
-        transactionId : transactionId,
+        transactionId: transactionId,
         clientDetails: userId,
         amount: metadata.amountPaid,
       });
@@ -135,11 +133,7 @@ export const handleWebhook = async (request, response) => {
     };
     await updateAdminPayment();
   }
-  if (
-    userId &&
-    metadata &&
-    metadata.trainer_reference_id
-  ) {
+  if (userId && metadata && metadata.trainer_reference_id) {
     // console.log(
     //   "userId",
     //   userId,
@@ -156,7 +150,7 @@ export const handleWebhook = async (request, response) => {
         clientDetails: userId,
         trainersId: metadata.trainer_reference_id,
         amount: metadata.amountPaid,
-        transactionId : transactionId
+        transactionId: transactionId,
       });
       await paymentDocument.save();
 

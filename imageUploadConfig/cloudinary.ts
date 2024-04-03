@@ -38,7 +38,6 @@ const uploadVideoToCloudinary = async (path: string, folder: string) => {
       return { url: data.url, public_id: data.public_id };
     })
     .catch((error) => {
-      throw error
       console.log("error while uplaoding video to cloudinary", error);
     });
 };

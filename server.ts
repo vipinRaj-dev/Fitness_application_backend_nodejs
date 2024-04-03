@@ -11,16 +11,16 @@ import { Server, Socket } from "socket.io";
 
 // importing the routes
 import authRouter from "./Router/authRoute";
-import userRouter from "./Router/userRouter";
-import adminRouter from "./Router/adminRouter";
-import trainerRoutes from "./Router/trainerRoutes";
-import workoutRouter from "./Router/workoutRouter";
-import chatRouter from "./Router/chatRoutes";
+import userRouter from "./Router/userRoute";
+import adminRouter from "./Router/adminRoute";
+import trainerRoutes from "./Router/trainerRoute";
+import workoutRouter from "./Router/workoutRoute";
+import chatRouter from "./Router/chatRoute";
 
 import { User } from "./models/UserModel";
 import { Attendance } from "./models/AttendanceModel";
 import { FoodLog } from "./models/FoodLogModel";
-import foodRouter from "./Router/foodRouter";
+import foodRouter from "./Router/foodRoute";
 import { Trainer } from "./models/TrainerModel";
 import {
   findChatDoc,
@@ -28,6 +28,13 @@ import {
   markAllSeen,
   sendAndSaveMessage,
 } from "./utils/chatHelpers";
+
+interface UserSocket {
+  [key: string]: {
+    userId: string;
+    role: string;
+  };
+}
 
 const app: express.Application = express();
 
@@ -76,13 +83,6 @@ app.use("/workouts", workoutRouter);
 
 app.use("/chat", chatRouter);
 
-interface UserSocket {
-  [key: string]: {
-    userId: string;
-    role: string;
-  };
-}
-
 const users: UserSocket = {};
 
 io.on("connection", (socket: Socket) => {
@@ -126,7 +126,7 @@ io.on("connection", (socket: Socket) => {
         }
       };
 
-      setIsOnline();
+      data.userCookie && setIsOnline();
 
       socket.on("sendMessage", async (message, callBack) => {
         // console.log("message recieved", message);
@@ -155,7 +155,6 @@ io.on("connection", (socket: Socket) => {
         }
       });
 
-
       // socket.on('updateLiveMsg' , async (data) => {
 
       //   console.log("data in update live msg", data);
@@ -163,25 +162,23 @@ io.on("connection", (socket: Socket) => {
       //   socket.to(recieverId).emit('toReciever' , {msg : 'success by the server'});
       // })
 
-
       socket.on("allSeen", async (data) => {
         // console.log("all seen data", data);
         const { trainerId, userId, from } = data;
         const chatDoc = await findChatDoc(trainerId, userId);
-        markAllSeen(chatDoc, from === 'user' ? userId : trainerId);
-        socket.to(from === 'user' ? trainerId : userId).emit("allSeen");
-
+        markAllSeen(chatDoc, from === "user" ? userId : trainerId);
+        socket.to(from === "user" ? trainerId : userId).emit("allSeen");
       });
-    } catch (error) { 
+    } catch (error) {
       console.error("error in setting the user online", error);
     }
   });
 
   socket.on("disconnect", async () => {
-    let recievedUser = users[socket.id];  
+    let recievedUser = users[socket.id];
 
     if (!recievedUser) return;
-   
+
     if (recievedUser.role === "trainer") {
       const trainerData = await Trainer.findOneAndUpdate(
         { _id: recievedUser.userId },
@@ -209,7 +206,7 @@ io.on("connection", (socket: Socket) => {
           .emit("clientOffline", { clientId: recievedUser.userId });
     }
 
-    delete users[socket.id];
+    delete users[socket.id];  
   });
 });
 
@@ -265,7 +262,7 @@ async function markAttendance() {
         { _id: user._id },
         { $set: { attendanceId: ans._id } }
       );
-      console.log("attandance created to the user", userUpdation);
+      // console.log("attandance created to the user", userUpdation);
     }
   }
 }
@@ -288,7 +285,7 @@ if (hostName && port && mongo_uri) {
         console.log(`socket io Listening on port ${port}`)
       );
     })
-    .catch((error: any) => {
+    .catch((error) => {
       console.log("cannot conncect to the database", error);
       process.exit(1);
     });

@@ -8,8 +8,8 @@ import { User, UserType } from "../models/UserModel";
 import { Trainer, TrainerType } from "../models/TrainerModel";
 import { Admin, AdminType } from "../models/AdminModel";
 
-import { otpVerify } from "../utils/otpverify";
-import { SaveOTPAndTempUser } from "../utils/sendandsaveotp";
+import { otpVerify } from "../utils/otpVerify";
+import { SaveOTPAndTempUser } from "../utils/sendAndSaveOtp";
 
 export const userRegistrationSendOtp = async (
   req: express.Request,
@@ -87,7 +87,7 @@ export const SaveUser = async (req: express.Request, res: express.Response) => {
           // console.log("User saved successfully:", user);
           return res.status(201).json({ msg: "user registration successful" });
         })
-        .catch((error: any) => {
+        .catch((error) => {
           console.error("Error saving user:", error);
         });
     }
@@ -163,7 +163,7 @@ export const checkrole = async (
   res: express.Response
 ) => {
   try {
-    let requstedUser: any = req.headers["user"];
+    let requstedUser: string | string[] | any = req.headers["user"];
 
     if (requstedUser.role === "user") {
       let isUserBlocked = await User.findById(requstedUser.userId).select(
@@ -230,7 +230,7 @@ export const otpVerification = async (
         return res.status(404).json({ msg: "User not found" });
       } else {
         userDetails.password = hashedPassword;
-        userDetails.save().then((user: any) => {
+        userDetails.save().then((user) => {
           return res.status(200).json({ msg: "Password reset successfully" });
         });
       }
@@ -243,24 +243,3 @@ export const otpVerification = async (
   }
 };
 
-// export const forgotPasswordReset = async (
-//   req: express.Request,
-//   res: express.Response
-// ) => {
-//   try {
-//     const { email, password } = req.body;
-//     const userDetails = await User.findOne({ email: email });
-//     let hashedPassword = await hashPassword(password);
-//     if (!userDetails) {
-//       return res.status(404).json({ msg: "User not found" });
-//     } else {
-//       userDetails.password = hashedPassword;
-//       userDetails.save().then((user: any) => {
-//         // console.log("Password reset successfully:", user);
-//         return res.status(200).json({ msg: "Password reset successfully" });
-//       });
-//     }
-//   } catch (error) {
-//     return res.status(500).json({msg : "server error"})
-//   }
-// };

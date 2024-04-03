@@ -7,7 +7,8 @@ export let isPremiumUser = async (
   next: express.NextFunction
 ) => {
   try {
-    let requstedUser: any = req.headers["user"];
+     let requstedUser: string | string[] | any = req.headers["user"];
+
 
     const user = await User.findById(requstedUser.userId);
     if (user) {

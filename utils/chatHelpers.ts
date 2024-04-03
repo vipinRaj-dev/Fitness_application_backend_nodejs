@@ -1,6 +1,6 @@
-import { Chat } from "../models/ChatSchema";
+import { Chat } from "../models/ChatModel";
 
-export const sendAndSaveMessage = async (message: any) => {
+export const sendAndSaveMessage = async (message) => {
   try {
     const { senderId, receiverId, text, from } = message;
 
@@ -65,8 +65,8 @@ export const sendAndSaveMessage = async (message: any) => {
 
 export const makeMsgSeen = async (senderId: string, receiverId: string) => {
   try {
-    console.log("makeMsgSeen==========================");
-    console.log("senderId", senderId, "receiverId", receiverId);
+    // console.log("makeMsgSeen==========================");
+    // console.log("senderId", senderId, "receiverId", receiverId);
 
     const chat = await Chat.findOne({
       $or: [
@@ -107,7 +107,7 @@ export const findChatDoc = async (trainerId: string, userId: string) => {
   }
 };
 
-export const markAllSeen = async (chatDoc: any, from: string) => {
+export const markAllSeen = async (chatDoc, from) => {
   try {
     chatDoc?.message.forEach(async (msg) => {
       if (msg.senderId.toString() !== from.toString()) {

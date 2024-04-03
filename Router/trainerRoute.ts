@@ -10,7 +10,7 @@ import {
   trainerProfileImageUpdate,
 } from "../controllers/trainerProfileController";
 import upload from "../middleware/upload";
-import { allClients } from "../controllers/trainerUserControllers";
+import { allClients } from "../controllers/trainerUserController";
 import { isTrainerBlocked } from "../middleware/trainerBlock";
 
 const trainerRouter: express.Router = express.Router();

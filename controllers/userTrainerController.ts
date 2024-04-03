@@ -30,7 +30,7 @@ export const getAllTrainers = async (
 
     const totalTrainers = await Trainer.countDocuments(query);
 
-    const { userId }: any = req.headers["user"];
+    const { userId }: string | string[] | any = req.headers["user"];
 
     const user = await User.findById(userId);
     const TrainerId = user?.trainerId;

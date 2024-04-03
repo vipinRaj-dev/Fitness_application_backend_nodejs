@@ -7,12 +7,6 @@ import { AdminPayment } from "../models/PaymentsModel";
 import { Food } from "../models/ListOfFood";
 import { Workout } from "../models/ListOfWorkout";
 
-interface RequestedUser {
-  email: string;
-  role: string;
-  userId: string;
-  iat: number;
-}
 
 // USER CONTROLLERS
 export const dashboard = async (
@@ -354,7 +348,7 @@ export const getAdminPayments = async (
       path: "clientDetails",
       select: "name email isPremium dueDate profileImage",
     });
-    console.log("payments", payments);
+    // console.log("payments", payments);
 
     
     res.status(200).json({ payments });
@@ -371,7 +365,7 @@ export const getGraphDataAdmin = async (
   res: express.Response
 ) => {
   try {
-    console.log("graph data");
+    // console.log("graph data");
     let totalRevenue: { totalRevenue: number }[],
       premiumUsers: number,
       trialUsers: number,

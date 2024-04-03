@@ -41,7 +41,7 @@ export const setTimeDetails = async (
     };
     // console.log(AddTimeDetails);
     const clientFood = client.latestDiet.find(
-      (food: any) => food._id == foodDocId
+      (food) => food._id == foodDocId
     );
     if (clientFood) {
       clientFood.time = AddTimeDetails.time;
@@ -170,9 +170,9 @@ export const decreasePerFoodQuantity = async (
     // console.log(foodId);
     const client = await User.findById(clientId);
 
-    const findFood = client.latestDiet.find((food: any) => {
+    const findFood = client.latestDiet.find((food) => {
       // console.log(food);
-      return food.foodId == foodId;
+      return food.foodId.toString() === foodId;
     });
 
     // console.log("findFood" , findFood);

@@ -8,7 +8,7 @@ export async function SaveOTPAndTempUser({
   password,
   name,
 }: {
-  email: string;
+  email: string; 
   name?: string;
   password?: string; 
 }) {
@@ -26,10 +26,10 @@ export async function SaveOTPAndTempUser({
 
   newOTP
     .save()
-    .then((otp: any) => {
+    .then((otp) => {
       console.log("OTP saved successfully:", otp.otp);
     })
-    .catch((error: any) => {
+    .catch((error) => {
       console.error("Error saving OTP:", error);
     });
 

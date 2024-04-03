@@ -2,40 +2,11 @@ import express from "express";
 import { Workout } from "../models/ListOfWorkout";
 import { User } from "../models/UserModel";
 import { WorkoutLog } from "../models/WorkoutLogModel";
-import mongoose from "mongoose";
-import {
-  Attendance,
-  AttendanceSchema,
-  AttendanceType,
-} from "../models/AttendanceModel";
-
-type WorkoutSet = {
-  _id: mongoose.Types.ObjectId;
-  reps: number;
-  weight: number;
-  completedReps: number;
-};
-
-type WorkOut = {
-  _id: mongoose.Types.ObjectId;
-  workoutId: mongoose.Types.ObjectId;
-  workoutSet: WorkoutSet[];
-};
-
-export type WorkoutLogType = {
-  _id: mongoose.Types.ObjectId;
-  date: Date;
-  userId: mongoose.Types.ObjectId;
-  workOuts: WorkOut[];
-  createdAt: Date;
-  updatedAt: Date;
-};
-
-// Trainer realted controllers
+import { Attendance } from "../models/AttendanceModel";
 
 export const getWorkouts = async (
   req: express.Request,
-  res: express.Response 
+  res: express.Response
 ) => {
   // console.log("getWorkouts");
   try {
@@ -240,7 +211,7 @@ export const addNewSet = async (
       workoutfound.workoutSet.push({ reps, weight, completedReps: 0 });
       await workoutLog?.save();
       res.status(200).json({ message: "Workout Add Set Successfully" });
-    }else{
+    } else {
       res.status(404).json({ message: "Workout Set not found" });
     }
   } catch (error) {
@@ -281,7 +252,7 @@ export const getWorkoutsUser = async (
   res: express.Response
 ) => {
   try {
-    let { userId }: any = req.headers["user"];
+    let { userId }: string | string[] | any = req.headers["user"];
 
     // console.log(userId);
     const date = new Date();

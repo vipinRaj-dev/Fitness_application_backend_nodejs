@@ -5,15 +5,15 @@ import {
   removeFromCloudinary,
   uploadToCloudinary,
 } from "../imageUploadConfig/cloudinary";
-import { TrainerPayment } from "../models/trainerPaymentModel";
-import { Chat } from "../models/ChatSchema";
+import { TrainerPayment } from "../models/TrainerPaymentModel";
+import { Chat } from "../models/ChatModel";
 
 export const trainerProfile = async (
   req: express.Request,
   res: express.Response
 ) => {
   try {
-    let requstedUser: any = req.headers["user"];
+   let requstedUser: string | string[] | any = req.headers["user"];
     // console.log(requstedUser);
     let trainerData: TrainerType | null = await Trainer.findById(
       requstedUser.userId
@@ -42,7 +42,7 @@ export const trainerProfileImageUpdate = async (
   res: express.Response
 ) => {
   try {
-    let requstedUser: any = req.headers["user"];
+   let requstedUser: string | string[] | any = req.headers["user"];
     const id = requstedUser.userId;
 
     const {
@@ -124,7 +124,7 @@ export const addCertificateAndClient = async (
   res: express.Response
 ) => {
   try {
-    let requstedUser: any = req.headers["user"];
+   let requstedUser: string | string[] | any = req.headers["user"];
     const id = requstedUser.userId;
 
     // console.log(req.body.name, req.body.content, req.body);
@@ -203,7 +203,7 @@ export const deleteCertificateOrClient = async (
   res: express.Response
 ) => {
   try {
-    let requstedUser: any = req.headers["user"];
+   let requstedUser: string | string[] | any = req.headers["user"];
     const id = requstedUser.userId;
     console.log(req.body);
     const { deleteId, field, publicId } = req.body;
@@ -246,7 +246,7 @@ export const getReviews = async (
   res: express.Response
 ) => {
   try {
-    let requstedUser: any = req.headers["user"];
+   let requstedUser: string | string[] | any = req.headers["user"];
     const id = requstedUser.userId;
 
     const page = parseInt(req.query.page as string) - 1 || 0;
@@ -298,7 +298,7 @@ export const getPayments = async (
   res: express.Response
 ) => {
   try {
-    let requstedUser: any = req.headers["user"];
+   let requstedUser: string | string[] | any = req.headers["user"];
     const id = requstedUser.userId;
 
     const trainerData = await Trainer.findById(id).populate({
@@ -383,7 +383,7 @@ export const getClients = async (
   res: express.Response
 ) => {
   try {
-    let requstedUser: any = req.headers["user"];
+   let requstedUser: string | string[] | any = req.headers["user"];
     const id = requstedUser.userId;
 
     const trainerClients = await Trainer.findById(id)

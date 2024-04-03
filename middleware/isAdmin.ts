@@ -7,7 +7,8 @@ export let isAdmin = async (
 ) => {
     console.log("yes admin verified")
   try {
-    let requstedUser: any = req.headers["user"];
+    let requstedUser: string | string[] | any = req.headers["user"];
+
     if (requstedUser.role !== "admin") {
       return res.status(401).json({ msg: "Not authorized" });
     }

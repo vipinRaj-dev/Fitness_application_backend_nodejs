@@ -1,5 +1,5 @@
 import express from "express";
-import { Chat } from "../models/ChatSchema";
+import { Chat } from "../models/ChatModel";
 
 export const getMessages = async (
   req: express.Request,
@@ -8,7 +8,7 @@ export const getMessages = async (
   try {
     const { userId, trainerId } = req.params;
 
-    console.log(userId, trainerId);
+    // console.log(userId, trainerId);
     const messages = await Chat.findOne({
       userId: userId,
       trainerId: trainerId,

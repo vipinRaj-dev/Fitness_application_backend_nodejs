@@ -14,7 +14,7 @@ import {
   getUserName,
   setRating,
   trainerOnlineStatus,
-  userHomePage,
+  userHomePage,  
   userProfile, 
   userProfileImageUpdate,
 } from "../controllers/userProfileController";
@@ -23,7 +23,7 @@ import upload from "../middleware/upload";
 import {
   getAllTrainers,
   getSingleTrainer,
-} from "../controllers/userTrainerControllers";
+} from "../controllers/userTrainerController";
 import {
   createCheckoutSession,
   handleWebhook,

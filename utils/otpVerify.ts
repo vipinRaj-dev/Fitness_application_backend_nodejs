@@ -7,7 +7,7 @@ export async function otpVerify(otp: number, email?: string) {
   if (email) {
     query.email = email;
   }
-  console.log("Query:", query); 
+  // console.log("Query:", query); 
   let otpDoc: OTPType = await OTP.findOne(query);
   if (!otpDoc) {
     return false;

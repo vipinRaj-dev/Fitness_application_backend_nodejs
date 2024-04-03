@@ -6,28 +6,27 @@ import {
   removeFromCloudinary,
   uploadToCloudinary,
 } from "../imageUploadConfig/cloudinary";
-import { WorkoutLog, WorkoutLogType } from "../models/WorkoutLogModel";
 import { FoodLog } from "../models/FoodLogModel";
 import { Review } from "../models/ReviewModel";
 import { Trainer } from "../models/TrainerModel";
 import mongoose from "mongoose";
-import { Chat } from "../models/ChatSchema";
+import { Chat } from "../models/ChatModel";
+type dietFoodType = {
+  _id: string;
+  trainerId: string;
+  trainerPaymentDueDate: Date;
+  attendanceId: {
+    _id: string;
+    foodLogs: any[];
+  };
+};
+
 
 export const userHomePage = async (
   req: express.Request,
   res: express.Response
 ) => {
-  type dietFoodType = {
-    _id: string;
-    trainerId: string;
-    trainerPaymentDueDate: Date;
-    attendanceId: {
-      _id: string;
-      foodLogs: any[];
-    };
-  };
-
-  let requstedUser: any = req.headers["user"];
+  let requstedUser: string | string[] | any = req.headers["user"];
 
   let userDetails: dietFoodType = await User.findById(
     requstedUser.userId
@@ -73,7 +72,7 @@ export const userHomePage = async (
 
   let allTasksCompleted = true;
 
-  if (yesterdayAttendanceReasonAndId.notCompleteReason === "") {
+  if (yesterdayAttendanceReasonAndId?.notCompleteReason === "") {
     const yesterdayAttendance = await Attendance.aggregate([
       {
         $match: {
@@ -151,7 +150,7 @@ export const getGraphDataUser = async (
 
     // how can i aggragate the data to get the above result
 
-    let requstedUser: any = req.headers["user"];
+    let requstedUser: string | string[] | any = req.headers["user"];
     const id = requstedUser.userId;
 
     const attendancePerDay = await Attendance.aggregate([
@@ -243,7 +242,7 @@ export const userProfile = async (
   res: express.Response
 ) => {
   try {
-    let requstedUser: any = req.headers["user"];
+    let requstedUser: string | string[] | any = req.headers["user"];
 
     // console.log(requstedUser);
 
@@ -275,7 +274,7 @@ export const userProfileImageUpdate = async (
   res: express.Response
 ) => {
   try {
-    let requstedUser: any = req.headers["user"];
+    let requstedUser: string | string[] | any = req.headers["user"];
     const id = requstedUser.userId;
     let imageData;
     if (req.file) {
@@ -406,7 +405,7 @@ export const addFoodLog = async (
 };
 
 export const getDay = async (req: express.Request, res: express.Response) => {
-  let requstedUser: any = req.headers["user"];
+  let requstedUser: string | string[] | any = req.headers["user"];
   const id = requstedUser.userId;
   const userDate = new Date(req.params.date); // assuming date is passed as a parameter in the request
   // console.log("userDate", userDate);
@@ -447,7 +446,7 @@ export const setRating = async (
 ) => {
   try {
     const { rating, trainerId, content } = req.body;
-    let requstedUser: any = req.headers["user"];
+    let requstedUser: string | string[] | any = req.headers["user"];
     const id = requstedUser.userId;
 
     const newReview = new Review({

@@ -1,15 +1,12 @@
 import express from "express";
 import { Trainer } from "../models/TrainerModel";
-import { User } from "../models/UserModel";
-import { Food } from "../models/ListOfFood";
-import { Attendance } from "../models/AttendanceModel";
 
 export const allClients = async (
   req: express.Request,
   res: express.Response
 ) => {
   // try {
-  let requstedUser: any = req.headers["user"];
+  let requstedUser: string | string[] | any = req.headers["user"];
   console.log(requstedUser);
 
   const page = parseInt(req.query.page as string) - 1 || 0;

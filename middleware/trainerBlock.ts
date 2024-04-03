@@ -6,7 +6,8 @@ export let isTrainerBlocked = async (
   res: express.Response,
   next: express.NextFunction
 ) => {
-  let requstedUser: any = req.headers["user"];
+  let requstedUser: string | string[] | any = req.headers["user"];
+
   let trainerData: TrainerType | null = await Trainer.findById(
     requstedUser.userId
   );
