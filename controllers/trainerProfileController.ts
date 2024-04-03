@@ -205,7 +205,7 @@ export const deleteCertificateOrClient = async (
   try {
     const requstedUser: string | string[] | any = req.headers["user"];
     const id = requstedUser.userId;
-    console.log(req.body);
+    // console.log(req.body);
     const { deleteId, field, publicId } = req.body;
 
     const trainerData = await Trainer.findById(id);

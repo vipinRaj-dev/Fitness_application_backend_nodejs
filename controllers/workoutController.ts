@@ -264,7 +264,7 @@ export const getWorkoutsUser = async (
     }).populate("workOuts.workoutId");
 
     if (workOutLogData) {
-      console.log(workOutLogData);
+      // console.log(workOutLogData);
 
       res.status(200).json({
         workOutData: workOutLogData.workOuts,

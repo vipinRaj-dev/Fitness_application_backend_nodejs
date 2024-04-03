@@ -26,7 +26,6 @@ export const userRegistrationSendOtp = async (
 
     user = await User.findOne({ email: email });
 
-
     if (!user) {
       user = await Trainer.findOne({ email: email });
     }
@@ -166,27 +165,31 @@ export const checkrole = async (
   try {
     const requstedUser: string | string[] | any = req.headers["user"];
 
-    if (requstedUser.role === "user") {
-      const isUserBlocked = await User.findById(requstedUser.userId).select(
-        "userBlocked"
-      );
-      if (!isUserBlocked) {
-        return res.status(404).json({ msg: "user not found" });
-      }
-      // console.log("requstedUser", requstedUser);
-      console.log("isUserBlocked", isUserBlocked);
-      console.log(requstedUser.userId)
+    // if (requstedUser.role === "user") {
+    //   const isUserBlocked = await User.findById(requstedUser.userId).select(
+    //     "userBlocked"
+    //   );
+    //   if (!isUserBlocked) {
+    //     return res.status(404).json({ msg: "user not found" });
+    //   }
+    //   // console.log("requstedUser", requstedUser);
+    //   console.log("isUserBlocked", isUserBlocked);
+    //   // console.log(requstedUser.userId)
 
-      if (isUserBlocked.userBlocked) {
-        return res
-          .status(401)
-          .json({ msg: "user is blocked please contact to admin" });
-      }
-    }
+    //   if (isUserBlocked.userBlocked) {
+    //     return res
+    //       .status(401)
+    //       .json({ msg: "user is blocked please contact to admin" });
+    //   }
+    // }
 
     res
       .status(200)
-      .json({ role: requstedUser.role, email: requstedUser.email , userId : requstedUser.userId });
+      .json({
+        role: requstedUser.role,
+        email: requstedUser.email,
+        userId: requstedUser.userId,
+      });
   } catch (error) {
     console.error(error);
   }
@@ -243,4 +246,3 @@ export const otpVerification = async (
     return res.status(500).json({ msg: "server error" });
   }
 };
-

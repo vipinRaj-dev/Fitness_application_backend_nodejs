@@ -145,7 +145,7 @@ export const getGraphDataUser = async (
   res: express.Response
 ) => {
   try {
-    console.log("getGraphDataUser");
+    // console.log("getGraphDataUser");
     // i want the users attandance details aggregated by the 7 days like this
 
     // how can i aggragate the data to get the above result
@@ -370,7 +370,7 @@ export const addFoodLog = async (
   try {
     const { time, foodDocId, attendanceId } = req.body;
 
-    console.log("attendanceId", attendanceId);
+    // console.log("attendanceId", attendanceId);
 
     const currentTime = new Date();
     const foodTime = new Date();
@@ -381,7 +381,7 @@ export const addFoodLog = async (
     const foodTime1HoursBefore = new Date(foodTime.getTime() - 1000 * 60 * 60);
 
     if (foodTime1HoursBefore > currentTime) {
-      return res.status(403).json({ msg: "time not reached yet" });
+      return res.status(400).json({ msg: "time not reached yet" });
     }
 
     const foodLogData = await FoodLog.findById(foodDocId);
@@ -516,7 +516,7 @@ export const trainerOnlineStatus = async (
       },
     ]);
 
-    console.log("pendingMessages", pendingMessages);
+    // console.log("pendingMessages", pendingMessages);
     const pendingMessageCount = pendingMessages[0]?.pendingMessagesCount || 0;
     res.status(200).json({
       msg: "onlineStatus",
@@ -558,7 +558,7 @@ export const getUserName = async (
   try {
     const requestedUser: any = req.headers["user"];
 
-    console.log("requestedUser", requestedUser);
+    // console.log("requestedUser", requestedUser);
     res.status(200).json({ msg: "user email", email: requestedUser.email });
   } catch (error) {
     console.error(error);

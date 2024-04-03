@@ -14,8 +14,8 @@ import {
   getUserName,
   setRating,
   trainerOnlineStatus,
-  userHomePage,  
-  userProfile, 
+  userHomePage,
+  userProfile,
   userProfileImageUpdate,
 } from "../controllers/userProfileController";
 
@@ -28,44 +28,73 @@ import {
   createCheckoutSession,
   handleWebhook,
 } from "../controllers/paymentController";
+import { IsUserBlocked } from "../middleware/isUserBlocked";
 
 const userRouter: express.Router = express.Router();
 
-userRouter.get("/homePage", tokenVerify, isPremiumUser, userHomePage);
+userRouter.get(
+  "/homePage",
+  tokenVerify,
+  IsUserBlocked,
+  isPremiumUser,
+  userHomePage
+);
 
 userRouter.get("/getGraphs", tokenVerify, getGraphDataUser);
 
-userRouter.get("/profile", tokenVerify, isPremiumUser, userProfile);
+userRouter.get(
+  "/profile",
+  tokenVerify,
+  IsUserBlocked,
+  isPremiumUser,
+  userProfile
+);
 
 userRouter.put(
   "/profileUpdate",
   tokenVerify,
+  IsUserBlocked,
   upload.single("image"),
   userProfileImageUpdate
 );
 
-userRouter.post("/create-checkout-session", tokenVerify, createCheckoutSession);
+userRouter.post(
+  "/create-checkout-session",
+  tokenVerify,
+  IsUserBlocked,
+  createCheckoutSession
+);
 
 userRouter.post(
   "/webhook",
   express.raw({ type: "application/json" }),
   handleWebhook
 );
-userRouter.get("/getAllTrainers", tokenVerify, getAllTrainers);
+userRouter.get("/getAllTrainers", tokenVerify, IsUserBlocked, getAllTrainers);
 
-userRouter.get("/getTrainer/:id", tokenVerify, isPremiumUser, getSingleTrainer);
+userRouter.get(
+  "/getTrainer/:id",
+  tokenVerify,
+  isPremiumUser,
+  IsUserBlocked,
+  getSingleTrainer
+);
 
-userRouter.put("/addFoodLog", tokenVerify, addFoodLog);
+userRouter.put("/addFoodLog", tokenVerify, IsUserBlocked, addFoodLog);
 
-userRouter.get("/getDate/:date", tokenVerify, getDay);
+userRouter.get("/getDate/:date", tokenVerify, IsUserBlocked, getDay);
 
-userRouter.post("/rating", tokenVerify, setRating);
+userRouter.post("/rating", tokenVerify, IsUserBlocked, setRating);
 
-userRouter.get('/getTrainerOnlineStatus/:trainerId/:userId' , tokenVerify , trainerOnlineStatus)
+userRouter.get(
+  "/getTrainerOnlineStatus/:trainerId/:userId",
+  tokenVerify,
+  trainerOnlineStatus
+);
 
-userRouter.get('/getUser' ,tokenVerify , getUserName)
+userRouter.get("/getUser", tokenVerify, getUserName);
 
-userRouter.post('/applyReason' , tokenVerify , applyReason)
+userRouter.post("/applyReason", tokenVerify, applyReason);
 // userRouter.get("/attandance", attendance);
 
 export default userRouter;
