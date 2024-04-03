@@ -26,6 +26,7 @@ export const userRegistrationSendOtp = async (
 
     user = await User.findOne({ email: email });
 
+
     if (!user) {
       user = await Trainer.findOne({ email: email });
     }
@@ -56,25 +57,25 @@ export const userRegistrationSendOtp = async (
 
 export const SaveUser = async (req: express.Request, res: express.Response) => {
   try {
-    let { otp, data } = req.body;
+    const { otp, data } = req.body;
     // console.log("Request body:", req.body);
-    let OTP = parseInt(otp);
+    const OTP = parseInt(otp);
     console.log("otp:", OTP);
-    let otpDoc = await otpVerify(OTP, data.email);
+    const otpDoc = await otpVerify(OTP, data.email);
 
     if (!otpDoc) {
       return res.status(401).json({ msg: "otp verification failed" });
     } else {
       // console.log("otp verified successfully");
-      let { name, email, hashedPassword } = otpDoc;
-      let userCount = await User.countDocuments({});
+      const { name, email, hashedPassword } = otpDoc;
+      const userCount = await User.countDocuments({});
 
-      let trialPeriod = 5; // 5 days trial period
+      const trialPeriod = 5; // 5 days trial period
       const trialEndsDate = new Date();
       trialEndsDate.setDate(trialEndsDate.getDate() + trialPeriod);
 
       //register the user
-      let newUser = new User({
+      const newUser = new User({
         admissionNumber: userCount + 1,
         name,
         email,
@@ -119,7 +120,7 @@ export const userLogin = async (
       return res.status(404).json({ msg: "user not found" });
     }
 
-    let passwordMatch = await verifyPassword(password, foundUser.password);
+    const passwordMatch = await verifyPassword(password, foundUser.password);
 
     if (!passwordMatch) {
       return res.status(401).json({ msg: "password incorrect" });
@@ -139,13 +140,13 @@ export const userLogin = async (
     }
     // sending token
 
-    let payload = {
+    const payload = {
       email: email,
       role: foundUser.role,
       userId: foundUser._id,
     };
 
-    let token = jwt.sign(payload, process.env.JWT_SECRET_KEY);
+    const token = jwt.sign(payload, process.env.JWT_SECRET_KEY);
     res
       .status(200)
       .cookie("jwttoken", token)
@@ -163,10 +164,10 @@ export const checkrole = async (
   res: express.Response
 ) => {
   try {
-    let requstedUser: string | string[] | any = req.headers["user"];
+    const requstedUser: string | string[] | any = req.headers["user"];
 
     if (requstedUser.role === "user") {
-      let isUserBlocked = await User.findById(requstedUser.userId).select(
+      const isUserBlocked = await User.findById(requstedUser.userId).select(
         "userBlocked"
       );
       if (!isUserBlocked) {

@@ -252,7 +252,7 @@ export const getWorkoutsUser = async (
   res: express.Response
 ) => {
   try {
-    let { userId }: string | string[] | any = req.headers["user"];
+    const { userId }: string | string[] | any = req.headers["user"];
 
     // console.log(userId);
     const date = new Date();

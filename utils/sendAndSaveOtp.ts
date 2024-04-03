@@ -15,9 +15,9 @@ export async function SaveOTPAndTempUser({
   //generate otp
   const Otp = Math.floor(1000 + Math.random() * 9000);
 
-  let hashedPasswordGenerated = await hashPassword(password);
+  const hashedPasswordGenerated = await hashPassword(password);
   //save the otpwith user details in the temp collection
-  let newOTP = new OTP({
+  const newOTP = new OTP({
     email: email,
     otp: Otp,
     name: name || "",
@@ -33,7 +33,7 @@ export async function SaveOTPAndTempUser({
       console.error("Error saving OTP:", error);
     });
 
-  let transporter = nodemailer.createTransport({
+    const transporter = nodemailer.createTransport({
     service: "gmail",
     auth: {
       user: "vipinrj8473@gmail.com",
@@ -41,7 +41,7 @@ export async function SaveOTPAndTempUser({
     },
   });
 
-  let mailOptions = {
+  const mailOptions = {
     from: "vipinrj8473@gmail.com",
     to: email,
     subject: "Your OTP",
@@ -62,7 +62,7 @@ export async function SaveOTPAndTempUser({
   };
 
   try {
-    let info = await transporter.sendMail(mailOptions);
+    const info = await transporter.sendMail(mailOptions);
     if (info.response) {
       console.log("Email sent: " + info.response);
       return true;

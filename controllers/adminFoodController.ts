@@ -27,7 +27,7 @@ export const addFood = async (req: express.Request, res: express.Response) => {
   } = req.body;
 
   try {
-    let data = await uploadToCloudinary(req.file.path, "food-Images");
+    const data = await uploadToCloudinary(req.file.path, "food-Images");
     // console.log("data:", data);
 
     if (data && data.url && data.public_id) {
@@ -187,10 +187,10 @@ export const deleteFood = async (
   res: express.Response
 ) => {
   try {
-    let foodData = await Food.findById(req.params.id);
+    const foodData = await Food.findById(req.params.id);
 
     if (foodData?.publicId) {
-      let publicId = foodData.publicId;
+      const publicId = foodData.publicId;
       await removeFromCloudinary(publicId);
       await foodData.deleteOne();
     } else {

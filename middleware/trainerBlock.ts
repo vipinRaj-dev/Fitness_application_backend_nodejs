@@ -1,14 +1,14 @@
 import express from "express";
 import { Trainer, TrainerType } from "../models/TrainerModel";
 
-export let isTrainerBlocked = async (
+export const isTrainerBlocked = async (
   req: express.Request,
   res: express.Response,
   next: express.NextFunction
 ) => {
-  let requstedUser: string | string[] | any = req.headers["user"];
+  const requstedUser: string | string[] | any = req.headers["user"];
 
-  let trainerData: TrainerType | null = await Trainer.findById(
+  const trainerData: TrainerType | null = await Trainer.findById(
     requstedUser.userId
   );
 

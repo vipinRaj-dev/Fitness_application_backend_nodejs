@@ -13,9 +13,9 @@ export const trainerProfile = async (
   res: express.Response
 ) => {
   try {
-   let requstedUser: string | string[] | any = req.headers["user"];
+    const requstedUser: string | string[] | any = req.headers["user"];
     // console.log(requstedUser);
-    let trainerData: TrainerType | null = await Trainer.findById(
+    const trainerData: TrainerType | null = await Trainer.findById(
       requstedUser.userId
     ).select(
       "_id name email mobileNumber isBlocked profilePicture publicId experience specializedIn price description certifications avgRating transformationClients"
@@ -42,7 +42,7 @@ export const trainerProfileImageUpdate = async (
   res: express.Response
 ) => {
   try {
-   let requstedUser: string | string[] | any = req.headers["user"];
+    const requstedUser: string | string[] | any = req.headers["user"];
     const id = requstedUser.userId;
 
     const {
@@ -78,7 +78,7 @@ export const trainerProfileImageUpdate = async (
       const trainer = await Trainer.findById(id);
 
       if (trainer?.publicId) {
-        let publicId = trainer.publicId;
+        const publicId = trainer.publicId;
         await removeFromCloudinary(publicId);
         await Trainer.updateOne(
           { _id: id },
@@ -124,7 +124,7 @@ export const addCertificateAndClient = async (
   res: express.Response
 ) => {
   try {
-   let requstedUser: string | string[] | any = req.headers["user"];
+    const requstedUser: string | string[] | any = req.headers["user"];
     const id = requstedUser.userId;
 
     // console.log(req.body.name, req.body.content, req.body);
@@ -203,7 +203,7 @@ export const deleteCertificateOrClient = async (
   res: express.Response
 ) => {
   try {
-   let requstedUser: string | string[] | any = req.headers["user"];
+    const requstedUser: string | string[] | any = req.headers["user"];
     const id = requstedUser.userId;
     console.log(req.body);
     const { deleteId, field, publicId } = req.body;
@@ -246,7 +246,7 @@ export const getReviews = async (
   res: express.Response
 ) => {
   try {
-   let requstedUser: string | string[] | any = req.headers["user"];
+    const requstedUser: string | string[] | any = req.headers["user"];
     const id = requstedUser.userId;
 
     const page = parseInt(req.query.page as string) - 1 || 0;
@@ -254,7 +254,7 @@ export const getReviews = async (
     const rating = parseInt(req.query.rating as string) || 0;
     const trainerId = (req.query.trainerId as string) || id;
 
-    let populateOptions = {
+    const populateOptions = {
       path: "reviews",
       populate: {
         path: "userId",
@@ -298,7 +298,7 @@ export const getPayments = async (
   res: express.Response
 ) => {
   try {
-   let requstedUser: string | string[] | any = req.headers["user"];
+    const requstedUser: string | string[] | any = req.headers["user"];
     const id = requstedUser.userId;
 
     const trainerData = await Trainer.findById(id).populate({
@@ -383,7 +383,7 @@ export const getClients = async (
   res: express.Response
 ) => {
   try {
-   let requstedUser: string | string[] | any = req.headers["user"];
+    const requstedUser: string | string[] | any = req.headers["user"];
     const id = requstedUser.userId;
 
     const trainerClients = await Trainer.findById(id)

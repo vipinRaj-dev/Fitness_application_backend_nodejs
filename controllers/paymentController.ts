@@ -156,7 +156,7 @@ export const handleWebhook = async (request, response) => {
 
       // console.log("paymentDocument", paymentDocument);
 
-      let month = 1;
+      const month = 1;
       const calculatedDueDate = new Date();
       calculatedDueDate.setMonth(calculatedDueDate.getMonth() + month);
       // console.log("new date", new Date());

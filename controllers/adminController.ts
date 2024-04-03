@@ -14,7 +14,7 @@ export const dashboard = async (
   res: express.Response
 ) => {
   try {
-    let adminData: AdminType | null = await Admin.findOne({}).select(
+    const adminData: AdminType | null = await Admin.findOne({}).select(
       "role email fullName _id"
     );
     // console.log(adminData);

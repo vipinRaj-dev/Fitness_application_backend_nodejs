@@ -26,9 +26,9 @@ export const userHomePage = async (
   req: express.Request,
   res: express.Response
 ) => {
-  let requstedUser: string | string[] | any = req.headers["user"];
+  const requstedUser: string | string[] | any = req.headers["user"];
 
-  let userDetails: dietFoodType = await User.findById(
+  const userDetails: dietFoodType = await User.findById(
     requstedUser.userId
   ).populate({
     path: "attendanceId",
@@ -150,7 +150,7 @@ export const getGraphDataUser = async (
 
     // how can i aggragate the data to get the above result
 
-    let requstedUser: string | string[] | any = req.headers["user"];
+    const requstedUser: string | string[] | any = req.headers["user"];
     const id = requstedUser.userId;
 
     const attendancePerDay = await Attendance.aggregate([
@@ -242,11 +242,11 @@ export const userProfile = async (
   res: express.Response
 ) => {
   try {
-    let requstedUser: string | string[] | any = req.headers["user"];
+    const requstedUser: string | string[] | any = req.headers["user"];
 
     // console.log(requstedUser);
 
-    let userData: UserType | null = await User.findById(requstedUser.userId)
+    const userData: UserType | null = await User.findById(requstedUser.userId)
       .select(
         "_id name email mobileNumber weight height userBlocked profileImage publicId healthIssues createdAt trainerId trainerPaymentDueDate"
       )
@@ -274,14 +274,14 @@ export const userProfileImageUpdate = async (
   res: express.Response
 ) => {
   try {
-    let requstedUser: string | string[] | any = req.headers["user"];
+    const requstedUser: string | string[] | any = req.headers["user"];
     const id = requstedUser.userId;
     let imageData;
     if (req.file) {
       const user = await User.findById(id);
 
       if (user?.publicId) {
-        let publicId = user.publicId;
+        const publicId = user.publicId;
         await removeFromCloudinary(publicId);
         await User.updateOne(
           { _id: id },
@@ -381,7 +381,7 @@ export const addFoodLog = async (
     const foodTime1HoursBefore = new Date(foodTime.getTime() - 1000 * 60 * 60);
 
     if (foodTime1HoursBefore > currentTime) {
-      return res.status(201).json({ msg: "time not reached yet" });
+      return res.status(403).json({ msg: "time not reached yet" });
     }
 
     const foodLogData = await FoodLog.findById(foodDocId);
@@ -405,7 +405,7 @@ export const addFoodLog = async (
 };
 
 export const getDay = async (req: express.Request, res: express.Response) => {
-  let requstedUser: string | string[] | any = req.headers["user"];
+  const requstedUser: string | string[] | any = req.headers["user"];
   const id = requstedUser.userId;
   const userDate = new Date(req.params.date); // assuming date is passed as a parameter in the request
   // console.log("userDate", userDate);
@@ -446,7 +446,7 @@ export const setRating = async (
 ) => {
   try {
     const { rating, trainerId, content } = req.body;
-    let requstedUser: string | string[] | any = req.headers["user"];
+    const requstedUser: string | string[] | any = req.headers["user"];
     const id = requstedUser.userId;
 
     const newReview = new Review({
@@ -536,7 +536,7 @@ export const applyReason = async (
   try {
     const { reason, yesterdayAttendanceId, agree } = req.body;
 
-    let reasonToAdd = agree ? reason : "Reason not Added";
+    const reasonToAdd = agree ? reason : "Reason not Added";
 
     const ans = await Attendance.findOneAndUpdate(
       { _id: yesterdayAttendanceId },

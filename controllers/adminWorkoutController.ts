@@ -13,11 +13,11 @@ export const addWorkout = async (
     // console.log("req.file:", req.file);
     if (req.file && req.file.path) {
       // await removeFromCloudinary("workout-Videos/lknzdrwawdsncuea41tf")
-      let video: {
+      const video: {
         url: string;
         public_id: string;
       } = await uploadVideoToCloudinary(req.file.path, "workout-Videos") || { url: "", public_id: "" };
-      let thumbnailUrl = video.url.replace("mp4", "jpg");
+      const thumbnailUrl = video.url.replace("mp4", "jpg");
       // console.log("video:", video);
       const newWorkout = new Workout({
         workoutName: req.body.workoutName,
@@ -27,7 +27,7 @@ export const addWorkout = async (
         publicId: video.public_id,
         thumbnailUrl: thumbnailUrl,
       });
-      let ans = await newWorkout.save();
+      const ans = await newWorkout.save();
       res.status(200).json({ message: "Workout added successfully", ans });
     } else {
       res.status(400).json({ message: "Please upload a video" });
@@ -81,10 +81,10 @@ export const deleteWorkout = async (
   res: express.Response
 ) => {
   try {
-    let workoutData = await Workout.findById(req.params.workoutId);
+    const workoutData = await Workout.findById(req.params.workoutId);
 
     if (workoutData?.publicId) {
-      let publicId = workoutData.publicId;
+      const publicId = workoutData.publicId;
       // console.log("publicId:", publicId);
       await removeVideoFromCloudinary(publicId);
       await workoutData.deleteOne();

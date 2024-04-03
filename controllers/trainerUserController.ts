@@ -6,7 +6,7 @@ export const allClients = async (
   res: express.Response
 ) => {
   // try {
-  let requstedUser: string | string[] | any = req.headers["user"];
+    const requstedUser: string | string[] | any = req.headers["user"];
   console.log(requstedUser);
 
   const page = parseInt(req.query.page as string) - 1 || 0;

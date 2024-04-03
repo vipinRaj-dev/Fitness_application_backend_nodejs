@@ -1,13 +1,13 @@
 import express from "express";
 import { User } from "../models/UserModel";
 
-export let isPremiumUser = async (
+export const isPremiumUser = async (
   req: express.Request,
   res: express.Response,
   next: express.NextFunction
 ) => {
   try {
-     let requstedUser: string | string[] | any = req.headers["user"];
+     const requstedUser: string | string[] | any = req.headers["user"];
 
 
     const user = await User.findById(requstedUser.userId);
