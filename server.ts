@@ -67,6 +67,11 @@ const hostName: string | undefined = process.env.HOST_NAME;
 const port: string | undefined = process.env.PORT;
 const mongo_uri: string | undefined = process.env.MONGO_DB_LOCAL;
 
+// check working
+app.get("/working", async (req, res) => {
+  res.send("Backed code working properly");
+});
+
 // Defining the routes
 
 app.use("/auth", authRouter);
@@ -206,7 +211,7 @@ io.on("connection", (socket: Socket) => {
           .emit("clientOffline", { clientId: recievedUser.userId });
     }
 
-    delete users[socket.id];  
+    delete users[socket.id];
   });
 });
 
@@ -263,7 +268,7 @@ async function markAttendance() {
         { $set: { attendanceId: ans._id } }
       );
       // console.log("attandance created to the user", userUpdation);
-    }else{
+    } else {
       // console.log("attendance already marked for the user", user._id)
     }
   }
@@ -275,7 +280,7 @@ async function markAttendance() {
 // });
 
 if (hostName && port && mongo_uri) {
-  mongoose  
+  mongoose
     .connect(mongo_uri)
     .then(() => {
       console.log("Database connected succesfully");
@@ -285,7 +290,7 @@ if (hostName && port && mongo_uri) {
       // });
       http.listen(port, () =>
         console.log(`socket io Listening on port ${port}`)
-      );  
+      );
     })
     .catch((error) => {
       console.log("cannot conncect to the database", error);
