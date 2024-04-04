@@ -1,7 +1,7 @@
-import mongoose, { Document, Schema } from "mongoose";
+import mongoose, { Document, Schema, Types } from "mongoose";
 
 export interface TrainerType extends Document {
-  _id?: string;
+  _id: Types.ObjectId;
   password: string;
   email: string;
   name: string;
@@ -44,6 +44,7 @@ interface TransformationClientType {
 
 const trainerSchema = new Schema<TrainerType>(
   {
+    
     email: { type: String, required: true, unique: true },
     password: { type: String, required: true },
     name: { type: String, required: true },
