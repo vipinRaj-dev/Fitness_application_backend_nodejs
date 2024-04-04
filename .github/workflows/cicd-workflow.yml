@@ -20,7 +20,7 @@ jobs:
     needs: build 
     runs-on: self-hosted 
     steps: 
-      - name: Pull image from Docker Hub
+      - name: Pull image from Docker Hub 
         run: docker pull vipinrajr/vigor-backend:latest
       - name: Delete old container
         run: docker rm -f backend-container  

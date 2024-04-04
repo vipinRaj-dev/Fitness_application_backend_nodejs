@@ -41,14 +41,14 @@ const app: express.Application = express();
 const http = require("http").Server(app);
 const io = require("socket.io")(http, {
   cors: {
-    origin: "http://localhost:3000",
+    // origin: "http://localhost:3000",
   },
 });
 cors;
 app.use(
   cors({
-    origin: "http://localhost:3000",
-    credentials: true,
+    // origin: "http://localhost:3000",
+    // credentials: true,
   })
 );
 
