@@ -43,12 +43,14 @@ const http = require("http").Server(app);
 const io = require("socket.io")(http, {
   cors: {
     origin: "*",
+    credential : true
   },
 });
 
 app.use(
   cors({
     origin: "*",
+    credentials : true
   })
 );
 
