@@ -1,0 +1,21 @@
+"use strict";
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+const express_1 = __importDefault(require("express"));
+const tokenVerify_1 = require("../middleware/tokenVerify");
+const trainerProfileController_1 = require("../controllers/trainerProfileController");
+const upload_1 = __importDefault(require("../middleware/upload"));
+const trainerUserController_1 = require("../controllers/trainerUserController");
+const trainerBlock_1 = require("../middleware/trainerBlock");
+const trainerRouter = express_1.default.Router();
+trainerRouter.get("/profile", tokenVerify_1.tokenVerify, trainerBlock_1.isTrainerBlocked, trainerProfileController_1.trainerProfile);
+trainerRouter.put("/profileUpdate", tokenVerify_1.tokenVerify, upload_1.default.single("image"), trainerProfileController_1.trainerProfileImageUpdate);
+trainerRouter.put("/addCertificate", tokenVerify_1.tokenVerify, upload_1.default.single("image"), trainerProfileController_1.addCertificateAndClient);
+trainerRouter.delete("/deleteCertificateOrClient", tokenVerify_1.tokenVerify, trainerProfileController_1.deleteCertificateOrClient);
+trainerRouter.get("/allClients", tokenVerify_1.tokenVerify, trainerUserController_1.allClients);
+trainerRouter.get("/reviews", tokenVerify_1.tokenVerify, trainerProfileController_1.getReviews);
+trainerRouter.get("/payments", tokenVerify_1.tokenVerify, trainerProfileController_1.getPayments);
+trainerRouter.get("/getClients", tokenVerify_1.tokenVerify, trainerProfileController_1.getClients);
+exports.default = trainerRouter;
