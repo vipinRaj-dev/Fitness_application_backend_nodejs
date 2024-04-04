@@ -36,10 +36,12 @@ const http = require("http").Server(app);
 const io = require("socket.io")(http, {
     cors: {
         origin: "*",
+        credential: true
     },
 });
 app.use((0, cors_1.default)({
     origin: "*",
+    credentials: true
 }));
 // app.use(express.json());
 app.use((req, res, next) => {
