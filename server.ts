@@ -63,9 +63,9 @@ app.use((req, res, next) => {
 });
 dotenv.config();
 
-const hostName: string | undefined = process.env.HOST_NAME;
-const port: string | undefined = process.env.PORT;
-const mongo_uri: string | undefined = process.env.MONGO_DB_LOCAL;
+const hostName: string = "localhost";
+const port: string = "4000";
+const mongo_uri: string | undefined = process.env.MONGO_DB_URI;
 
 // check working
 app.get("/working", async (req, res) => {
