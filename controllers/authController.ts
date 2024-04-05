@@ -151,13 +151,13 @@ export const userLogin = async (
     //   .cookie("jwttoken", token)
     //   .json({ success: "success", token: token });
 
+    res.cookie("jwttoken", token, {
+      secure: true,
+      sameSite: "none",
+      maxAge: 30 * 24 * 60 * 60 * 1000,
+    })
     res
       .status(200)
-      .cookie("jwttoken", token, {
-        secure: true,
-        sameSite: "none",
-        maxAge: 30 * 24 * 60 * 60 * 1000,
-      })
       .json({ success: "success", token: token });
   } catch (error) {
     console.error(error);
