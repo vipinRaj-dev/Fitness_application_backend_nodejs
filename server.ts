@@ -44,7 +44,7 @@ const io = require("socket.io")(http, {
   cors: {
     origin: ["https://vipinvj.xyz", "http://localhost:3000"],
     credentials: true,
-    exposedHeaders: ["set-cookie"],
+    allowedHeaders: ["Content-Type", "Authorization"],
   },
 });
 
@@ -52,7 +52,7 @@ app.use(
   cors({
     origin: ["https://vipinvj.xyz", "http://localhost:3000"],
     credentials: true,
-    exposedHeaders: ["set-cookie"],
+    allowedHeaders: ["Content-Type", "Authorization"],
   })
 );
 
@@ -289,7 +289,7 @@ if (hostName && port && mongo_uri) {
     .connect(mongo_uri)
     .then(() => {
       console.log("Database connected succesfully");
-      console.log('yes working properly')
+      console.log("yes working properly");
       // markAttendance();
       // app.listen(Number(port), () => {
       //   console.log(`server is listening at http://${hostName}:${port}`);
