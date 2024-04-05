@@ -43,8 +43,8 @@ const createCheckoutSession = (req, res) => __awaiter(void 0, void 0, void 0, fu
             },
         ],
         mode: "payment",
-        success_url: "http://localhost:3000/success",
-        cancel_url: "http://localhost:3000/failed",
+        success_url: "https://vipinvj.xyz/success",
+        cancel_url: "https://vipinvj.xyz/failed",
         client_reference_id: userId,
         // trainer_reference_id: trainerId,
         metadata: {

@@ -16,6 +16,7 @@ const express_1 = __importDefault(require("express"));
 const cors_1 = __importDefault(require("cors"));
 const dotenv_1 = __importDefault(require("dotenv"));
 const mongoose_1 = __importDefault(require("mongoose"));
+const node_cron_1 = __importDefault(require("node-cron"));
 const jsonwebtoken_1 = __importDefault(require("jsonwebtoken"));
 // import { io } from "./socket";
 // importing the routes
@@ -35,12 +36,12 @@ const app = (0, express_1.default)();
 const http = require("http").Server(app);
 const io = require("socket.io")(http, {
     cors: {
-        origin: "*",
-        credential: true
+        origin: ['https://api.vipinvj.xyz'],
+        credentials: true
     },
 });
 app.use((0, cors_1.default)({
-    origin: "*",
+    origin: ['https://api.vipinvj.xyz'],
     credentials: true
 }));
 // app.use(express.json());
@@ -210,16 +211,16 @@ function markAttendance() {
         }
     });
 }
-// cron.schedule('0 0 * * *', markAttendance, {
-//   scheduled: true,
-//   timezone: "Asia/Kolkata"
-// });
+node_cron_1.default.schedule('0 0 * * *', markAttendance, {
+    scheduled: true,
+    timezone: "Asia/Kolkata"
+});
 if (hostName && port && mongo_uri) {
     mongoose_1.default
         .connect(mongo_uri)
         .then(() => {
         console.log("Database connected succesfully");
-        markAttendance();
+        // markAttendance();
         // app.listen(Number(port), () => {
         //   console.log(`server is listening at http://${hostName}:${port}`);
         // });
