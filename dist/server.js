@@ -36,12 +36,12 @@ const app = (0, express_1.default)();
 const http = require("http").Server(app);
 const io = require("socket.io")(http, {
     cors: {
-        origin: ['https://api.vipinvj.xyz'],
+        origin: ['https://vipinvj.xyz'],
         credentials: true
     },
 });
 app.use((0, cors_1.default)({
-    origin: ['https://api.vipinvj.xyz'],
+    origin: ['https://vipinvj.xyz'],
     credentials: true
 }));
 // app.use(express.json());

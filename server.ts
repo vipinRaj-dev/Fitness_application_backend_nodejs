@@ -42,14 +42,14 @@ const http = require("http").Server(app);
 
 const io = require("socket.io")(http, {
   cors: {
-    origin: ['https://api.vipinvj.xyz'],
+    origin: ['https://vipinvj.xyz'],
     credentials : true
   },
 });
 
 app.use(
   cors({
-    origin: ['https://api.vipinvj.xyz'],
+    origin: ['https://vipinvj.xyz'],
     credentials : true
   })
 );
