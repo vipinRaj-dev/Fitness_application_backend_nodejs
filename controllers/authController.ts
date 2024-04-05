@@ -146,9 +146,17 @@ export const userLogin = async (
     };
 
     const token = jwt.sign(payload, process.env.JWT_SECRET_KEY);
+    // res
+    //   .status(200)
+    //   .cookie("jwttoken", token)
+    //   .json({ success: "success", token: token });
+
     res
       .status(200)
-      .cookie("jwttoken", token)
+      .cookie("jwttoken", token, {
+        secure: true,
+        sameSite: "none",
+      })
       .json({ success: "success", token: token });
   } catch (error) {
     console.error(error);
@@ -165,6 +173,7 @@ export const checkrole = async (
   try {
     const requstedUser: string | string[] | any = req.headers["user"];
 
+    console.log("role from the backend code" , requstedUser)
     // if (requstedUser.role === "user") {
     //   const isUserBlocked = await User.findById(requstedUser.userId).select(
     //     "userBlocked"
@@ -183,13 +192,11 @@ export const checkrole = async (
     //   }
     // }
 
-    res
-      .status(200)
-      .json({
-        role: requstedUser.role,
-        email: requstedUser.email,
-        userId: requstedUser.userId,
-      });
+    res.status(200).json({
+      role: requstedUser.role,
+      email: requstedUser.email,
+      userId: requstedUser.userId,
+    });
   } catch (error) {
     console.error(error);
   }

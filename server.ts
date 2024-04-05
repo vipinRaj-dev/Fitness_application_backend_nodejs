@@ -43,14 +43,16 @@ const http = require("http").Server(app);
 const io = require("socket.io")(http, {
   cors: {
     origin: ['https://vipinvj.xyz'],
-    credentials : true
+    credentials: true,
+    exposedHeaders: ["set-cookie"],
   },
 });
 
 app.use(
   cors({
     origin: ['https://vipinvj.xyz'],
-    credentials : true
+    credentials: true,
+    exposedHeaders: ["set-cookie"],
   })
 );
 
@@ -93,6 +95,7 @@ app.use("/chat", chatRouter);
 const users: UserSocket = {};
 
 io.on("connection", (socket: Socket) => {
+  console.log('socker connected succesfulluy in the backend side code')
   socket.on("userConnection", (data) => {
     // console.log("user connected", data);
     // console.log("users", users);

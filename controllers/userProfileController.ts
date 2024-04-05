@@ -40,6 +40,8 @@ export const userHomePage = async (
     },
   });
 
+  console.log('userDetail from the backend code' , userDetails)
+
   const hasTrainer = userDetails?.trainerId
     ? userDetails.trainerPaymentDueDate > new Date()
       ? true
