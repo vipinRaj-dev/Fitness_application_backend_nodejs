@@ -42,7 +42,7 @@ const http = require("http").Server(app);
 
 const io = require("socket.io")(http, {
   cors: {
-    origin: ['https://vipinvj.xyz'],
+    origin: ["https://vipinvj.xyz", "http://localhost:3000"],
     credentials: true,
     exposedHeaders: ["set-cookie"],
   },
@@ -50,9 +50,9 @@ const io = require("socket.io")(http, {
 
 app.use(
   cors({
-    origin: ['https://vipinvj.xyz'],
+    origin: ["https://vipinvj.xyz", "http://localhost:3000"],
     credentials: true,
-    exposedHeaders: ["set-cookie"],  
+    exposedHeaders: ["set-cookie"],
   })
 );
 
@@ -95,7 +95,7 @@ app.use("/chat", chatRouter);
 const users: UserSocket = {};
 
 io.on("connection", (socket: Socket) => {
-  console.log('socker connected succesfulluy in the backend side code')
+  console.log("socker connected succesfulluy in the backend side code");
   socket.on("userConnection", (data) => {
     // console.log("user connected", data);
     // console.log("users", users);
@@ -279,9 +279,9 @@ async function markAttendance() {
   }
 }
 
-cron.schedule('0 0 * * *', markAttendance, {
+cron.schedule("0 0 * * *", markAttendance, {
   scheduled: true,
-  timezone: "Asia/Kolkata"
+  timezone: "Asia/Kolkata",
 });
 
 if (hostName && port && mongo_uri) {
