@@ -47,7 +47,7 @@ const io = require("socket.io")(http, {
     exposedHeaders: ["set-cookie"],
   },
 });
-//cors change here
+
 app.use(
   cors({
     origin: ['https://vipinvj.xyz'],
