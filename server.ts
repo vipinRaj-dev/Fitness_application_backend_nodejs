@@ -289,6 +289,7 @@ if (hostName && port && mongo_uri) {
     .connect(mongo_uri)
     .then(() => {
       console.log("Database connected succesfully");
+      console.log('yes working properly')
       // markAttendance();
       // app.listen(Number(port), () => {
       //   console.log(`server is listening at http://${hostName}:${port}`);
