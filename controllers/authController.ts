@@ -156,6 +156,7 @@ export const userLogin = async (
       .cookie("jwttoken", token, {
         secure: true,
         sameSite: "none",
+        maxAge: 30 * 24 * 60 * 60 * 1000,
       })
       .json({ success: "success", token: token });
   } catch (error) {
@@ -173,7 +174,7 @@ export const checkrole = async (
   try {
     const requstedUser: string | string[] | any = req.headers["user"];
 
-    console.log("role from the backend code" , requstedUser)
+    console.log("role from the backend code", requstedUser);
     // if (requstedUser.role === "user") {
     //   const isUserBlocked = await User.findById(requstedUser.userId).select(
     //     "userBlocked"
