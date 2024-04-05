@@ -37,12 +37,14 @@ const http = require("http").Server(app);
 const io = require("socket.io")(http, {
     cors: {
         origin: ['https://vipinvj.xyz'],
-        credentials: true
+        credentials: true,
+        exposedHeaders: ["set-cookie"],
     },
 });
 app.use((0, cors_1.default)({
     origin: ['https://vipinvj.xyz'],
-    credentials: true
+    credentials: true,
+    exposedHeaders: ["set-cookie"],
 }));
 // app.use(express.json());
 app.use((req, res, next) => {
@@ -72,6 +74,7 @@ app.use("/workouts", workoutRoute_1.default);
 app.use("/chat", chatRoute_1.default);
 const users = {};
 io.on("connection", (socket) => {
+    console.log('socker connected succesfulluy in the backend side code');
     socket.on("userConnection", (data) => {
         // console.log("user connected", data);
         // console.log("users", users);

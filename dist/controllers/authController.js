@@ -131,9 +131,16 @@ const userLogin = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
             userId: foundUser._id,
         };
         const token = jsonwebtoken_1.default.sign(payload, process.env.JWT_SECRET_KEY);
+        // res
+        //   .status(200)
+        //   .cookie("jwttoken", token)
+        //   .json({ success: "success", token: token });
         res
             .status(200)
-            .cookie("jwttoken", token)
+            .cookie("jwttoken", token, {
+            secure: true,
+            sameSite: "none",
+        })
             .json({ success: "success", token: token });
     }
     catch (error) {
@@ -147,6 +154,7 @@ exports.userLogin = userLogin;
 const checkrole = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const requstedUser = req.headers["user"];
+        console.log("role from the backend code", requstedUser);
         // if (requstedUser.role === "user") {
         //   const isUserBlocked = await User.findById(requstedUser.userId).select(
         //     "userBlocked"
@@ -163,9 +171,7 @@ const checkrole = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
         //       .json({ msg: "user is blocked please contact to admin" });
         //   }
         // }
-        res
-            .status(200)
-            .json({
+        res.status(200).json({
             role: requstedUser.role,
             email: requstedUser.email,
             userId: requstedUser.userId,

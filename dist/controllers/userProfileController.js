@@ -33,6 +33,7 @@ const userHomePage = (req, res) => __awaiter(void 0, void 0, void 0, function* (
             },
         },
     });
+    console.log('userDetail from the backend code', userDetails);
     const hasTrainer = (userDetails === null || userDetails === void 0 ? void 0 : userDetails.trainerId)
         ? userDetails.trainerPaymentDueDate > new Date()
             ? true
