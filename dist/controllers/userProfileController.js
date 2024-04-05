@@ -33,7 +33,6 @@ const userHomePage = (req, res) => __awaiter(void 0, void 0, void 0, function* (
             },
         },
     });
-    console.log('userDetail from the backend code', userDetails);
     const hasTrainer = (userDetails === null || userDetails === void 0 ? void 0 : userDetails.trainerId)
         ? userDetails.trainerPaymentDueDate > new Date()
             ? true
@@ -320,7 +319,7 @@ const addFoodLog = (req, res) => __awaiter(void 0, void 0, void 0, function* () 
         foodTime.setHours(hours, minutes);
         const foodTime1HoursBefore = new Date(foodTime.getTime() - 1000 * 60 * 60);
         if (foodTime1HoursBefore > currentTime) {
-            return res.status(400).json({ msg: "time not reached yet" });
+            return res.status(401).json({ msg: "time not reached yet" });
         }
         const foodLogData = yield FoodLogModel_1.FoodLog.findById(foodDocId);
         if (foodTime > currentTime) {

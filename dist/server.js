@@ -16,7 +16,6 @@ const express_1 = __importDefault(require("express"));
 const cors_1 = __importDefault(require("cors"));
 const dotenv_1 = __importDefault(require("dotenv"));
 const mongoose_1 = __importDefault(require("mongoose"));
-const node_cron_1 = __importDefault(require("node-cron"));
 const jsonwebtoken_1 = __importDefault(require("jsonwebtoken"));
 // import { io } from "./socket";
 // importing the routes
@@ -124,11 +123,6 @@ io.on("connection", (socket) => {
                     socket.to(senderId).emit("msgSeen", { senderId: senderId });
                 }
             }));
-            // socket.on('updateLiveMsg' , async (data) => {
-            //   console.log("data in update live msg", data);
-            //   const {recieverId} = data;
-            //   socket.to(recieverId).emit('toReciever' , {msg : 'success by the server'});
-            // })
             socket.on("allSeen", (data) => __awaiter(void 0, void 0, void 0, function* () {
                 // console.log("all seen data", data);
                 const { trainerId, userId, from } = data;
@@ -170,6 +164,7 @@ function markAttendance() {
         const users = yield UserModel_1.User.find({
             $or: [{ isPremiumUser: true }, { trialEndsAt: { $gte: new Date() } }],
         });
+        // console.log('attandanec')
         for (const user of users) {
             // console.log("user that has the values corectly", user);
             const today = new Date();
@@ -183,6 +178,7 @@ function markAttendance() {
                     $lt: tomorrow,
                 },
             });
+            // console.log("each user" , existingAttendance)
             if (!existingAttendance) {
                 // creating food logs for each food in the latestDiet
                 const foodLogsIds = yield Promise.all(user.latestDiet.map((food) => __awaiter(this, void 0, void 0, function* () {
@@ -214,17 +210,16 @@ function markAttendance() {
         }
     });
 }
-node_cron_1.default.schedule("0 0 * * *", markAttendance, {
-    scheduled: true,
-    timezone: "Asia/Kolkata",
-});
+// cron.schedule("0 0 * * *", markAttendance, {
+//   scheduled: true,
+//   timezone: "Asia/Kolkata",
+// });
 if (hostName && port && mongo_uri) {
     mongoose_1.default
         .connect(mongo_uri)
         .then(() => {
         console.log("Database connected succesfully");
-        console.log("yes working properly");
-        // markAttendance();
+        markAttendance();
         // app.listen(Number(port), () => {
         //   console.log(`server is listening at http://${hostName}:${port}`);
         // });

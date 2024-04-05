@@ -10,6 +10,7 @@ import { Admin, AdminType } from "../models/AdminModel";
 
 import { otpVerify } from "../utils/otpVerify";
 import { SaveOTPAndTempUser } from "../utils/sendAndSaveOtp";
+import { Attendance } from "../models/AttendanceModel";
 
 export const userRegistrationSendOtp = async (
   req: express.Request,
@@ -137,6 +138,28 @@ export const userLogin = async (
         .status(401)
         .json({ msg: "You are blocked please contact to admin" });
     }
+
+    //if there is no attandance make an attandance
+    if (foundUser.role === "user" && !(foundUser as UserType).attendanceId) {
+      const today = new Date();
+      today.setHours(0, 0, 0, 0);
+
+      const attendance = new Attendance({
+        date: today,
+        userId: foundUser._id,
+        isPresent: false,
+        foodLogs: [],
+      });
+
+      const ans = await attendance.save();
+
+      const userUpdation = await User.updateOne(
+        { _id: foundUser._id },
+        { $set: { attendanceId: ans._id } }
+      );
+      // console.log("attandance created for new user", userUpdation);
+    }
+
     // sending token
 
     const payload = {
@@ -155,10 +178,8 @@ export const userLogin = async (
       secure: true,
       sameSite: "none",
       maxAge: 30 * 24 * 60 * 60 * 1000,
-    })
-    res
-      .status(200)
-      .json({ success: "success", token: token });
+    });
+    res.status(200).json({ success: "success", token: token });
   } catch (error) {
     console.error(error);
     res.status(500).json({
@@ -174,7 +195,7 @@ export const checkrole = async (
   try {
     const requstedUser: string | string[] | any = req.headers["user"];
 
-    console.log("role from the backend code", requstedUser);
+    // console.log("role from the backend code", requstedUser);
     // if (requstedUser.role === "user") {
     //   const isUserBlocked = await User.findById(requstedUser.userId).select(
     //     "userBlocked"

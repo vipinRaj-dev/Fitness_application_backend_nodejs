@@ -40,7 +40,6 @@ export const userHomePage = async (
     },
   });
 
-  console.log('userDetail from the backend code' , userDetails)
 
   const hasTrainer = userDetails?.trainerId
     ? userDetails.trainerPaymentDueDate > new Date()
@@ -382,8 +381,8 @@ export const addFoodLog = async (
 
     const foodTime1HoursBefore = new Date(foodTime.getTime() - 1000 * 60 * 60);
 
-    if (foodTime1HoursBefore > currentTime) {
-      return res.status(400).json({ msg: "time not reached yet" });
+    if (foodTime1HoursBefore > currentTime) { 
+      return res.status(401).json({ msg: "time not reached yet" });
     }
 
     const foodLogData = await FoodLog.findById(foodDocId);

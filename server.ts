@@ -165,12 +165,7 @@ io.on("connection", (socket: Socket) => {
         }
       });
 
-      // socket.on('updateLiveMsg' , async (data) => {
 
-      //   console.log("data in update live msg", data);
-      //   const {recieverId} = data;
-      //   socket.to(recieverId).emit('toReciever' , {msg : 'success by the server'});
-      // })
 
       socket.on("allSeen", async (data) => {
         // console.log("all seen data", data);
@@ -225,6 +220,7 @@ async function markAttendance() {
     $or: [{ isPremiumUser: true }, { trialEndsAt: { $gte: new Date() } }],
   });
 
+  // console.log('attandanec')
   for (const user of users) {
     // console.log("user that has the values corectly", user);
     const today = new Date();
@@ -239,6 +235,7 @@ async function markAttendance() {
       },
     });
 
+    // console.log("each user" , existingAttendance)
     if (!existingAttendance) {
       // creating food logs for each food in the latestDiet
       const foodLogsIds = await Promise.all(
@@ -279,18 +276,18 @@ async function markAttendance() {
   }
 }
 
-cron.schedule("0 0 * * *", markAttendance, {
-  scheduled: true,
-  timezone: "Asia/Kolkata",
-});
+// cron.schedule("0 0 * * *", markAttendance, {
+//   scheduled: true,
+//   timezone: "Asia/Kolkata",
+// });
 
 if (hostName && port && mongo_uri) {
   mongoose
     .connect(mongo_uri)
     .then(() => {
       console.log("Database connected succesfully");
-      console.log("yes working properly");
-      // markAttendance();
+
+      markAttendance();
       // app.listen(Number(port), () => {
       //   console.log(`server is listening at http://${hostName}:${port}`);
       // });
