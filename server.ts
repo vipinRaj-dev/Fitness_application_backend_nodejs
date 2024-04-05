@@ -276,10 +276,10 @@ async function markAttendance() {
   }
 }
 
-// cron.schedule("0 0 * * *", markAttendance, {
-//   scheduled: true,
-//   timezone: "Asia/Kolkata",
-// });
+cron.schedule("0 0 * * *", markAttendance, {
+  scheduled: true,
+  timezone: "Asia/Kolkata",
+});
 
 if (hostName && port && mongo_uri) {
   mongoose
@@ -287,7 +287,7 @@ if (hostName && port && mongo_uri) {
     .then(() => {
       console.log("Database connected succesfully");
 
-      markAttendance();
+      // markAttendance();
       // app.listen(Number(port), () => {
       //   console.log(`server is listening at http://${hostName}:${port}`);
       // });
