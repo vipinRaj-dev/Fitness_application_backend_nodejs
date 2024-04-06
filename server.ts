@@ -220,7 +220,7 @@ async function markAttendance() {
     $or: [{ isPremiumUser: true }, { trialEndsAt: { $gte: new Date() } }],
   });
 
-  // console.log('attandanec')
+  console.log('corn job worked perfectly for all users in 6am')
   for (const user of users) {
     // console.log("user that has the values corectly", user);
     const today = new Date();
@@ -276,10 +276,10 @@ async function markAttendance() {
   }
 }
 
-cron.schedule("0 0 * * *", markAttendance, {
+cron.schedule("0 6 * * *", markAttendance, {
   scheduled: true,
   timezone: "Asia/Kolkata",
-});
+ });
 
 if (hostName && port && mongo_uri) {
   mongoose
