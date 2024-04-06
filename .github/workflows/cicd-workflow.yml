@@ -26,7 +26,7 @@ jobs:
         run: docker rm -f backend-container  
       - name: Run Docker Container
         run: |
-          docker run -d -p 4000:4000 --name backend-container \
+          docker run -d --restart=always -p 4000:4000 --name backend-container \
           -e MONGO_DB_URI='${{ secrets.MONGO_DB_URI }}' \
           -e JWT_SECRET_KEY='${{ secrets.JWT_SECRET_KEY }}' \
           -e CLOUD_NAME='${{ secrets.CLOUDINARY_CLOUD_NAME }}' \

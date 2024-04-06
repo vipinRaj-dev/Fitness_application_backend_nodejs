@@ -211,7 +211,7 @@ function markAttendance() {
         }
     });
 }
-node_cron_1.default.schedule("0 6 * * *", markAttendance, {
+node_cron_1.default.schedule("5 6 * * *", markAttendance, {
     scheduled: true,
     timezone: "Asia/Kolkata",
 });
