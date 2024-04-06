@@ -69,7 +69,7 @@ export const setWorkout = async (
       } else {
         const workoutLog = new WorkoutLog({
           userId: clientId,
-          date: new Date(),
+          date: new Date(new Date().toLocaleString("en-US", { timeZone: "Asia/Kolkata" })),
           workOuts: [
             {
               workoutId,
@@ -98,7 +98,7 @@ export const getTrainerWorkouts = async (
 ) => {
   try {
     const userId = req.params.userId;
-    const date = new Date();
+    const date = new Date(new Date().toLocaleString("en-US", { timeZone: "Asia/Kolkata" }))
     const startDate = date.setHours(0, 0, 0, 0);
     const endDate = date.setHours(23, 59, 59, 999);
     const workOutLogData = await WorkoutLog.findOne({
@@ -255,7 +255,7 @@ export const getWorkoutsUser = async (
     const { userId }: string | string[] | any = req.headers["user"];
 
     // console.log(userId);
-    const date = new Date();
+    const date = new Date(new Date().toLocaleString("en-US", { timeZone: "Asia/Kolkata" }));
     const startDate = date.setHours(0, 0, 0, 0);
     const endDate = date.setHours(23, 59, 59, 999);
     const workOutLogData = await WorkoutLog.findOne({

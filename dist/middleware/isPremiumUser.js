@@ -16,10 +16,10 @@ const isPremiumUser = (req, res, next) => __awaiter(void 0, void 0, void 0, func
         const requstedUser = req.headers["user"];
         const user = yield UserModel_1.User.findById(requstedUser.userId);
         if (user) {
-            if (user.isPremiumUser && user.dueDate > new Date()) {
+            if (user.isPremiumUser && user.dueDate > new Date(new Date().toLocaleString("en-US", { timeZone: "Asia/Kolkata" }))) {
                 next();
             }
-            else if (user.trialEndsAt > new Date()) {
+            else if (user.trialEndsAt > new Date(new Date().toLocaleString("en-US", { timeZone: "Asia/Kolkata" }))) {
                 next();
             }
             else {

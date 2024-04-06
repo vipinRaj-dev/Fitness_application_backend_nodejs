@@ -217,13 +217,13 @@ io.on("connection", (socket: Socket) => {
 
 async function markAttendance() {
   const users = await User.find({
-    $or: [{ isPremiumUser: true }, { trialEndsAt: { $gte: new Date() } }],
+    $or: [{ isPremiumUser: true }, { trialEndsAt: { $gte:  new Date(new Date().toLocaleString("en-US", { timeZone: "Asia/Kolkata" })) } }],
   });
 
   console.log('corn job worked perfectly for all users in 6am')
   for (const user of users) {
     // console.log("user that has the values corectly", user);
-    const today = new Date();
+    const today =  new Date(new Date().toLocaleString("en-US", { timeZone: "Asia/Kolkata" }));
     today.setHours(0, 0, 0, 0);
     const tomorrow = new Date(today.getTime() + 24 * 60 * 60 * 1000);
     // console.log("today", today , "tomorrow", tomorrow);
@@ -241,7 +241,7 @@ async function markAttendance() {
       const foodLogsIds = await Promise.all(
         user.latestDiet.map(async (food) => {
           const foodLogData = new FoodLog({
-            date: new Date(),
+            date:  new Date(new Date().toLocaleString("en-US", { timeZone: "Asia/Kolkata" })),
             userId: user._id,
             foodId: food.foodId,
             status: false,

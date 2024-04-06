@@ -71,7 +71,7 @@ export const SaveUser = async (req: express.Request, res: express.Response) => {
       const userCount = await User.countDocuments({});
 
       const trialPeriod = 5; // 5 days trial period
-      const trialEndsDate = new Date();
+      const trialEndsDate = new Date(new Date().toLocaleString("en-US", { timeZone: "Asia/Kolkata" }));
       trialEndsDate.setDate(trialEndsDate.getDate() + trialPeriod);
 
       //register the user
@@ -141,7 +141,7 @@ export const userLogin = async (
 
     //if there is no attandance make an attandance
     if (foundUser.role === "user" && !(foundUser as UserType).attendanceId) {
-      const today = new Date();
+      const today =  new Date(new Date().toLocaleString("en-US", { timeZone: "Asia/Kolkata" }));
       today.setHours(0, 0, 0, 0);
 
       const attendance = new Attendance({

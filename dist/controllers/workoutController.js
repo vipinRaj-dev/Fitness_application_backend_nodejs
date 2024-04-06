@@ -64,7 +64,7 @@ const setWorkout = (req, res) => __awaiter(void 0, void 0, void 0, function* () 
             else {
                 const workoutLog = new WorkoutLogModel_1.WorkoutLog({
                     userId: clientId,
-                    date: new Date(),
+                    date: new Date(new Date().toLocaleString("en-US", { timeZone: "Asia/Kolkata" })),
                     workOuts: [
                         {
                             workoutId,
@@ -91,7 +91,7 @@ exports.setWorkout = setWorkout;
 const getTrainerWorkouts = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const userId = req.params.userId;
-        const date = new Date();
+        const date = new Date(new Date().toLocaleString("en-US", { timeZone: "Asia/Kolkata" }));
         const startDate = date.setHours(0, 0, 0, 0);
         const endDate = date.setHours(23, 59, 59, 999);
         const workOutLogData = yield WorkoutLogModel_1.WorkoutLog.findOne({
@@ -221,7 +221,7 @@ const getWorkoutsUser = (req, res) => __awaiter(void 0, void 0, void 0, function
     try {
         const { userId } = req.headers["user"];
         // console.log(userId);
-        const date = new Date();
+        const date = new Date(new Date().toLocaleString("en-US", { timeZone: "Asia/Kolkata" }));
         const startDate = date.setHours(0, 0, 0, 0);
         const endDate = date.setHours(23, 59, 59, 999);
         const workOutLogData = yield WorkoutLogModel_1.WorkoutLog.findOne({

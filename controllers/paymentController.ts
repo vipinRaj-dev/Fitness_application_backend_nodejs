@@ -114,7 +114,7 @@ export const handleWebhook = async (request, response) => {
 
       const numberOfMonths: number =
         metadata?.selectedPlan === "Monthly plan" ? 1 : 6;
-      const calculatedDueDate = new Date();
+      const calculatedDueDate =  new Date(new Date().toLocaleString("en-US", { timeZone: "Asia/Kolkata" }));
       calculatedDueDate.setMonth(calculatedDueDate.getMonth() + numberOfMonths);
       //   console.log("new date", new Date());
       //   console.log("calculatedDueDate", calculatedDueDate);
@@ -157,7 +157,7 @@ export const handleWebhook = async (request, response) => {
       // console.log("paymentDocument", paymentDocument);
 
       const month = 1;
-      const calculatedDueDate = new Date();
+      const calculatedDueDate =  new Date(new Date().toLocaleString("en-US", { timeZone: "Asia/Kolkata" }));
       calculatedDueDate.setMonth(calculatedDueDate.getMonth() + month);
       // console.log("new date", new Date());
       // console.log("calculatedDueDate", calculatedDueDate);

@@ -113,7 +113,7 @@ const handleWebhook = (request, response) => __awaiter(void 0, void 0, void 0, f
             yield paymentDocument.save();
             //   console.log("paymentDocument", paymentDocument);
             const numberOfMonths = (metadata === null || metadata === void 0 ? void 0 : metadata.selectedPlan) === "Monthly plan" ? 1 : 6;
-            const calculatedDueDate = new Date();
+            const calculatedDueDate = new Date(new Date().toLocaleString("en-US", { timeZone: "Asia/Kolkata" }));
             calculatedDueDate.setMonth(calculatedDueDate.getMonth() + numberOfMonths);
             //   console.log("new date", new Date());
             //   console.log("calculatedDueDate", calculatedDueDate);
@@ -151,7 +151,7 @@ const handleWebhook = (request, response) => __awaiter(void 0, void 0, void 0, f
             yield paymentDocument.save();
             // console.log("paymentDocument", paymentDocument);
             const month = 1;
-            const calculatedDueDate = new Date();
+            const calculatedDueDate = new Date(new Date().toLocaleString("en-US", { timeZone: "Asia/Kolkata" }));
             calculatedDueDate.setMonth(calculatedDueDate.getMonth() + month);
             // console.log("new date", new Date());
             // console.log("calculatedDueDate", calculatedDueDate);

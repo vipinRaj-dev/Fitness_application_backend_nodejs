@@ -337,11 +337,11 @@ const getGraphDataAdmin = (req, res) => __awaiter(void 0, void 0, void 0, functi
         ]);
         premiumUsers = yield UserModel_1.User.countDocuments({ isPremiumUser: true });
         trialUsers = yield UserModel_1.User.countDocuments({
-            trialEndsAt: { $gte: new Date() },
+            trialEndsAt: { $gte: new Date(new Date().toLocaleString("en-US", { timeZone: "Asia/Kolkata" })) },
             isPremiumUser: false,
         });
         trialExpired = yield UserModel_1.User.countDocuments({
-            trialEndsAt: { $lt: new Date() },
+            trialEndsAt: { $lt: new Date(new Date().toLocaleString("en-US", { timeZone: "Asia/Kolkata" })) },
             isPremiumUser: false,
         });
         totalTrainers = yield TrainerModel_1.Trainer.countDocuments();

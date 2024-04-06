@@ -115,7 +115,7 @@ const addFoodToLatestDiet = (req, res) => __awaiter(void 0, void 0, void 0, func
         const food = yield ListOfFood_1.Food.findById(foodId);
         // console.log(food._id);
         const foodToAdd = {
-            date: new Date(),
+            date: new Date(new Date().toLocaleString("en-US", { timeZone: "Asia/Kolkata" })),
             foodId: food._id,
         };
         const client = yield UserModel_1.User.findById(clientId);

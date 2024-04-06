@@ -34,7 +34,7 @@ const userHomePage = (req, res) => __awaiter(void 0, void 0, void 0, function* (
         },
     });
     const hasTrainer = (userDetails === null || userDetails === void 0 ? void 0 : userDetails.trainerId)
-        ? userDetails.trainerPaymentDueDate > new Date()
+        ? userDetails.trainerPaymentDueDate > new Date(new Date().toLocaleString("en-US", { timeZone: "Asia/Kolkata" }))
             ? true
             : false
         : false;
@@ -42,7 +42,7 @@ const userHomePage = (req, res) => __awaiter(void 0, void 0, void 0, function* (
     // console.log("userDetails", userDetails.attendanceId.foodLogs);
     // console.log("eatedFood", eatedFoodDocIds);
     //getting the yesterday status
-    const today = new Date();
+    const today = new Date(new Date().toLocaleString("en-US", { timeZone: "Asia/Kolkata" }));
     today.setHours(0, 0, 0, 0);
     const yesterday = new Date(today.getTime());
     yesterday.setDate(yesterday.getDate() - 1);
@@ -173,7 +173,7 @@ const getGraphDataUser = (req, res) => __awaiter(void 0, void 0, void 0, functio
             },
         ]);
         // console.log("attendancePerDay", attendancePerDay);
-        const today = new Date();
+        const today = new Date(new Date().toLocaleString("en-US", { timeZone: "Asia/Kolkata" }));
         today.setHours(0, 0, 0, 0);
         const tomorrow = new Date(today);
         tomorrow.setDate(tomorrow.getDate() + 1);
@@ -314,8 +314,6 @@ exports.userProfileImageUpdate = userProfileImageUpdate;
 const addFoodLog = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const { time, foodDocId, attendanceId } = req.body;
-        // console.log("attendanceId", attendanceId);
-        console.log("kazhikkan olla time frontendil ninnum", time);
         // Get the current time in 'Asia/Kolkata' timezone
         const currentTimeString = new Date().toLocaleString("en-US", {
             timeZone: "Asia/Kolkata",
@@ -329,18 +327,12 @@ const addFoodLog = (req, res) => __awaiter(void 0, void 0, void 0, function* () 
         foodTime.setSeconds(0); // Set the seconds to 0
         // Calculate the food time 1 hour before
         const foodTime1HoursBefore = new Date(foodTime.getTime() - 1000 * 60 * 60);
-        console.log("current time string", currentTimeString);
-        console.log("current time ", currentTime);
-        console.log("foodtime", foodTime);
-        console.log("1 hour mumpe olla time", foodTime1HoursBefore);
         if (foodTime1HoursBefore > currentTime) {
-            // console.log("time aayittilla");
             return res.status(401).json({ msg: "time not reached yet" });
         }
         const foodLogData = yield FoodLogModel_1.FoodLog.findById(foodDocId);
         if (foodTime > currentTime) {
             if (foodLogData) {
-                // console.log("foodLogData", foodLogData);
                 foodLogData.status = true;
                 yield foodLogData.save();
                 yield AttendanceModel_1.Attendance.findByIdAndUpdate(attendanceId, { isPresent: true });

@@ -40,7 +40,7 @@ export const userHomePage = async (
   });
 
   const hasTrainer = userDetails?.trainerId
-    ? userDetails.trainerPaymentDueDate > new Date()
+    ? userDetails.trainerPaymentDueDate > new Date(new Date().toLocaleString("en-US", { timeZone: "Asia/Kolkata" }))
       ? true
       : false
     : false;
@@ -54,7 +54,7 @@ export const userHomePage = async (
 
   //getting the yesterday status
 
-  const today = new Date();
+  const today = new Date(new Date().toLocaleString("en-US", { timeZone: "Asia/Kolkata" }));
   today.setHours(0, 0, 0, 0);
   const yesterday = new Date(today.getTime());
   yesterday.setDate(yesterday.getDate() - 1);
@@ -199,7 +199,7 @@ export const getGraphDataUser = async (
 
     // console.log("attendancePerDay", attendancePerDay);
 
-    const today = new Date();
+    const today = new Date(new Date().toLocaleString("en-US", { timeZone: "Asia/Kolkata" }));
     today.setHours(0, 0, 0, 0);
     const tomorrow = new Date(today);
     tomorrow.setDate(tomorrow.getDate() + 1);
@@ -371,10 +371,6 @@ export const addFoodLog = async (
   try {
     const { time, foodDocId, attendanceId } = req.body;
 
-    // console.log("attendanceId", attendanceId);
-
-    console.log("kazhikkan olla time frontendil ninnum", time);
-
     // Get the current time in 'Asia/Kolkata' timezone
     const currentTimeString = new Date().toLocaleString("en-US", {
       timeZone: "Asia/Kolkata",
@@ -391,13 +387,7 @@ export const addFoodLog = async (
     // Calculate the food time 1 hour before
     const foodTime1HoursBefore = new Date(foodTime.getTime() - 1000 * 60 * 60);
 
-    console.log("current time string", currentTimeString);
-    console.log("current time ", currentTime);
-    console.log("foodtime", foodTime);
-    console.log("1 hour mumpe olla time", foodTime1HoursBefore);
-
     if (foodTime1HoursBefore > currentTime) {
-      // console.log("time aayittilla");
       return res.status(401).json({ msg: "time not reached yet" });
     }
 
@@ -405,7 +395,6 @@ export const addFoodLog = async (
 
     if (foodTime > currentTime) {
       if (foodLogData) {
-        // console.log("foodLogData", foodLogData);
         foodLogData.status = true;
         await foodLogData.save();
         await Attendance.findByIdAndUpdate(attendanceId, { isPresent: true });

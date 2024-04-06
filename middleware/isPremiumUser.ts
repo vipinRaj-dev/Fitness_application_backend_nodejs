@@ -12,9 +12,9 @@ export const isPremiumUser = async (
 
     const user = await User.findById(requstedUser.userId);
     if (user) {
-      if (user.isPremiumUser && user.dueDate > new Date() ) {
+      if (user.isPremiumUser && user.dueDate > new Date(new Date().toLocaleString("en-US", { timeZone: "Asia/Kolkata" })) ) {
         next(); 
-      } else if (user.trialEndsAt > new Date()) {
+      } else if (user.trialEndsAt >new Date(new Date().toLocaleString("en-US", { timeZone: "Asia/Kolkata" }))) {
         next();
       } else {
         res

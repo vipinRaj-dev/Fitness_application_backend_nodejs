@@ -69,7 +69,7 @@ const SaveUser = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
             const { name, email, hashedPassword } = otpDoc;
             const userCount = yield UserModel_1.User.countDocuments({});
             const trialPeriod = 5; // 5 days trial period
-            const trialEndsDate = new Date();
+            const trialEndsDate = new Date(new Date().toLocaleString("en-US", { timeZone: "Asia/Kolkata" }));
             trialEndsDate.setDate(trialEndsDate.getDate() + trialPeriod);
             //register the user
             const newUser = new UserModel_1.User({
@@ -127,7 +127,7 @@ const userLogin = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
         }
         //if there is no attandance make an attandance
         if (foundUser.role === "user" && !foundUser.attendanceId) {
-            const today = new Date();
+            const today = new Date(new Date().toLocaleString("en-US", { timeZone: "Asia/Kolkata" }));
             today.setHours(0, 0, 0, 0);
             const attendance = new AttendanceModel_1.Attendance({
                 date: today,

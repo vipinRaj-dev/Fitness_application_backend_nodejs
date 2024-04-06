@@ -138,7 +138,7 @@ export const addFoodToLatestDiet = async (
     const food = await Food.findById(foodId);
     // console.log(food._id);
     const foodToAdd = {
-      date: new Date(),
+      date: new Date(new Date().toLocaleString("en-US", { timeZone: "Asia/Kolkata" })),
       foodId: food._id,
     };
 

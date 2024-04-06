@@ -389,12 +389,12 @@ export const getGraphDataAdmin = async (
     premiumUsers = await User.countDocuments({ isPremiumUser: true });
 
     trialUsers = await User.countDocuments({
-      trialEndsAt: { $gte: new Date() },
+      trialEndsAt: { $gte:  new Date(new Date().toLocaleString("en-US", { timeZone: "Asia/Kolkata" })) },
       isPremiumUser: false,
     });
 
     trialExpired = await User.countDocuments({
-      trialEndsAt: { $lt: new Date() },
+      trialEndsAt: { $lt:  new Date(new Date().toLocaleString("en-US", { timeZone: "Asia/Kolkata" })) },
       isPremiumUser: false,
     });
 
