@@ -379,6 +379,12 @@ export const addFoodLog = async (
     const foodTime = new Date();
 
     console.log("serveril current time", currentTime);
+    console.log('currentTime.toLocaleString',currentTime.toLocaleString() )
+    console.log('currentTime.toLocaleDateString',currentTime.toLocaleDateString() )
+    console.log('currentTime.toLocaleTimeString',currentTime.toLocaleTimeString() )
+    console.log('date.now' , Date.now())
+    console.log('newDate' , new Date(Date.now()))
+   
 
     const [hours, minutes] = time.split(":").map(Number);
     foodTime.setHours(hours, minutes);
