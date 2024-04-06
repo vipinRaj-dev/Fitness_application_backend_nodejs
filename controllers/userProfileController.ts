@@ -21,7 +21,6 @@ type dietFoodType = {
   };
 };
 
-
 export const userHomePage = async (
   req: express.Request,
   res: express.Response
@@ -39,7 +38,6 @@ export const userHomePage = async (
       },
     },
   });
-
 
   const hasTrainer = userDetails?.trainerId
     ? userDetails.trainerPaymentDueDate > new Date()
@@ -359,7 +357,7 @@ export const userProfileImageUpdate = async (
       console.log("error", error.message, error.stack);
     }
 
-    res.status(200).json({ msg: "updated successfully", imageData : imageData });
+    res.status(200).json({ msg: "updated successfully", imageData: imageData });
   } catch (error) {
     res.status(500).json({ msg: "server error", error });
     console.log("error", error.message, error.stack);
@@ -375,16 +373,24 @@ export const addFoodLog = async (
 
     // console.log("attendanceId", attendanceId);
 
+    console.log("kazhikkan olla time frontendil ninnum", time);
+
     const currentTime = new Date();
     const foodTime = new Date();
+
+    console.log("serveril current time", currentTime);
 
     const [hours, minutes] = time.split(":").map(Number);
     foodTime.setHours(hours, minutes);
 
-    console.log('foodTime data ' , foodTime)
+    console.log("kazikkan olla food time serveril ", foodTime);
+
     const foodTime1HoursBefore = new Date(foodTime.getTime() - 1000 * 60 * 60);
 
-    if (foodTime1HoursBefore > currentTime) { 
+    console.log("1 hour mumpe olla time", foodTime1HoursBefore);
+
+    if (foodTime1HoursBefore > currentTime) {
+      console.log("time aayittilla");
       return res.status(401).json({ msg: "time not reached yet" });
     }
 
@@ -392,7 +398,7 @@ export const addFoodLog = async (
 
     if (foodTime > currentTime) {
       if (foodLogData) {
-        // console.log("foodLogData", foodLogData);  
+        // console.log("foodLogData", foodLogData);
         foodLogData.status = true;
         await foodLogData.save();
         await Attendance.findByIdAndUpdate(attendanceId, { isPresent: true });

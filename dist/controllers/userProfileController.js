@@ -315,19 +315,23 @@ const addFoodLog = (req, res) => __awaiter(void 0, void 0, void 0, function* () 
     try {
         const { time, foodDocId, attendanceId } = req.body;
         // console.log("attendanceId", attendanceId);
+        console.log("kazhikkan olla time frontendil ninnum", time);
         const currentTime = new Date();
         const foodTime = new Date();
+        console.log("serveril current time", currentTime);
         const [hours, minutes] = time.split(":").map(Number);
         foodTime.setHours(hours, minutes);
-        console.log('foodTime data ', foodTime);
+        console.log("kazikkan olla food time serveril ", foodTime);
         const foodTime1HoursBefore = new Date(foodTime.getTime() - 1000 * 60 * 60);
+        console.log("1 hour mumpe olla time", foodTime1HoursBefore);
         if (foodTime1HoursBefore > currentTime) {
+            console.log("time aayittilla");
             return res.status(401).json({ msg: "time not reached yet" });
         }
         const foodLogData = yield FoodLogModel_1.FoodLog.findById(foodDocId);
         if (foodTime > currentTime) {
             if (foodLogData) {
-                // console.log("foodLogData", foodLogData);  
+                // console.log("foodLogData", foodLogData);
                 foodLogData.status = true;
                 yield foodLogData.save();
                 yield AttendanceModel_1.Attendance.findByIdAndUpdate(attendanceId, { isPresent: true });
