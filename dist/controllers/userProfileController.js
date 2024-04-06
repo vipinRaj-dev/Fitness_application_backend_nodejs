@@ -316,23 +316,25 @@ const addFoodLog = (req, res) => __awaiter(void 0, void 0, void 0, function* () 
         const { time, foodDocId, attendanceId } = req.body;
         // console.log("attendanceId", attendanceId);
         console.log("kazhikkan olla time frontendil ninnum", time);
-        const currentTime = new Date();
-        const foodTime = new Date();
-        console.log("serveril current time", currentTime);
-        console.log('currentTime.toLocaleString', currentTime.toLocaleString());
-        console.log('currentTime.toLocaleDateString', currentTime.toLocaleDateString());
-        console.log('currentTime.toLocaleTimeString', currentTime.toLocaleTimeString());
-        console.log('date.now', Date.now());
-        console.log('newDate', new Date(Date.now()));
-        console.log('is this time is correct', currentTime.toLocaleTimeString('en-US', { timeZone: 'Asia/Kolkata' }));
-        console.log('Local time in Asia/Kolkata:', currentTime.toLocaleString('en-US', { timeZone: 'Asia/Kolkata' }));
+        // Get the current time in 'Asia/Kolkata' timezone
+        const currentTimeString = new Date().toLocaleString("en-US", {
+            timeZone: "Asia/Kolkata",
+        });
+        const currentTime = new Date(currentTimeString);
+        // Get the food time in 'Asia/Kolkata' timezone
         const [hours, minutes] = time.split(":").map(Number);
-        foodTime.setHours(hours, minutes);
-        console.log("kazikkan olla food time serveril ", foodTime);
+        const foodTime = new Date(currentTimeString); // Start with the current time
+        foodTime.setHours(hours); // Set the hours
+        foodTime.setMinutes(minutes); // Set the minutes
+        foodTime.setSeconds(0); // Set the seconds to 0
+        // Calculate the food time 1 hour before
         const foodTime1HoursBefore = new Date(foodTime.getTime() - 1000 * 60 * 60);
+        console.log("current time string", currentTimeString);
+        console.log("current time ", currentTime);
+        console.log("foodtime", foodTime);
         console.log("1 hour mumpe olla time", foodTime1HoursBefore);
         if (foodTime1HoursBefore > currentTime) {
-            console.log("time aayittilla");
+            // console.log("time aayittilla");
             return res.status(401).json({ msg: "time not reached yet" });
         }
         const foodLogData = yield FoodLogModel_1.FoodLog.findById(foodDocId);
