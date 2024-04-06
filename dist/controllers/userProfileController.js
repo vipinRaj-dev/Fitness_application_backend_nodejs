@@ -324,6 +324,8 @@ const addFoodLog = (req, res) => __awaiter(void 0, void 0, void 0, function* () 
         console.log('currentTime.toLocaleTimeString', currentTime.toLocaleTimeString());
         console.log('date.now', Date.now());
         console.log('newDate', new Date(Date.now()));
+        console.log('is this time is correct', currentTime.toLocaleTimeString('en-US', { timeZone: 'Asia/Kolkata' }));
+        console.log('Local time in Asia/Kolkata:', currentTime.toLocaleString('en-US', { timeZone: 'Asia/Kolkata' }));
         const [hours, minutes] = time.split(":").map(Number);
         foodTime.setHours(hours, minutes);
         console.log("kazikkan olla food time serveril ", foodTime);
