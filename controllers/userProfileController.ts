@@ -278,6 +278,7 @@ export const userProfileImageUpdate = async (
     const requstedUser: string | string[] | any = req.headers["user"];
     const id = requstedUser.userId;
     let imageData;
+    // console.log('req.file' , req.file)
     if (req.file) {
       const user = await User.findById(id);
 
@@ -295,6 +296,7 @@ export const userProfileImageUpdate = async (
 
       try {
         imageData = await uploadToCloudinary(req.file.path, "user-Images");
+        // console.log('image updted successfully ========================' , imageData)
       } catch (error) {
         console.error("Error uploading to Cloudinary:", error);
         return res.status(500).json({ msg: "Error uploading image", error });
@@ -357,7 +359,7 @@ export const userProfileImageUpdate = async (
       console.log("error", error.message, error.stack);
     }
 
-    res.status(200).json({ msg: "updated successfully", imageData });
+    res.status(200).json({ msg: "updated successfully", imageData : imageData });
   } catch (error) {
     res.status(500).json({ msg: "server error", error });
     console.log("error", error.message, error.stack);
@@ -379,6 +381,7 @@ export const addFoodLog = async (
     const [hours, minutes] = time.split(":").map(Number);
     foodTime.setHours(hours, minutes);
 
+    console.log('foodTime data ' , foodTime)
     const foodTime1HoursBefore = new Date(foodTime.getTime() - 1000 * 60 * 60);
 
     if (foodTime1HoursBefore > currentTime) { 
@@ -389,7 +392,7 @@ export const addFoodLog = async (
 
     if (foodTime > currentTime) {
       if (foodLogData) {
-        // console.log("foodLogData", foodLogData);
+        // console.log("foodLogData", foodLogData);  
         foodLogData.status = true;
         await foodLogData.save();
         await Attendance.findByIdAndUpdate(attendanceId, { isPresent: true });

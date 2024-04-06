@@ -239,6 +239,7 @@ const userProfileImageUpdate = (req, res) => __awaiter(void 0, void 0, void 0, f
         const requstedUser = req.headers["user"];
         const id = requstedUser.userId;
         let imageData;
+        // console.log('req.file' , req.file)
         if (req.file) {
             const user = yield UserModel_1.User.findById(id);
             if (user === null || user === void 0 ? void 0 : user.publicId) {
@@ -252,6 +253,7 @@ const userProfileImageUpdate = (req, res) => __awaiter(void 0, void 0, void 0, f
             // console.log(req.file);
             try {
                 imageData = yield (0, cloudinary_1.uploadToCloudinary)(req.file.path, "user-Images");
+                // console.log('image updted successfully ========================' , imageData)
             }
             catch (error) {
                 console.error("Error uploading to Cloudinary:", error);
@@ -301,7 +303,7 @@ const userProfileImageUpdate = (req, res) => __awaiter(void 0, void 0, void 0, f
         catch (error) {
             console.log("error", error.message, error.stack);
         }
-        res.status(200).json({ msg: "updated successfully", imageData });
+        res.status(200).json({ msg: "updated successfully", imageData: imageData });
     }
     catch (error) {
         res.status(500).json({ msg: "server error", error });
@@ -317,6 +319,7 @@ const addFoodLog = (req, res) => __awaiter(void 0, void 0, void 0, function* () 
         const foodTime = new Date();
         const [hours, minutes] = time.split(":").map(Number);
         foodTime.setHours(hours, minutes);
+        console.log('foodTime data ', foodTime);
         const foodTime1HoursBefore = new Date(foodTime.getTime() - 1000 * 60 * 60);
         if (foodTime1HoursBefore > currentTime) {
             return res.status(401).json({ msg: "time not reached yet" });
@@ -324,7 +327,7 @@ const addFoodLog = (req, res) => __awaiter(void 0, void 0, void 0, function* () 
         const foodLogData = yield FoodLogModel_1.FoodLog.findById(foodDocId);
         if (foodTime > currentTime) {
             if (foodLogData) {
-                // console.log("foodLogData", foodLogData);
+                // console.log("foodLogData", foodLogData);  
                 foodLogData.status = true;
                 yield foodLogData.save();
                 yield AttendanceModel_1.Attendance.findByIdAndUpdate(attendanceId, { isPresent: true });
