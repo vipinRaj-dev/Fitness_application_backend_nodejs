@@ -11,6 +11,7 @@ import { Review } from "../models/ReviewModel";
 import { Trainer } from "../models/TrainerModel";
 import mongoose from "mongoose";
 import { Chat } from "../models/ChatModel";
+import moment from 'moment-timezone';
 type dietFoodType = {
   _id: string;
   trainerId: string;
@@ -40,7 +41,8 @@ export const userHomePage = async (
   });
 
   const hasTrainer = userDetails?.trainerId
-    ? userDetails.trainerPaymentDueDate > new Date(new Date().toLocaleString("en-US", { timeZone: "Asia/Kolkata" }))
+    ? userDetails.trainerPaymentDueDate >
+      new Date(new Date().toLocaleString("en-US", { timeZone: "Asia/Kolkata" }))
       ? true
       : false
     : false;
@@ -54,7 +56,9 @@ export const userHomePage = async (
 
   //getting the yesterday status
 
-  const today = new Date(new Date().toLocaleString("en-US", { timeZone: "Asia/Kolkata" }));
+  const today = new Date(
+    new Date().toLocaleString("en-US", { timeZone: "Asia/Kolkata" })
+  );
   today.setHours(0, 0, 0, 0);
   const yesterday = new Date(today.getTime());
   yesterday.setDate(yesterday.getDate() - 1);
@@ -199,7 +203,9 @@ export const getGraphDataUser = async (
 
     // console.log("attendancePerDay", attendancePerDay);
 
-    const today = new Date(new Date().toLocaleString("en-US", { timeZone: "Asia/Kolkata" }));
+    const today = new Date(
+      new Date().toLocaleString("en-US", { timeZone: "Asia/Kolkata" })
+    );
     today.setHours(0, 0, 0, 0);
     const tomorrow = new Date(today);
     tomorrow.setDate(tomorrow.getDate() + 1);
@@ -311,7 +317,7 @@ export const userProfileImageUpdate = async (
         { _id: id },
         { $set: { profileImage: imageData.url, publicId: imageData.public_id } }
       );
-      console.log("profileUpdate", profileUpdate);
+      // console.log("profileUpdate", profileUpdate);
     }
     // console.log("req.body user : " , req.body);
     // user detal update
@@ -414,13 +420,22 @@ export const getDay = async (req: express.Request, res: express.Response) => {
   const requstedUser: string | string[] | any = req.headers["user"];
   const id = requstedUser.userId;
   const userDate = new Date(req.params.date); // assuming date is passed as a parameter in the request
-  // console.log("userDate", userDate);
+  console.log("userDate with new date only================", userDate);
+
+  const today1 = new Date(
+    new Date(req.params.date).toLocaleString("en-US", {
+      timeZone: "Asia/Kolkata",
+    })
+  );
+
+  console.log("date of today1", today1);
+
 
   const startOfUserDate = new Date(userDate.setHours(0, 0, 0, 0));
   const endOfTheDay = new Date(userDate.setHours(23, 59, 59, 999));
 
-  // console.log("startOfUserDate", startOfUserDate);
-  // console.log("endOfTheDay", endOfTheDay);
+  console.log("startOfUserDate", startOfUserDate);
+  console.log("endOfTheDay", endOfTheDay);
 
   const attandanceData = await Attendance.findOne({
     userId: id,

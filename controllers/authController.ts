@@ -21,7 +21,7 @@ export const userRegistrationSendOtp = async (
 
     const { name, email, password } = req.body;
 
-    console.log("Request body:", name, email, password);
+    // console.log("Request body:", name, email, password);
 
     let user: UserType | TrainerType | AdminType;
 

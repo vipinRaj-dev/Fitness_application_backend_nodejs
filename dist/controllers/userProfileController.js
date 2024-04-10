@@ -34,7 +34,8 @@ const userHomePage = (req, res) => __awaiter(void 0, void 0, void 0, function* (
         },
     });
     const hasTrainer = (userDetails === null || userDetails === void 0 ? void 0 : userDetails.trainerId)
-        ? userDetails.trainerPaymentDueDate > new Date(new Date().toLocaleString("en-US", { timeZone: "Asia/Kolkata" }))
+        ? userDetails.trainerPaymentDueDate >
+            new Date(new Date().toLocaleString("en-US", { timeZone: "Asia/Kolkata" }))
             ? true
             : false
         : false;
@@ -266,7 +267,7 @@ const userProfileImageUpdate = (req, res) => __awaiter(void 0, void 0, void 0, f
                     .json({ msg: "Invalid response from image upload" });
             }
             const profileUpdate = yield UserModel_1.User.updateOne({ _id: id }, { $set: { profileImage: imageData.url, publicId: imageData.public_id } });
-            console.log("profileUpdate", profileUpdate);
+            // console.log("profileUpdate", profileUpdate);
         }
         // console.log("req.body user : " , req.body);
         // user detal update
@@ -353,11 +354,15 @@ const getDay = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const requstedUser = req.headers["user"];
     const id = requstedUser.userId;
     const userDate = new Date(req.params.date); // assuming date is passed as a parameter in the request
-    // console.log("userDate", userDate);
+    console.log("userDate with new date only================", userDate);
+    const today1 = new Date(new Date(req.params.date).toLocaleString("en-US", {
+        timeZone: "Asia/Kolkata",
+    }));
+    console.log("date of today1", today1);
     const startOfUserDate = new Date(userDate.setHours(0, 0, 0, 0));
     const endOfTheDay = new Date(userDate.setHours(23, 59, 59, 999));
-    // console.log("startOfUserDate", startOfUserDate);
-    // console.log("endOfTheDay", endOfTheDay);
+    console.log("startOfUserDate", startOfUserDate);
+    console.log("endOfTheDay", endOfTheDay);
     const attandanceData = yield AttendanceModel_1.Attendance.findOne({
         userId: id,
         date: {

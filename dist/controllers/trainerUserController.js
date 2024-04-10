@@ -14,7 +14,7 @@ const TrainerModel_1 = require("../models/TrainerModel");
 const allClients = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     // try {
     const requstedUser = req.headers["user"];
-    console.log(requstedUser);
+    // console.log(requstedUser);
     const page = parseInt(req.query.page) - 1 || 0;
     const limit = parseInt(req.query.limit) || 3;
     const search = req.query.search || "";

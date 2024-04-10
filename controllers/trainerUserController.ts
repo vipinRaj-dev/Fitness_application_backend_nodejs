@@ -7,7 +7,7 @@ export const allClients = async (
 ) => {
   // try {
     const requstedUser: string | string[] | any = req.headers["user"];
-  console.log(requstedUser);
+  // console.log(requstedUser);
 
   const page = parseInt(req.query.page as string) - 1 || 0;
   const limit = parseInt(req.query.limit as string) || 3;

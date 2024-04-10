@@ -226,7 +226,9 @@ async function markAttendance() {
     const today =  new Date(new Date().toLocaleString("en-US", { timeZone: "Asia/Kolkata" }));
     today.setHours(0, 0, 0, 0);
     const tomorrow = new Date(today.getTime() + 24 * 60 * 60 * 1000);
+
     // console.log("today", today , "tomorrow", tomorrow);
+    
     const existingAttendance = await Attendance.findOne({
       userId: user._id,
       date: {

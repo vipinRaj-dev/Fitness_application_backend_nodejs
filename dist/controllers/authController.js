@@ -25,7 +25,7 @@ const userRegistrationSendOtp = (req, res) => __awaiter(void 0, void 0, void 0, 
     try {
         // console.log("Request body:", req.body);
         const { name, email, password } = req.body;
-        console.log("Request body:", name, email, password);
+        // console.log("Request body:", name, email, password);
         let user;
         user = yield UserModel_1.User.findOne({ email: email });
         if (!user) {
