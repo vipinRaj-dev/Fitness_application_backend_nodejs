@@ -365,10 +365,7 @@ const getDay = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     console.log("endOfTheDay", endOfTheDay);
     const attandanceData = yield AttendanceModel_1.Attendance.findOne({
         userId: id,
-        date: {
-            $gte: startOfUserDate,
-            $lt: endOfTheDay,
-        },
+        date: today1,
     })
         .populate({
         path: "foodLogs",
@@ -382,7 +379,7 @@ const getDay = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
             path: "workOuts.workoutId",
         },
     });
-    // console.log("attandanceData", attandanceData);
+    console.log("attandanceData", attandanceData);
     res.status(200).json({ msg: "attandanceData", attandanceData });
 });
 exports.getDay = getDay;

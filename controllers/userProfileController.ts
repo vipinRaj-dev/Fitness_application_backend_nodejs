@@ -11,7 +11,7 @@ import { Review } from "../models/ReviewModel";
 import { Trainer } from "../models/TrainerModel";
 import mongoose from "mongoose";
 import { Chat } from "../models/ChatModel";
-import moment from 'moment-timezone';
+import moment from "moment-timezone";
 type dietFoodType = {
   _id: string;
   trainerId: string;
@@ -430,7 +430,6 @@ export const getDay = async (req: express.Request, res: express.Response) => {
 
   console.log("date of today1", today1);
 
-
   const startOfUserDate = new Date(userDate.setHours(0, 0, 0, 0));
   const endOfTheDay = new Date(userDate.setHours(23, 59, 59, 999));
 
@@ -439,10 +438,7 @@ export const getDay = async (req: express.Request, res: express.Response) => {
 
   const attandanceData = await Attendance.findOne({
     userId: id,
-    date: {
-      $gte: startOfUserDate,
-      $lt: endOfTheDay,
-    },
+    date: today1,
   })
     .populate({
       path: "foodLogs",
@@ -457,7 +453,7 @@ export const getDay = async (req: express.Request, res: express.Response) => {
       },
     });
 
-  // console.log("attandanceData", attandanceData);
+  console.log("attandanceData", attandanceData);
   res.status(200).json({ msg: "attandanceData", attandanceData });
 };
 
