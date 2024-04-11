@@ -43,23 +43,23 @@ export const setAttendance = async (
     res.status(200).json("attendance data available");
   } else {
     const user = await User.findById(requstedUser.userId);
-    const foodLogsIds = user?.latestDiet.map(async (food) => {
-      const foodLogData = new FoodLog({
-        date: new Date(
-          new Date().toLocaleString("en-US", { timeZone: "Asia/Kolkata" })
-        ),
-        userId: user?._id,
-        foodId: food.foodId,
-        status: false,
-        timePeriod: food.timePeriod,
-        time: food.time,
-        quantity: food.quantity,
-      });
+    const foodLogsIds = await Promise.all(
+      user?.latestDiet.map(async (food) => {
+        const foodLogData = new FoodLog({
+          date: today,
+          userId: user?._id,
+          foodId: food.foodId,
+          status: false,
+          timePeriod: food.timePeriod,
+          time: food.time,
+          quantity: food.quantity,
+        });
 
-      const foodLogId = await foodLogData.save();
+        const foodLogId = await foodLogData.save();
 
-      return foodLogId._id;
-    });
+        return foodLogId._id;
+      })
+    );
     const attendanceCreating = new Attendance({
       date: today,
       userId: user?._id,

@@ -35,9 +35,9 @@ const setAttendance = (req, res) => __awaiter(void 0, void 0, void 0, function* 
     }
     else {
         const user = yield UserModel_1.User.findById(requstedUser.userId);
-        const foodLogsIds = user === null || user === void 0 ? void 0 : user.latestDiet.map((food) => __awaiter(void 0, void 0, void 0, function* () {
+        const foodLogsIds = yield Promise.all(user === null || user === void 0 ? void 0 : user.latestDiet.map((food) => __awaiter(void 0, void 0, void 0, function* () {
             const foodLogData = new FoodLogModel_1.FoodLog({
-                date: new Date(new Date().toLocaleString("en-US", { timeZone: "Asia/Kolkata" })),
+                date: today,
                 userId: user === null || user === void 0 ? void 0 : user._id,
                 foodId: food.foodId,
                 status: false,
@@ -47,7 +47,7 @@ const setAttendance = (req, res) => __awaiter(void 0, void 0, void 0, function* 
             });
             const foodLogId = yield foodLogData.save();
             return foodLogId._id;
-        }));
+        })));
         const attendanceCreating = new AttendanceModel_1.Attendance({
             date: today,
             userId: user === null || user === void 0 ? void 0 : user._id,

@@ -4,6 +4,7 @@ import { Trainer } from "../models/TrainerModel";
 import { User } from "../models/UserModel";
 import { Food } from "../models/ListOfFood";
 import { Attendance } from "../models/AttendanceModel";
+import { FoodLog } from "../models/FoodLogModel";
 
 export const clientDetailsAndLatestFood = async (
   req: express.Request,
@@ -40,9 +41,7 @@ export const setTimeDetails = async (
       quantity: req.body.quantity,
     };
     // console.log(AddTimeDetails);
-    const clientFood = client.latestDiet.find(
-      (food) => food._id == foodDocId
-    );
+    const clientFood = client.latestDiet.find((food) => food._id == foodDocId);
     if (clientFood) {
       clientFood.time = AddTimeDetails.time;
       clientFood.timePeriod = AddTimeDetails.timePeriod;
@@ -78,7 +77,7 @@ export const deletePerFood = async (
     res.status(500).json({ msg: "server error" });
   }
 };
-  
+
 export const getAllFood = async (
   req: express.Request,
   res: express.Response
@@ -138,7 +137,9 @@ export const addFoodToLatestDiet = async (
     const food = await Food.findById(foodId);
     // console.log(food._id);
     const foodToAdd = {
-      date: new Date(new Date().toLocaleString("en-US", { timeZone: "Asia/Kolkata" })),
+      date: new Date(
+        new Date().toLocaleString("en-US", { timeZone: "Asia/Kolkata" })
+      ),
       foodId: food._id,
     };
 
@@ -207,8 +208,8 @@ export const getClientFoodDetails = async (
       userId: userId,
       date: {
         $gte: startOfUserDate,
-        $lt: endOfTheDay,   
-      }, 
+        $lt: endOfTheDay,
+      },
     })
       .populate({
         path: "foodLogs",
@@ -228,5 +229,64 @@ export const getClientFoodDetails = async (
   } catch (error) {
     console.error(error);
     res.status(500).json({ msg: "server error" });
+  }
+};
+
+export const UpdateDiet = async (
+  req: express.Request,
+  res: express.Response
+) => {
+  try {
+    const requstedUser: string | string[] | any = req.headers["user"];
+    const id = requstedUser.userId;
+
+    const today = new Date(
+      new Date().toLocaleString("en-US", { timeZone: "Asia/Kolkata" })
+    );
+    today.setHours(0, 0, 0, 0);
+    const deleteExistingFoodLogs = await FoodLog.deleteMany({
+      userId: id,
+      date: today,
+    });
+
+    console.log("deleted the existing food logs", deleteExistingFoodLogs);
+
+    const user = await User.findById(id);
+
+    const attandanceData = await Attendance.updateOne(
+      { _id: user.attendanceId },
+      { $set: { foodLogs: [] } }
+    );
+
+    console.log("attendanceData deleted", attandanceData);
+
+    const foodLogsIds = await Promise.all(
+      user?.latestDiet.map(async (food) => {
+        const foodLogData = new FoodLog({
+          date: today,
+          userId: user?._id,
+          foodId: food.foodId,
+          status: false,
+          timePeriod: food.timePeriod,
+          time: food.time,
+          quantity: food.quantity,
+        });
+
+        const foodLogId = await foodLogData.save();
+
+        return foodLogId._id;
+      })  
+    );
+
+    const ans = await Attendance.updateOne(
+      { _id: user.attendanceId },
+      { $set: { foodLogs: foodLogsIds } }
+    );
+
+    console.log('updated succesfully' , ans)
+    res.status(200).json('updated successfully')
+  } catch (error) {
+    console.log("error in the update existing diet");
+    console.log(error);
   }
 };

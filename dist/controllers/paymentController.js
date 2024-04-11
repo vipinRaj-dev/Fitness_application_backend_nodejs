@@ -68,7 +68,14 @@ const handleWebhook = (request, response) => __awaiter(void 0, void 0, void 0, f
     let metadata;
     let event;
     try {
-        console.log("request.body", request.body, "sig-----------", sig, "endpoint-----", endpointSecret);
+        // console.log(
+        //   "request.body",
+        //   request.body,
+        //   "sig-----------",
+        //   sig,
+        //   "endpoint-----",
+        //   endpointSecret
+        // );
         event = stripe.webhooks.constructEvent(request.body, sig, endpointSecret);
     }
     catch (err) {
@@ -96,7 +103,14 @@ const handleWebhook = (request, response) => __awaiter(void 0, void 0, void 0, f
     }
     // Return a 200 response to acknowledge receipt of the event
     if (userId && !metadata.trainer_reference_id) {
-        console.log("userId", userId, "transactionId", transactionId, "metadata", metadata);
+        // console.log(
+        //   "userId",
+        //   userId,
+        //   "transactionId",
+        //   transactionId,
+        //   "metadata",
+        //   metadata
+        // );
         const updateAdminPayment = () => __awaiter(void 0, void 0, void 0, function* () {
             const paymentDocument = new PaymentsModel_1.AdminPayment({
                 planSelected: metadata.selectedPlan,
@@ -109,22 +123,22 @@ const handleWebhook = (request, response) => __awaiter(void 0, void 0, void 0, f
             const numberOfMonths = (metadata === null || metadata === void 0 ? void 0 : metadata.selectedPlan) === "Monthly plan" ? 1 : 6;
             const calculatedDueDate = new Date(new Date().toLocaleString("en-US", { timeZone: "Asia/Kolkata" }));
             calculatedDueDate.setMonth(calculatedDueDate.getMonth() + numberOfMonths);
-            //   console.log("new date", new Date());
-            //   console.log("calculatedDueDate", calculatedDueDate);
-            //   console.log("payemntDocument._id", paymentDocument._id);
             yield UserModel_1.User.updateOne({ _id: userId }, {
                 $set: { isPremiumUser: true, dueDate: calculatedDueDate },
                 $push: { subscriptionDetails: paymentDocument._id },
             });
-            // userId = "";
-            // metadata = "";
-            // transactionId = "";
-            // receiptUrl = "";
         });
         yield updateAdminPayment();
     }
     if (userId && metadata && metadata.trainer_reference_id) {
-        console.log("userId", userId, "transactionId", transactionId, "metadata", metadata.trainer_reference_id);
+        // console.log(
+        //   "userId",
+        //   userId,
+        //   "transactionId",
+        //   transactionId,
+        //   "metadata",
+        //   metadata.trainer_reference_id
+        // );
         const updateTrainerPayment = () => __awaiter(void 0, void 0, void 0, function* () {
             const paymentDocument = new TrainerPaymentModel_1.TrainerPayment({
                 planSelected: metadata.selectedPlan,
@@ -134,7 +148,7 @@ const handleWebhook = (request, response) => __awaiter(void 0, void 0, void 0, f
                 transactionId: transactionId,
             });
             yield paymentDocument.save();
-            console.log("paymentDocument", paymentDocument);
+            // console.log("paymentDocument", paymentDocumen  t);
             const month = 1;
             const calculatedDueDate = new Date(new Date().toLocaleString("en-US", { timeZone: "Asia/Kolkata" }));
             calculatedDueDate.setMonth(calculatedDueDate.getMonth() + month);

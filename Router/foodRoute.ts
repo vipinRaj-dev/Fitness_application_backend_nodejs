@@ -1,5 +1,6 @@
 import express from "express";
 import {
+  UpdateDiet,
   addFoodToLatestDiet,
   clientDetailsAndLatestFood,
   decreasePerFoodQuantity,
@@ -8,8 +9,7 @@ import {
   getClientFoodDetails,
   setTimeDetails,
 } from "../controllers/userTrainerFoodController";
-
-
+import { tokenVerify } from "../middleware/tokenVerify";
 
 const foodRouter: express.Router = express.Router();
 
@@ -25,8 +25,8 @@ foodRouter.delete("/deletePerFood/:clientId/:foodDocId", deletePerFood);
 
 foodRouter.delete("/deleteFood/:clientId/:foodId", decreasePerFoodQuantity);
 
-foodRouter.get('/getFoodAndWorkouts/:userId/:date', getClientFoodDetails);
+foodRouter.get("/getFoodAndWorkouts/:userId/:date", getClientFoodDetails);
 
-
+foodRouter.get("/updateExisting", tokenVerify, UpdateDiet);
 
 export default foodRouter;

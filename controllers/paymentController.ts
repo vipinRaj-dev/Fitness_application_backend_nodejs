@@ -60,14 +60,14 @@ export const handleWebhook = async (request, response) => {
   let event;
 
   try {
-    console.log(
-      "request.body",
-      request.body,
-      "sig-----------",
-      sig,
-      "endpoint-----",
-      endpointSecret
-    );
+    // console.log(
+    //   "request.body",
+    //   request.body,
+    //   "sig-----------",
+    //   sig,
+    //   "endpoint-----",
+    //   endpointSecret
+    // );
     event = stripe.webhooks.constructEvent(request.body, sig, endpointSecret);
   } catch (err) {
     console.log("webhook error", err);
@@ -86,8 +86,8 @@ export const handleWebhook = async (request, response) => {
       userId = session.client_reference_id;
       metadata = session.metadata;
       transactionId = session.payment_intent;
-      
-      console.log("Checkout Session completed!", metadata);
+
+      console.log("Checkout Session completed!", metadata); 
 
       break;
 
@@ -101,14 +101,14 @@ export const handleWebhook = async (request, response) => {
 
   // Return a 200 response to acknowledge receipt of the event
   if (userId && !metadata.trainer_reference_id) {
-    console.log(
-      "userId",
-      userId,
-      "transactionId",
-      transactionId,
-      "metadata",
-      metadata
-    );
+    // console.log(
+    //   "userId",
+    //   userId,
+    //   "transactionId",
+    //   transactionId,
+    //   "metadata",
+    //   metadata
+    // );
     const updateAdminPayment = async () => {
       const paymentDocument = new AdminPayment({
         planSelected: metadata.selectedPlan,
@@ -126,9 +126,7 @@ export const handleWebhook = async (request, response) => {
         new Date().toLocaleString("en-US", { timeZone: "Asia/Kolkata" })
       );
       calculatedDueDate.setMonth(calculatedDueDate.getMonth() + numberOfMonths);
-      //   console.log("new date", new Date());
-      //   console.log("calculatedDueDate", calculatedDueDate);
-      //   console.log("payemntDocument._id", paymentDocument._id);
+  
       await User.updateOne(
         { _id: userId },
         {
@@ -136,22 +134,19 @@ export const handleWebhook = async (request, response) => {
           $push: { subscriptionDetails: paymentDocument._id },
         }
       );
-      // userId = "";
-      // metadata = "";
-      // transactionId = "";
-      // receiptUrl = "";
+ 
     };
     await updateAdminPayment();
   }
   if (userId && metadata && metadata.trainer_reference_id) {
-    console.log(
-      "userId",
-      userId,
-      "transactionId",
-      transactionId,
-      "metadata",
-      metadata.trainer_reference_id
-    );
+    // console.log(
+    //   "userId",
+    //   userId,
+    //   "transactionId",
+    //   transactionId,
+    //   "metadata",
+    //   metadata.trainer_reference_id
+    // );
     const updateTrainerPayment = async () => {
       const paymentDocument = new TrainerPayment({
         planSelected: metadata.selectedPlan,
@@ -162,7 +157,7 @@ export const handleWebhook = async (request, response) => {
       });
       await paymentDocument.save();
 
-      console.log("paymentDocument", paymentDocument);
+      // console.log("paymentDocument", paymentDocumen  t);
 
       const month = 1;
       const calculatedDueDate = new Date(

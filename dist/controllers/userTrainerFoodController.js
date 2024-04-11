@@ -9,10 +9,11 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.getClientFoodDetails = exports.decreasePerFoodQuantity = exports.addFoodToLatestDiet = exports.getAllFood = exports.deletePerFood = exports.setTimeDetails = exports.clientDetailsAndLatestFood = void 0;
+exports.UpdateDiet = exports.getClientFoodDetails = exports.decreasePerFoodQuantity = exports.addFoodToLatestDiet = exports.getAllFood = exports.deletePerFood = exports.setTimeDetails = exports.clientDetailsAndLatestFood = void 0;
 const UserModel_1 = require("../models/UserModel");
 const ListOfFood_1 = require("../models/ListOfFood");
 const AttendanceModel_1 = require("../models/AttendanceModel");
+const FoodLogModel_1 = require("../models/FoodLogModel");
 const clientDetailsAndLatestFood = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const clientId = req.params.id;
@@ -189,3 +190,40 @@ const getClientFoodDetails = (req, res) => __awaiter(void 0, void 0, void 0, fun
     }
 });
 exports.getClientFoodDetails = getClientFoodDetails;
+const UpdateDiet = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        const requstedUser = req.headers["user"];
+        const id = requstedUser.userId;
+        const today = new Date(new Date().toLocaleString("en-US", { timeZone: "Asia/Kolkata" }));
+        today.setHours(0, 0, 0, 0);
+        const deleteExistingFoodLogs = yield FoodLogModel_1.FoodLog.deleteMany({
+            userId: id,
+            date: today,
+        });
+        console.log("deleted the existing food logs", deleteExistingFoodLogs);
+        const user = yield UserModel_1.User.findById(id);
+        const attandanceData = yield AttendanceModel_1.Attendance.updateOne({ _id: user.attendanceId }, { $set: { foodLogs: [] } });
+        console.log("attendanceData deleted", attandanceData);
+        const foodLogsIds = yield Promise.all(user === null || user === void 0 ? void 0 : user.latestDiet.map((food) => __awaiter(void 0, void 0, void 0, function* () {
+            const foodLogData = new FoodLogModel_1.FoodLog({
+                date: today,
+                userId: user === null || user === void 0 ? void 0 : user._id,
+                foodId: food.foodId,
+                status: false,
+                timePeriod: food.timePeriod,
+                time: food.time,
+                quantity: food.quantity,
+            });
+            const foodLogId = yield foodLogData.save();
+            return foodLogId._id;
+        })));
+        const ans = yield AttendanceModel_1.Attendance.updateOne({ _id: user.attendanceId }, { $set: { foodLogs: foodLogsIds } });
+        console.log('updated succesfully', ans);
+        res.status(200).json('updated successfully');
+    }
+    catch (error) {
+        console.log("error in the update existing diet");
+        console.log(error);
+    }
+});
+exports.UpdateDiet = UpdateDiet;
