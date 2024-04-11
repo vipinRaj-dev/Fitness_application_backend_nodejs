@@ -192,6 +192,7 @@ const getClientFoodDetails = (req, res) => __awaiter(void 0, void 0, void 0, fun
 exports.getClientFoodDetails = getClientFoodDetails;
 const UpdateDiet = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
+        console.log('inside the  update diet controller');
         const requstedUser = req.headers["user"];
         const id = requstedUser.userId;
         const today = new Date(new Date().toLocaleString("en-US", { timeZone: "Asia/Kolkata" }));

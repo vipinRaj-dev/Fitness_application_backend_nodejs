@@ -237,9 +237,10 @@ export const UpdateDiet = async (
   res: express.Response
 ) => {
   try {
+    console.log('inside the  update diet controller')
     const requstedUser: string | string[] | any = req.headers["user"];
     const id = requstedUser.userId;
-
+     
     const today = new Date(
       new Date().toLocaleString("en-US", { timeZone: "Asia/Kolkata" })
     );

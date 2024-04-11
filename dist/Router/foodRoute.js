@@ -14,5 +14,5 @@ foodRouter.put("/addTimeDetails/:clientId/:foodDocId", userTrainerFoodController
 foodRouter.delete("/deletePerFood/:clientId/:foodDocId", userTrainerFoodController_1.deletePerFood);
 foodRouter.delete("/deleteFood/:clientId/:foodId", userTrainerFoodController_1.decreasePerFoodQuantity);
 foodRouter.get("/getFoodAndWorkouts/:userId/:date", userTrainerFoodController_1.getClientFoodDetails);
-foodRouter.get("/updateExisting", tokenVerify_1.tokenVerify, userTrainerFoodController_1.UpdateDiet);
+foodRouter.put("/updateExisting", tokenVerify_1.tokenVerify, userTrainerFoodController_1.UpdateDiet);
 exports.default = foodRouter;
