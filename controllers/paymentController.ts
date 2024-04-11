@@ -3,7 +3,6 @@ import { AdminPayment } from "../models/PaymentsModel";
 import { User } from "../models/UserModel";
 dotenv.config();
 import Stripe from "stripe";
-import { buffer } from "micro";
 import { TrainerPayment } from "../models/TrainerPaymentModel";
 import { Trainer } from "../models/TrainerModel";
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY);
@@ -47,7 +46,7 @@ export const createCheckoutSession = async (req, res) => {
 
 // This is your Stripe CLI webhook secret for testing your endpoint locally.
 const endpointSecret =
-  // "whsec_fecaf7dd03cff4bae38d6e153a36ed764714f82ea43044821c6e464f741209fd"
+  // "whsec_fecaf7dd03cff4bae38d6e153a36ed764714f82ea43044821c6e464f741209fd";
   "whsec_i6h4rr1SX6dpRJIDQywikG5U1g0iml8V";
 
 export const handleWebhook = async (request, response) => {
@@ -56,13 +55,20 @@ export const handleWebhook = async (request, response) => {
   let userId: string;
   let transactionId: string;
   const sig = request.headers["stripe-signature"];
-  const buf = await buffer(request);
 
   let metadata;
   let event;
 
   try {
-    event = stripe.webhooks.constructEvent(buf.toString(), sig, endpointSecret);
+    console.log(
+      "request.body",
+      request.body,
+      "sig-----------",
+      sig,
+      "endpoint-----",
+      endpointSecret
+    );
+    event = stripe.webhooks.constructEvent(request.body, sig, endpointSecret);
   } catch (err) {
     console.log("webhook error", err);
     response.status(400).send(`Webhook Error: ${err.message}`);
@@ -80,7 +86,8 @@ export const handleWebhook = async (request, response) => {
       userId = session.client_reference_id;
       metadata = session.metadata;
       transactionId = session.payment_intent;
-      // console.log("Checkout Session completed!", metadata);
+      
+      console.log("Checkout Session completed!", metadata);
 
       break;
 
@@ -94,16 +101,14 @@ export const handleWebhook = async (request, response) => {
 
   // Return a 200 response to acknowledge receipt of the event
   if (userId && !metadata.trainer_reference_id) {
-    // console.log(
-    //   "userId",
-    //   userId,
-    //   "transactionId",
-    //   transactionId,
-    //   "receiptUrl",
-    //   receiptUrl,
-    //   "metadata",
-    //   metadata
-    // );
+    console.log(
+      "userId",
+      userId,
+      "transactionId",
+      transactionId,
+      "metadata",
+      metadata
+    );
     const updateAdminPayment = async () => {
       const paymentDocument = new AdminPayment({
         planSelected: metadata.selectedPlan,
@@ -139,16 +144,14 @@ export const handleWebhook = async (request, response) => {
     await updateAdminPayment();
   }
   if (userId && metadata && metadata.trainer_reference_id) {
-    // console.log(
-    //   "userId",
-    //   userId,
-    //   "transactionId",
-    //   transactionId,
-    //   "receiptUrl",
-    //   receiptUrl,
-    //   "metadata",
-    //   metadata.trainer_reference_id
-    // );
+    console.log(
+      "userId",
+      userId,
+      "transactionId",
+      transactionId,
+      "metadata",
+      metadata.trainer_reference_id
+    );
     const updateTrainerPayment = async () => {
       const paymentDocument = new TrainerPayment({
         planSelected: metadata.selectedPlan,
@@ -159,7 +162,7 @@ export const handleWebhook = async (request, response) => {
       });
       await paymentDocument.save();
 
-      // console.log("paymentDocument", paymentDocument);
+      console.log("paymentDocument", paymentDocument);
 
       const month = 1;
       const calculatedDueDate = new Date(

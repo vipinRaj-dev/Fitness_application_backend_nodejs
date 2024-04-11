@@ -18,7 +18,6 @@ const PaymentsModel_1 = require("../models/PaymentsModel");
 const UserModel_1 = require("../models/UserModel");
 dotenv_1.default.config();
 const stripe_1 = __importDefault(require("stripe"));
-const micro_1 = require("micro");
 const TrainerPaymentModel_1 = require("../models/TrainerPaymentModel");
 const TrainerModel_1 = require("../models/TrainerModel");
 const stripe = new stripe_1.default(process.env.STRIPE_SECRET_KEY);
@@ -59,18 +58,18 @@ const createCheckoutSession = (req, res) => __awaiter(void 0, void 0, void 0, fu
 exports.createCheckoutSession = createCheckoutSession;
 // This is your Stripe CLI webhook secret for testing your endpoint locally.
 const endpointSecret = 
-// "whsec_fecaf7dd03cff4bae38d6e153a36ed764714f82ea43044821c6e464f741209fd"
+// "whsec_fecaf7dd03cff4bae38d6e153a36ed764714f82ea43044821c6e464f741209fd";
 "whsec_i6h4rr1SX6dpRJIDQywikG5U1g0iml8V";
 const handleWebhook = (request, response) => __awaiter(void 0, void 0, void 0, function* () {
     console.log("inside the handleWebhook");
     let userId;
     let transactionId;
     const sig = request.headers["stripe-signature"];
-    const buf = yield (0, micro_1.buffer)(request);
     let metadata;
     let event;
     try {
-        event = stripe.webhooks.constructEvent(buf.toString(), sig, endpointSecret);
+        console.log("request.body", request.body, "sig-----------", sig, "endpoint-----", endpointSecret);
+        event = stripe.webhooks.constructEvent(request.body, sig, endpointSecret);
     }
     catch (err) {
         console.log("webhook error", err);
@@ -87,7 +86,7 @@ const handleWebhook = (request, response) => __awaiter(void 0, void 0, void 0, f
             userId = session.client_reference_id;
             metadata = session.metadata;
             transactionId = session.payment_intent;
-            // console.log("Checkout Session completed!", metadata);
+            console.log("Checkout Session completed!", metadata);
             break;
         case "charge.succeeded":
             // const charge = event.data.object;
@@ -97,16 +96,7 @@ const handleWebhook = (request, response) => __awaiter(void 0, void 0, void 0, f
     }
     // Return a 200 response to acknowledge receipt of the event
     if (userId && !metadata.trainer_reference_id) {
-        // console.log(
-        //   "userId",
-        //   userId,
-        //   "transactionId",
-        //   transactionId,
-        //   "receiptUrl",
-        //   receiptUrl,
-        //   "metadata",
-        //   metadata
-        // );
+        console.log("userId", userId, "transactionId", transactionId, "metadata", metadata);
         const updateAdminPayment = () => __awaiter(void 0, void 0, void 0, function* () {
             const paymentDocument = new PaymentsModel_1.AdminPayment({
                 planSelected: metadata.selectedPlan,
@@ -134,16 +124,7 @@ const handleWebhook = (request, response) => __awaiter(void 0, void 0, void 0, f
         yield updateAdminPayment();
     }
     if (userId && metadata && metadata.trainer_reference_id) {
-        // console.log(
-        //   "userId",
-        //   userId,
-        //   "transactionId",
-        //   transactionId,
-        //   "receiptUrl",
-        //   receiptUrl,
-        //   "metadata",
-        //   metadata.trainer_reference_id
-        // );
+        console.log("userId", userId, "transactionId", transactionId, "metadata", metadata.trainer_reference_id);
         const updateTrainerPayment = () => __awaiter(void 0, void 0, void 0, function* () {
             const paymentDocument = new TrainerPaymentModel_1.TrainerPayment({
                 planSelected: metadata.selectedPlan,
@@ -153,7 +134,7 @@ const handleWebhook = (request, response) => __awaiter(void 0, void 0, void 0, f
                 transactionId: transactionId,
             });
             yield paymentDocument.save();
-            // console.log("paymentDocument", paymentDocument);
+            console.log("paymentDocument", paymentDocument);
             const month = 1;
             const calculatedDueDate = new Date(new Date().toLocaleString("en-US", { timeZone: "Asia/Kolkata" }));
             calculatedDueDate.setMonth(calculatedDueDate.getMonth() + month);
