@@ -278,10 +278,10 @@ async function markAttendance() {
   }
 }
 
-cron.schedule("5 6 * * *", markAttendance, {
-  scheduled: true,
-  timezone: "Asia/Kolkata",
-});
+// cron.schedule("5 6 * * *", markAttendance, {
+//   scheduled: true,
+//   timezone: "Asia/Kolkata",
+// });
 
 if (hostName && port && mongo_uri) {
   mongoose

@@ -92,7 +92,7 @@ const getAllFood = (req, res) => __awaiter(void 0, void 0, void 0, function* () 
             .limit(limit);
         const user = yield UserModel_1.User.findById({ _id: clientId });
         const listOfFood = user === null || user === void 0 ? void 0 : user.latestDiet;
-        const foodIds = listOfFood.map((food) => food.foodId);
+        const foodIds = listOfFood ? listOfFood.map((food) => food.foodId) : [];
         res.status(200).json({
             allFood: allFood,
             listOfFood: foodIds,

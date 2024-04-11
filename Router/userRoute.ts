@@ -12,6 +12,7 @@ import {
   getDay,
   getGraphDataUser,
   getUserName,
+  setAttendance,
   setRating,
   trainerOnlineStatus,
   userHomePage,
@@ -31,6 +32,14 @@ import {
 import { IsUserBlocked } from "../middleware/isUserBlocked";
 
 const userRouter: express.Router = express.Router();
+
+userRouter.get(
+  "/setAttendance",
+  tokenVerify,
+  IsUserBlocked,
+  isPremiumUser,
+  setAttendance
+);
 
 userRouter.get(
   "/homePage",

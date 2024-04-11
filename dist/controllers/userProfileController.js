@@ -12,7 +12,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.getUserName = exports.applyReason = exports.trainerOnlineStatus = exports.setRating = exports.getDay = exports.addFoodLog = exports.userProfileImageUpdate = exports.userProfile = exports.getGraphDataUser = exports.userHomePage = void 0;
+exports.getUserName = exports.applyReason = exports.trainerOnlineStatus = exports.setRating = exports.getDay = exports.addFoodLog = exports.userProfileImageUpdate = exports.userProfile = exports.getGraphDataUser = exports.userHomePage = exports.setAttendance = void 0;
 const UserModel_1 = require("../models/UserModel");
 const AttendanceModel_1 = require("../models/AttendanceModel");
 const cloudinary_1 = require("../imageUploadConfig/cloudinary");
@@ -21,6 +21,45 @@ const ReviewModel_1 = require("../models/ReviewModel");
 const TrainerModel_1 = require("../models/TrainerModel");
 const mongoose_1 = __importDefault(require("mongoose"));
 const ChatModel_1 = require("../models/ChatModel");
+const setAttendance = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const requstedUser = req.headers["user"];
+    const today = new Date(new Date().toLocaleString("en-US", { timeZone: "Asia/Kolkata" }));
+    today.setHours(0, 0, 0, 0);
+    const attandanceData = yield AttendanceModel_1.Attendance.findOne({
+        userId: requstedUser.userId,
+        date: today,
+    });
+    if (attandanceData) {
+        console.log("attendance already marked for the user", requstedUser.userId);
+        res.status(200).json("attendance data available");
+    }
+    else {
+        const user = yield UserModel_1.User.findById(requstedUser.userId);
+        const foodLogsIds = user === null || user === void 0 ? void 0 : user.latestDiet.map((food) => __awaiter(void 0, void 0, void 0, function* () {
+            const foodLogData = new FoodLogModel_1.FoodLog({
+                date: new Date(new Date().toLocaleString("en-US", { timeZone: "Asia/Kolkata" })),
+                userId: user === null || user === void 0 ? void 0 : user._id,
+                foodId: food.foodId,
+                status: false,
+                timePeriod: food.timePeriod,
+                time: food.time,
+                quantity: food.quantity,
+            });
+            const foodLogId = yield foodLogData.save();
+            return foodLogId._id;
+        }));
+        const attendanceCreating = new AttendanceModel_1.Attendance({
+            date: today,
+            userId: user === null || user === void 0 ? void 0 : user._id,
+            isPresent: false,
+            foodLogs: foodLogsIds,
+        });
+        const ans = yield attendanceCreating.save();
+        const userUpdation = yield UserModel_1.User.updateOne({ _id: user === null || user === void 0 ? void 0 : user._id }, { $set: { attendanceId: ans._id } });
+        console.log("attandance created to the user", user === null || user === void 0 ? void 0 : user._id);
+    }
+});
+exports.setAttendance = setAttendance;
 const userHomePage = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     var _a, _b, _c;
     const requstedUser = req.headers["user"];
@@ -353,19 +392,19 @@ exports.addFoodLog = addFoodLog;
 const getDay = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const requstedUser = req.headers["user"];
     const id = requstedUser.userId;
-    const userDate = new Date(req.params.date); // assuming date is passed as a parameter in the request
-    console.log("userDate with new date only================", userDate);
-    const today1 = new Date(new Date(req.params.date).toLocaleString("en-US", {
+    // const userDate = new Date(req.params.date); // assuming date is passed as a parameter in the request
+    // console.log("userDate with new date only================", userDate);
+    const requestedDate = new Date(new Date(req.params.date).toLocaleString("en-US", {
         timeZone: "Asia/Kolkata",
     }));
-    console.log("date of today1", today1);
-    const startOfUserDate = new Date(userDate.setHours(0, 0, 0, 0));
-    const endOfTheDay = new Date(userDate.setHours(23, 59, 59, 999));
-    console.log("startOfUserDate", startOfUserDate);
-    console.log("endOfTheDay", endOfTheDay);
+    console.log("date of requestedDate", requestedDate);
+    // const startOfUserDate = new Date(userDate.setHours(0, 0, 0, 0));
+    // const endOfTheDay = new Date(userDate.setHours(23, 59, 59, 999));
+    // console.log("startOfUserDate", startOfUserDate);
+    // console.log("endOfTheDay", endOfTheDay);
     const attandanceData = yield AttendanceModel_1.Attendance.findOne({
         userId: id,
-        date: today1,
+        date: requestedDate,
     })
         .populate({
         path: "foodLogs",

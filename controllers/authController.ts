@@ -140,25 +140,25 @@ export const userLogin = async (
     }
 
     //if there is no attandance make an attandance
-    if (foundUser.role === "user" && !(foundUser as UserType).attendanceId) {
-      const today =  new Date(new Date().toLocaleString("en-US", { timeZone: "Asia/Kolkata" }));
-      today.setHours(0, 0, 0, 0);
+    // if (foundUser.role === "user" && !(foundUser as UserType).attendanceId) {
+    //   const today =  new Date(new Date().toLocaleString("en-US", { timeZone: "Asia/Kolkata" }));
+    //   today.setHours(0, 0, 0, 0);
 
-      const attendance = new Attendance({
-        date: today,
-        userId: foundUser._id,
-        isPresent: false,
-        foodLogs: [],
-      });
+    //   const attendance = new Attendance({
+    //     date: today,
+    //     userId: foundUser._id,
+    //     isPresent: false,
+    //     foodLogs: [],
+    //   });
 
-      const ans = await attendance.save();
+    //   const ans = await attendance.save();
 
-      const userUpdation = await User.updateOne(
-        { _id: foundUser._id },
-        { $set: { attendanceId: ans._id } }
-      );
-      // console.log("attandance created for new user", userUpdation);
-    }
+    //   const userUpdation = await User.updateOne(
+    //     { _id: foundUser._id },
+    //     { $set: { attendanceId: ans._id } }
+    //   );
+    //   // console.log("attandance created for new user", userUpdation);
+    // }
 
     // sending token
 

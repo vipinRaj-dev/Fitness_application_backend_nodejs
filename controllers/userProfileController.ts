@@ -22,6 +22,58 @@ type dietFoodType = {
   };
 };
 
+export const setAttendance = async (
+  req: express.Request,
+  res: express.Response
+) => {
+  const requstedUser: string | string[] | any = req.headers["user"];
+
+  const today = new Date(
+    new Date().toLocaleString("en-US", { timeZone: "Asia/Kolkata" })
+  );
+  today.setHours(0, 0, 0, 0);
+
+  const attandanceData = await Attendance.findOne({
+    userId: requstedUser.userId,
+    date: today,
+  });
+
+  if (attandanceData) {
+    console.log("attendance already marked for the user", requstedUser.userId);
+    res.status(200).json("attendance data available");
+  } else {
+    const user = await User.findById(requstedUser.userId);
+    const foodLogsIds = user?.latestDiet.map(async (food) => {
+      const foodLogData = new FoodLog({
+        date: new Date(
+          new Date().toLocaleString("en-US", { timeZone: "Asia/Kolkata" })
+        ),
+        userId: user?._id,
+        foodId: food.foodId,
+        status: false,
+        timePeriod: food.timePeriod,
+        time: food.time,
+        quantity: food.quantity,
+      });
+
+      const foodLogId = await foodLogData.save();
+
+      return foodLogId._id;
+    });
+    const attendanceCreating = new Attendance({
+      date: today,
+      userId: user?._id,
+      isPresent: false,
+      foodLogs: foodLogsIds,
+    });
+    const ans = await attendanceCreating.save();
+    const userUpdation = await User.updateOne(
+      { _id: user?._id },
+      { $set: { attendanceId: ans._id } }
+    );
+    console.log("attandance created to the user", user?._id);
+  }
+};
 export const userHomePage = async (
   req: express.Request,
   res: express.Response
@@ -419,26 +471,26 @@ export const addFoodLog = async (
 export const getDay = async (req: express.Request, res: express.Response) => {
   const requstedUser: string | string[] | any = req.headers["user"];
   const id = requstedUser.userId;
-  const userDate = new Date(req.params.date); // assuming date is passed as a parameter in the request
-  console.log("userDate with new date only================", userDate);
+  // const userDate = new Date(req.params.date); // assuming date is passed as a parameter in the request
+  // console.log("userDate with new date only================", userDate);
 
-  const today1 = new Date(
+  const requestedDate = new Date(
     new Date(req.params.date).toLocaleString("en-US", {
       timeZone: "Asia/Kolkata",
     })
   );
 
-  console.log("date of today1", today1);
+  console.log("date of requestedDate", requestedDate);
 
-  const startOfUserDate = new Date(userDate.setHours(0, 0, 0, 0));
-  const endOfTheDay = new Date(userDate.setHours(23, 59, 59, 999));
+  // const startOfUserDate = new Date(userDate.setHours(0, 0, 0, 0));
+  // const endOfTheDay = new Date(userDate.setHours(23, 59, 59, 999));
 
-  console.log("startOfUserDate", startOfUserDate);
-  console.log("endOfTheDay", endOfTheDay);
+  // console.log("startOfUserDate", startOfUserDate);
+  // console.log("endOfTheDay", endOfTheDay);
 
   const attandanceData = await Attendance.findOne({
     userId: id,
-    date: today1,
+    date: requestedDate,
   })
     .populate({
       path: "foodLogs",

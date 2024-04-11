@@ -79,7 +79,7 @@ const setWorkout = (req, res) => __awaiter(void 0, void 0, void 0, function* () 
             res.status(200).json({ message: "Workout Set Successfully" });
         }
         else {
-            res.status(404).json({ message: "User not found" });
+            res.status(404).json({ message: "User attendance not found" });
         }
     }
     catch (error) {

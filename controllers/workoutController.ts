@@ -84,7 +84,7 @@ export const setWorkout = async (
       }
       res.status(200).json({ message: "Workout Set Successfully" });
     } else {
-      res.status(404).json({ message: "User not found" });
+      res.status(404).json({ message: "User attendance not found" });
     }
   } catch (error) {
     console.log(error);

@@ -111,7 +111,7 @@ export const getAllFood = async (
 
     const user = await User.findById({ _id: clientId });
     const listOfFood = user?.latestDiet;
-    const foodIds = listOfFood.map((food) => food.foodId);
+    const foodIds = listOfFood ? listOfFood.map((food) => food.foodId) : [];
     res.status(200).json({
       allFood: allFood,
       listOfFood: foodIds,

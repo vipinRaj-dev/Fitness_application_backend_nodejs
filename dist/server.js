@@ -16,7 +16,6 @@ const express_1 = __importDefault(require("express"));
 const cors_1 = __importDefault(require("cors"));
 const dotenv_1 = __importDefault(require("dotenv"));
 const mongoose_1 = __importDefault(require("mongoose"));
-const node_cron_1 = __importDefault(require("node-cron"));
 const jsonwebtoken_1 = __importDefault(require("jsonwebtoken"));
 // import { io } from "./socket";
 // importing the routes
@@ -211,10 +210,10 @@ function markAttendance() {
         }
     });
 }
-node_cron_1.default.schedule("5 6 * * *", markAttendance, {
-    scheduled: true,
-    timezone: "Asia/Kolkata",
-});
+// cron.schedule("5 6 * * *", markAttendance, {
+//   scheduled: true,
+//   timezone: "Asia/Kolkata",
+// });
 if (hostName && port && mongo_uri) {
     mongoose_1.default
         .connect(mongo_uri)
