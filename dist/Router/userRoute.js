@@ -16,7 +16,7 @@ const userTrainerController_1 = require("../controllers/userTrainerController");
 const paymentController_1 = require("../controllers/paymentController");
 const isUserBlocked_1 = require("../middleware/isUserBlocked");
 const userRouter = express_1.default.Router();
-userRouter.get("/setAttendance", tokenVerify_1.tokenVerify, isUserBlocked_1.IsUserBlocked, isPremiumUser_1.isPremiumUser, userProfileController_1.setAttendance);
+userRouter.get("/setAttendance", tokenVerify_1.tokenVerify, isPremiumUser_1.isPremiumUser, userProfileController_1.setAttendance);
 userRouter.get("/homePage", tokenVerify_1.tokenVerify, isUserBlocked_1.IsUserBlocked, isPremiumUser_1.isPremiumUser, userProfileController_1.userHomePage);
 userRouter.get("/getGraphs", tokenVerify_1.tokenVerify, userProfileController_1.getGraphDataUser);
 userRouter.get("/profile", tokenVerify_1.tokenVerify, isUserBlocked_1.IsUserBlocked, isPremiumUser_1.isPremiumUser, userProfileController_1.userProfile);

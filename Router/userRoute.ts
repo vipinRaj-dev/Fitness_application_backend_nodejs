@@ -36,7 +36,6 @@ const userRouter: express.Router = express.Router();
 userRouter.get(
   "/setAttendance",
   tokenVerify,
-  IsUserBlocked,
   isPremiumUser,
   setAttendance
 );

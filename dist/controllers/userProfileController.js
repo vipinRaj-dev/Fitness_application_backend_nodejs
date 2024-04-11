@@ -57,6 +57,7 @@ const setAttendance = (req, res) => __awaiter(void 0, void 0, void 0, function* 
         const ans = yield attendanceCreating.save();
         const userUpdation = yield UserModel_1.User.updateOne({ _id: user === null || user === void 0 ? void 0 : user._id }, { $set: { attendanceId: ans._id } });
         console.log("attandance created to the user", user === null || user === void 0 ? void 0 : user._id);
+        res.status(200).json("attendance data created");
     }
 });
 exports.setAttendance = setAttendance;

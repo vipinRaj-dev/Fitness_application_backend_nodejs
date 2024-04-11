@@ -3,13 +3,14 @@ import { AdminPayment } from "../models/PaymentsModel";
 import { User } from "../models/UserModel";
 dotenv.config();
 import Stripe from "stripe";
+import { buffer } from "micro";
 import { TrainerPayment } from "../models/TrainerPaymentModel";
 import { Trainer } from "../models/TrainerModel";
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY);
 
 export const createCheckoutSession = async (req, res) => {
-  console.log('inside the createCheckoutSession');
-  
+  console.log("inside the createCheckoutSession");
+
   const { amount, plan, trainerId } = req.body;
   const userId = req.headers["user"].userId;
   trainerId
@@ -46,21 +47,22 @@ export const createCheckoutSession = async (req, res) => {
 
 // This is your Stripe CLI webhook secret for testing your endpoint locally.
 const endpointSecret =
-  "whsec_fecaf7dd03cff4bae38d6e153a36ed764714f82ea43044821c6e464f741209fd";
+  // "whsec_fecaf7dd03cff4bae38d6e153a36ed764714f82ea43044821c6e464f741209fd"
+  "whsec_i6h4rr1SX6dpRJIDQywikG5U1g0iml8V";
 
 export const handleWebhook = async (request, response) => {
-  console.log('inside the handleWebhook');
+  console.log("inside the handleWebhook");
 
   let userId: string;
   let transactionId: string;
   const sig = request.headers["stripe-signature"];
+  const buf = await buffer(request);
 
   let metadata;
   let event;
 
   try {
-    console.log('request.body' , request.body , 'sig' , sig)
-    event = stripe.webhooks.constructEvent(request.body, sig, endpointSecret);
+    event = stripe.webhooks.constructEvent(buf.toString(), sig, endpointSecret);
   } catch (err) {
     console.log("webhook error", err);
     response.status(400).send(`Webhook Error: ${err.message}`);
@@ -115,7 +117,9 @@ export const handleWebhook = async (request, response) => {
 
       const numberOfMonths: number =
         metadata?.selectedPlan === "Monthly plan" ? 1 : 6;
-      const calculatedDueDate =  new Date(new Date().toLocaleString("en-US", { timeZone: "Asia/Kolkata" }));
+      const calculatedDueDate = new Date(
+        new Date().toLocaleString("en-US", { timeZone: "Asia/Kolkata" })
+      );
       calculatedDueDate.setMonth(calculatedDueDate.getMonth() + numberOfMonths);
       //   console.log("new date", new Date());
       //   console.log("calculatedDueDate", calculatedDueDate);
@@ -158,7 +162,9 @@ export const handleWebhook = async (request, response) => {
       // console.log("paymentDocument", paymentDocument);
 
       const month = 1;
-      const calculatedDueDate =  new Date(new Date().toLocaleString("en-US", { timeZone: "Asia/Kolkata" }));
+      const calculatedDueDate = new Date(
+        new Date().toLocaleString("en-US", { timeZone: "Asia/Kolkata" })
+      );
       calculatedDueDate.setMonth(calculatedDueDate.getMonth() + month);
       // console.log("new date", new Date());
       // console.log("calculatedDueDate", calculatedDueDate);

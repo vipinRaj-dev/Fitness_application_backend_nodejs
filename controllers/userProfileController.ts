@@ -72,6 +72,7 @@ export const setAttendance = async (
       { $set: { attendanceId: ans._id } }
     );
     console.log("attandance created to the user", user?._id);
+    res.status(200).json("attendance data created");
   }
 };
 export const userHomePage = async (

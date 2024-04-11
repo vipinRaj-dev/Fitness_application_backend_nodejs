@@ -18,11 +18,12 @@ const PaymentsModel_1 = require("../models/PaymentsModel");
 const UserModel_1 = require("../models/UserModel");
 dotenv_1.default.config();
 const stripe_1 = __importDefault(require("stripe"));
+const micro_1 = require("micro");
 const TrainerPaymentModel_1 = require("../models/TrainerPaymentModel");
 const TrainerModel_1 = require("../models/TrainerModel");
 const stripe = new stripe_1.default(process.env.STRIPE_SECRET_KEY);
 const createCheckoutSession = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    console.log('inside the createCheckoutSession');
+    console.log("inside the createCheckoutSession");
     const { amount, plan, trainerId } = req.body;
     const userId = req.headers["user"].userId;
     trainerId
@@ -57,17 +58,19 @@ const createCheckoutSession = (req, res) => __awaiter(void 0, void 0, void 0, fu
 });
 exports.createCheckoutSession = createCheckoutSession;
 // This is your Stripe CLI webhook secret for testing your endpoint locally.
-const endpointSecret = "whsec_fecaf7dd03cff4bae38d6e153a36ed764714f82ea43044821c6e464f741209fd";
+const endpointSecret = 
+// "whsec_fecaf7dd03cff4bae38d6e153a36ed764714f82ea43044821c6e464f741209fd"
+"whsec_i6h4rr1SX6dpRJIDQywikG5U1g0iml8V";
 const handleWebhook = (request, response) => __awaiter(void 0, void 0, void 0, function* () {
-    console.log('inside the handleWebhook');
+    console.log("inside the handleWebhook");
     let userId;
     let transactionId;
     const sig = request.headers["stripe-signature"];
+    const buf = yield (0, micro_1.buffer)(request);
     let metadata;
     let event;
     try {
-        console.log('request.body', request.body, 'sig', sig);
-        event = stripe.webhooks.constructEvent(request.body, sig, endpointSecret);
+        event = stripe.webhooks.constructEvent(buf.toString(), sig, endpointSecret);
     }
     catch (err) {
         console.log("webhook error", err);
