@@ -157,17 +157,16 @@ const getClientFoodDetails = (req, res) => __awaiter(void 0, void 0, void 0, fun
     try {
         const { userId, date } = req.params;
         // console.log(userId, date);
-        const userDate = new Date(req.params.date);
-        const startOfUserDate = new Date(userDate.setHours(0, 0, 0, 0));
-        const endOfTheDay = new Date(userDate.setHours(23, 59, 59, 999));
-        // console.log("startOfUserDate", startOfUserDate);
-        // console.log("endOfTheDay", endOfTheDay);
+        // const userDate = new Date(req.params.date);
+        // const startOfUserDate = new Date(userDate.setHours(0, 0, 0, 0));
+        // const endOfTheDay = new Date(userDate.setHours(23, 59, 59, 999));
+        const today = new Date(new Date(req.params.date).toLocaleString("en-US", {
+            timeZone: "Asia/Kolkata",
+        }));
+        today.setHours(0, 0, 0, 0);
         const attandanceData = yield AttendanceModel_1.Attendance.findOne({
             userId: userId,
-            date: {
-                $gte: startOfUserDate,
-                $lt: endOfTheDay,
-            },
+            date: today,
         })
             .populate({
             path: "foodLogs",
@@ -192,9 +191,11 @@ const getClientFoodDetails = (req, res) => __awaiter(void 0, void 0, void 0, fun
 exports.getClientFoodDetails = getClientFoodDetails;
 const UpdateDiet = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
-        console.log('inside the  update diet controller');
-        const requstedUser = req.headers["user"];
-        const id = requstedUser.userId;
+        console.log("inside the  update diet controller");
+        // const requstedUser: string | string[] | any = req.headers["user"];
+        // const id = requstedUser.userId;
+        const id = req.body.client_Id;
+        console.log("userId of the requested one", id);
         const today = new Date(new Date().toLocaleString("en-US", { timeZone: "Asia/Kolkata" }));
         today.setHours(0, 0, 0, 0);
         const deleteExistingFoodLogs = yield FoodLogModel_1.FoodLog.deleteMany({
@@ -219,8 +220,8 @@ const UpdateDiet = (req, res) => __awaiter(void 0, void 0, void 0, function* () 
             return foodLogId._id;
         })));
         const ans = yield AttendanceModel_1.Attendance.updateOne({ _id: user.attendanceId }, { $set: { foodLogs: foodLogsIds } });
-        console.log('updated succesfully', ans);
-        res.status(200).json('updated successfully');
+        console.log("updated succesfully", ans);
+        res.status(200).json("updated successfully");
     }
     catch (error) {
         console.log("error in the update existing diet");

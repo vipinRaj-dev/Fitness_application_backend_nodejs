@@ -27,6 +27,6 @@ foodRouter.delete("/deleteFood/:clientId/:foodId", decreasePerFoodQuantity);
 
 foodRouter.get("/getFoodAndWorkouts/:userId/:date", getClientFoodDetails);
 
-foodRouter.put("/updateExisting", tokenVerify, UpdateDiet);
+foodRouter.put("/updateExisting", UpdateDiet);
 
 export default foodRouter;

@@ -197,19 +197,20 @@ export const getClientFoodDetails = async (
   try {
     const { userId, date } = req.params;
     // console.log(userId, date);
-    const userDate = new Date(req.params.date);
-    const startOfUserDate = new Date(userDate.setHours(0, 0, 0, 0));
-    const endOfTheDay = new Date(userDate.setHours(23, 59, 59, 999));
+    // const userDate = new Date(req.params.date);
+    // const startOfUserDate = new Date(userDate.setHours(0, 0, 0, 0));
+    // const endOfTheDay = new Date(userDate.setHours(23, 59, 59, 999));
 
-    // console.log("startOfUserDate", startOfUserDate);
-    // console.log("endOfTheDay", endOfTheDay);
+    const today = new Date(
+      new Date(req.params.date).toLocaleString("en-US", {
+        timeZone: "Asia/Kolkata",
+      })
+    );
+    today.setHours(0, 0, 0, 0);
 
     const attandanceData = await Attendance.findOne({
       userId: userId,
-      date: {
-        $gte: startOfUserDate,
-        $lt: endOfTheDay,
-      },
+      date: today,
     })
       .populate({
         path: "foodLogs",
@@ -237,10 +238,14 @@ export const UpdateDiet = async (
   res: express.Response
 ) => {
   try {
-    console.log('inside the  update diet controller')
-    const requstedUser: string | string[] | any = req.headers["user"];
-    const id = requstedUser.userId;
-     
+    console.log("inside the  update diet controller");
+    // const requstedUser: string | string[] | any = req.headers["user"];
+    // const id = requstedUser.userId;
+
+    const id = req.body.client_Id;
+
+    console.log("userId of the requested one", id);
+
     const today = new Date(
       new Date().toLocaleString("en-US", { timeZone: "Asia/Kolkata" })
     );
@@ -276,7 +281,7 @@ export const UpdateDiet = async (
         const foodLogId = await foodLogData.save();
 
         return foodLogId._id;
-      })  
+      })
     );
 
     const ans = await Attendance.updateOne(
@@ -284,8 +289,8 @@ export const UpdateDiet = async (
       { $set: { foodLogs: foodLogsIds } }
     );
 
-    console.log('updated succesfully' , ans)
-    res.status(200).json('updated successfully')
+    console.log("updated succesfully", ans);
+    res.status(200).json("updated successfully");
   } catch (error) {
     console.log("error in the update existing diet");
     console.log(error);

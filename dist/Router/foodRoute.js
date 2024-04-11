@@ -5,7 +5,6 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 const express_1 = __importDefault(require("express"));
 const userTrainerFoodController_1 = require("../controllers/userTrainerFoodController");
-const tokenVerify_1 = require("../middleware/tokenVerify");
 const foodRouter = express_1.default.Router();
 foodRouter.get("/client/:id", userTrainerFoodController_1.clientDetailsAndLatestFood);
 foodRouter.get("/allFood/:id", userTrainerFoodController_1.getAllFood);
@@ -14,5 +13,5 @@ foodRouter.put("/addTimeDetails/:clientId/:foodDocId", userTrainerFoodController
 foodRouter.delete("/deletePerFood/:clientId/:foodDocId", userTrainerFoodController_1.deletePerFood);
 foodRouter.delete("/deleteFood/:clientId/:foodId", userTrainerFoodController_1.decreasePerFoodQuantity);
 foodRouter.get("/getFoodAndWorkouts/:userId/:date", userTrainerFoodController_1.getClientFoodDetails);
-foodRouter.put("/updateExisting", tokenVerify_1.tokenVerify, userTrainerFoodController_1.UpdateDiet);
+foodRouter.put("/updateExisting", userTrainerFoodController_1.UpdateDiet);
 exports.default = foodRouter;
