@@ -39,7 +39,7 @@ export const setAttendance = async (
   });
 
   if (attandanceData) {
-    console.log("attendance already marked for the user", requstedUser.userId);
+    // console.log("attendance already marked for the user", requstedUser.userId);
     res.status(200).json("attendance data available");
   } else {
     const user = await User.findById(requstedUser.userId);
@@ -71,7 +71,7 @@ export const setAttendance = async (
       { _id: user?._id },
       { $set: { attendanceId: ans._id } }
     );
-    console.log("attandance created to the user", user?._id);
+    // console.log("attandance created to the user", user?._id);
     res.status(200).json("attendance data created");
   }
 };
@@ -481,7 +481,7 @@ export const getDay = async (req: express.Request, res: express.Response) => {
     })
   );
 
-  console.log("date of requestedDate", requestedDate);
+  // console.log("date of requestedDate", requestedDate);
 
   // const startOfUserDate = new Date(userDate.setHours(0, 0, 0, 0));
   // const endOfTheDay = new Date(userDate.setHours(23, 59, 59, 999));
@@ -506,7 +506,7 @@ export const getDay = async (req: express.Request, res: express.Response) => {
       },
     });
 
-  console.log("attandanceData", attandanceData);
+  // console.log("attandanceData", attandanceData);
   res.status(200).json({ msg: "attandanceData", attandanceData });
 };
 

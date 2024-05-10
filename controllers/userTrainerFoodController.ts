@@ -238,13 +238,13 @@ export const UpdateDiet = async (
   res: express.Response
 ) => {
   try {
-    console.log("inside the  update diet controller");
+    // console.log("inside the  update diet controller");
     // const requstedUser: string | string[] | any = req.headers["user"];
     // const id = requstedUser.userId;
 
     const id = req.body.client_Id;
 
-    console.log("userId of the requested one", id);
+    // console.log("userId of the requested one", id);
 
     const today = new Date(
       new Date().toLocaleString("en-US", { timeZone: "Asia/Kolkata" })
@@ -255,7 +255,7 @@ export const UpdateDiet = async (
       date: today,
     });
 
-    console.log("deleted the existing food logs", deleteExistingFoodLogs);
+    // console.log("deleted the existing food logs", deleteExistingFoodLogs);
 
     const user = await User.findById(id);
 
@@ -264,7 +264,7 @@ export const UpdateDiet = async (
       { $set: { foodLogs: [] } }
     );
 
-    console.log("attendanceData deleted", attandanceData);
+    // console.log("attendanceData deleted", attandanceData);
 
     const foodLogsIds = await Promise.all(
       user?.latestDiet.map(async (food) => {
@@ -289,7 +289,7 @@ export const UpdateDiet = async (
       { $set: { foodLogs: foodLogsIds } }
     );
 
-    console.log("updated succesfully", ans);
+    // console.log("updated succesfully", ans);
     res.status(200).json("updated successfully");
   } catch (error) {
     console.log("error in the update existing diet");

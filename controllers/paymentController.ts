@@ -8,7 +8,7 @@ import { Trainer } from "../models/TrainerModel";
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY);
 
 export const createCheckoutSession = async (req, res) => {
-  console.log("inside the createCheckoutSession");
+  // console.log("inside the createCheckoutSession");
 
   const { amount, plan, trainerId } = req.body;
   const userId = req.headers["user"].userId;
@@ -50,7 +50,7 @@ const endpointSecret =
   "whsec_i6h4rr1SX6dpRJIDQywikG5U1g0iml8V";
 
 export const handleWebhook = async (request, response) => {
-  console.log("inside the handleWebhook");
+  // console.log("inside the handleWebhook");
 
   let userId: string;
   let transactionId: string;

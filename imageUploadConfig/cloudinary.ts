@@ -13,9 +13,9 @@ cloudinary.config({
 
 const uploadToCloudinary = async (path: string, folder: string) => {
   return cloudinary.uploader
-    .upload(path, { folder })
+    .upload(path, { folder , secure : true})
     .then((data: UploadApiResponse) => {
-      return { url: data.url, public_id: data.public_id };
+      return { url: data.secure_url, public_id: data.public_id };
     })
     .catch((error) => {
       console.log(error);
@@ -33,9 +33,9 @@ const removeFromCloudinary = async (public_id) => {
 
 const uploadVideoToCloudinary = async (path: string, folder: string) => {
   return cloudinary.uploader
-    .upload(path, { resource_type: "video", folder })
+    .upload(path, { resource_type: "video", folder, secure : true})
     .then((data: UploadApiResponse) => {
-      return { url: data.url, public_id: data.public_id };
+      return { url: data.secure_url, public_id: data.public_id };
     })
     .catch((error) => {
       console.log("error while uplaoding video to cloudinary", error);

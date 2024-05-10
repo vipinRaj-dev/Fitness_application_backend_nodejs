@@ -159,7 +159,7 @@ io.on("connection", (socket: Socket) => {
         const { senderId, receiverId } = data;
         const msgSeen = await makeMsgSeen(senderId, receiverId);
 
-        console.log("msg seen", msgSeen);
+        // console.log("msg seen", msgSeen);
         if (msgSeen?.status === "success") {
           socket.to(senderId).emit("msgSeen", { senderId: senderId });
         }
@@ -227,7 +227,7 @@ async function markAttendance() {
     today.setHours(0, 0, 0, 0);
     const tomorrow = new Date(today.getTime() + 24 * 60 * 60 * 1000);
 
-    console.log("today", today , "tomorrow", tomorrow);
+    // console.log("today", today , "tomorrow", tomorrow);
     
     const existingAttendance = await Attendance.findOne({
       userId: user._id,
@@ -271,9 +271,9 @@ async function markAttendance() {
         { _id: user._id },
         { $set: { attendanceId: ans._id } }
       );
-      console.log("attandance created to the user", user._id);
+      // console.log("attandance created to the user", user._id);
     } else {
-      console.log("attendance already marked for the user", user._id)
+      // console.log("attendance already marked for the user", user._id)
     }
   }
 }

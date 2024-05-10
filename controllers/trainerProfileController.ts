@@ -74,7 +74,7 @@ export const trainerProfileImageUpdate = async (
       }
     );
     let data;
-    console.log("image trainer file" , req.file)
+    // console.log("image trainer file" , req.file)
     if (req.file) {
 
       const trainer = await Trainer.findById(id);
