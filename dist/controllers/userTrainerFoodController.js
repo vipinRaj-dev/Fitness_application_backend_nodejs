@@ -191,21 +191,21 @@ const getClientFoodDetails = (req, res) => __awaiter(void 0, void 0, void 0, fun
 exports.getClientFoodDetails = getClientFoodDetails;
 const UpdateDiet = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
-        console.log("inside the  update diet controller");
+        // console.log("inside the  update diet controller");
         // const requstedUser: string | string[] | any = req.headers["user"];
         // const id = requstedUser.userId;
         const id = req.body.client_Id;
-        console.log("userId of the requested one", id);
+        // console.log("userId of the requested one", id);
         const today = new Date(new Date().toLocaleString("en-US", { timeZone: "Asia/Kolkata" }));
         today.setHours(0, 0, 0, 0);
         const deleteExistingFoodLogs = yield FoodLogModel_1.FoodLog.deleteMany({
             userId: id,
             date: today,
         });
-        console.log("deleted the existing food logs", deleteExistingFoodLogs);
+        // console.log("deleted the existing food logs", deleteExistingFoodLogs);
         const user = yield UserModel_1.User.findById(id);
         const attandanceData = yield AttendanceModel_1.Attendance.updateOne({ _id: user.attendanceId }, { $set: { foodLogs: [] } });
-        console.log("attendanceData deleted", attandanceData);
+        // console.log("attendanceData deleted", attandanceData);
         const foodLogsIds = yield Promise.all(user === null || user === void 0 ? void 0 : user.latestDiet.map((food) => __awaiter(void 0, void 0, void 0, function* () {
             const foodLogData = new FoodLogModel_1.FoodLog({
                 date: today,
@@ -220,7 +220,7 @@ const UpdateDiet = (req, res) => __awaiter(void 0, void 0, void 0, function* () 
             return foodLogId._id;
         })));
         const ans = yield AttendanceModel_1.Attendance.updateOne({ _id: user.attendanceId }, { $set: { foodLogs: foodLogsIds } });
-        console.log("updated succesfully", ans);
+        // console.log("updated succesfully", ans);
         res.status(200).json("updated successfully");
     }
     catch (error) {

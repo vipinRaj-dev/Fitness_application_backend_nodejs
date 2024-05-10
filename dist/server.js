@@ -118,7 +118,7 @@ io.on("connection", (socket) => {
             socket.on("makeMsgSeen", (data) => __awaiter(void 0, void 0, void 0, function* () {
                 const { senderId, receiverId } = data;
                 const msgSeen = yield (0, chatHelpers_1.makeMsgSeen)(senderId, receiverId);
-                console.log("msg seen", msgSeen);
+                // console.log("msg seen", msgSeen);
                 if ((msgSeen === null || msgSeen === void 0 ? void 0 : msgSeen.status) === "success") {
                     socket.to(senderId).emit("msgSeen", { senderId: senderId });
                 }
@@ -170,7 +170,7 @@ function markAttendance() {
             const today = new Date(new Date().toLocaleString("en-US", { timeZone: "Asia/Kolkata" }));
             today.setHours(0, 0, 0, 0);
             const tomorrow = new Date(today.getTime() + 24 * 60 * 60 * 1000);
-            console.log("today", today, "tomorrow", tomorrow);
+            // console.log("today", today , "tomorrow", tomorrow);
             const existingAttendance = yield AttendanceModel_1.Attendance.findOne({
                 userId: user._id,
                 date: {
@@ -202,10 +202,10 @@ function markAttendance() {
                 });
                 const ans = yield attendance.save();
                 const userUpdation = yield UserModel_1.User.updateOne({ _id: user._id }, { $set: { attendanceId: ans._id } });
-                console.log("attandance created to the user", user._id);
+                // console.log("attandance created to the user", user._id);
             }
             else {
-                console.log("attendance already marked for the user", user._id);
+                // console.log("attendance already marked for the user", user._id)
             }
         }
     });

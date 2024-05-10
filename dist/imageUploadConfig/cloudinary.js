@@ -26,9 +26,9 @@ cloudinary_1.v2.config({
 });
 const uploadToCloudinary = (path, folder) => __awaiter(void 0, void 0, void 0, function* () {
     return cloudinary_1.v2.uploader
-        .upload(path, { folder })
+        .upload(path, { folder, secure: true })
         .then((data) => {
-        return { url: data.url, public_id: data.public_id };
+        return { url: data.secure_url, public_id: data.public_id };
     })
         .catch((error) => {
         console.log(error);
@@ -46,9 +46,9 @@ const removeFromCloudinary = (public_id) => __awaiter(void 0, void 0, void 0, fu
 exports.removeFromCloudinary = removeFromCloudinary;
 const uploadVideoToCloudinary = (path, folder) => __awaiter(void 0, void 0, void 0, function* () {
     return cloudinary_1.v2.uploader
-        .upload(path, { resource_type: "video", folder })
+        .upload(path, { resource_type: "video", folder, secure: true })
         .then((data) => {
-        return { url: data.url, public_id: data.public_id };
+        return { url: data.secure_url, public_id: data.public_id };
     })
         .catch((error) => {
         console.log("error while uplaoding video to cloudinary", error);

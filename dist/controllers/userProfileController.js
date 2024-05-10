@@ -30,7 +30,7 @@ const setAttendance = (req, res) => __awaiter(void 0, void 0, void 0, function* 
         date: today,
     });
     if (attandanceData) {
-        console.log("attendance already marked for the user", requstedUser.userId);
+        // console.log("attendance already marked for the user", requstedUser.userId);
         res.status(200).json("attendance data available");
     }
     else {
@@ -56,7 +56,7 @@ const setAttendance = (req, res) => __awaiter(void 0, void 0, void 0, function* 
         });
         const ans = yield attendanceCreating.save();
         const userUpdation = yield UserModel_1.User.updateOne({ _id: user === null || user === void 0 ? void 0 : user._id }, { $set: { attendanceId: ans._id } });
-        console.log("attandance created to the user", user === null || user === void 0 ? void 0 : user._id);
+        // console.log("attandance created to the user", user?._id);
         res.status(200).json("attendance data created");
     }
 });
@@ -398,7 +398,7 @@ const getDay = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const requestedDate = new Date(new Date(req.params.date).toLocaleString("en-US", {
         timeZone: "Asia/Kolkata",
     }));
-    console.log("date of requestedDate", requestedDate);
+    // console.log("date of requestedDate", requestedDate);
     // const startOfUserDate = new Date(userDate.setHours(0, 0, 0, 0));
     // const endOfTheDay = new Date(userDate.setHours(23, 59, 59, 999));
     // console.log("startOfUserDate", startOfUserDate);
@@ -419,7 +419,7 @@ const getDay = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
             path: "workOuts.workoutId",
         },
     });
-    console.log("attandanceData", attandanceData);
+    // console.log("attandanceData", attandanceData);
     res.status(200).json({ msg: "attandanceData", attandanceData });
 });
 exports.getDay = getDay;

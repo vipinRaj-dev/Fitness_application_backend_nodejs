@@ -22,7 +22,7 @@ const TrainerPaymentModel_1 = require("../models/TrainerPaymentModel");
 const TrainerModel_1 = require("../models/TrainerModel");
 const stripe = new stripe_1.default(process.env.STRIPE_SECRET_KEY);
 const createCheckoutSession = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    console.log("inside the createCheckoutSession");
+    // console.log("inside the createCheckoutSession");
     const { amount, plan, trainerId } = req.body;
     const userId = req.headers["user"].userId;
     trainerId
@@ -61,7 +61,7 @@ const endpointSecret =
 // "whsec_fecaf7dd03cff4bae38d6e153a36ed764714f82ea43044821c6e464f741209fd";
 "whsec_i6h4rr1SX6dpRJIDQywikG5U1g0iml8V";
 const handleWebhook = (request, response) => __awaiter(void 0, void 0, void 0, function* () {
-    console.log("inside the handleWebhook");
+    // console.log("inside the handleWebhook");
     let userId;
     let transactionId;
     const sig = request.headers["stripe-signature"];

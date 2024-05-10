@@ -58,7 +58,7 @@ const trainerProfileImageUpdate = (req, res) => __awaiter(void 0, void 0, void 0
             },
         });
         let data;
-        console.log("image trainer file", req.file);
+        // console.log("image trainer file" , req.file)
         if (req.file) {
             const trainer = yield TrainerModel_1.Trainer.findById(id);
             if (trainer === null || trainer === void 0 ? void 0 : trainer.publicId) {
